@@ -4,3 +4,6 @@
 [submodule "_libs_ios/OpenSSL"]
 	path = _libs_ios/OpenSSL
 	url = https://github.com/krzyzanowskim/OpenSSL
+[submodule "ios-cmake"]
+	path = ios-cmake
+	url = https://github.com/leetal/ios-cmake
