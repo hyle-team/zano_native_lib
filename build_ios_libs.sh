@@ -221,8 +221,9 @@ do
     #xcodebuild -create-xcframework -library "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64}/lib/$LIB_NAME" -library "${ZANO_MOBILE_IOS_INSTALL_FOLDER_x86_64}/lib/$LIB_NAME"  -library "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64_SIMULATOR}/lib/$LIB_NAME" -output "${ZANO_MOBILE_IOS_INSTALL_FOLDER}/lib/${LIB_NAME}.xcframework"
     xcodebuild -create-xcframework -library "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64}/lib/$LIB_NAME" -library "${ZANO_MOBILE_IOS_INSTALL_FOLDER_x86_64}/lib/$LIB_NAME"  -output "${ZANO_MOBILE_IOS_INSTALL_FOLDER}/lib/${LIB_NAME}.xcframework"
     if [ $? -ne 0 ]; then
-    echo "Failed to perform command"
-    exit 1
+        echo "Failed to perform command"
+        exit 1
+    fi
 done
 
 echo "Creating xcframwork for: OpenSSL"
