@@ -1,3 +1,6 @@
 [submodule "Zano"]
 	path = Zano
 	url = https://github.com/hyle-team/zano.git
+[submodule "_libs_ios/OpenSSL"]
+	path = _libs_ios/OpenSSL
+	url = https://github.com/krzyzanowskim/OpenSSL
