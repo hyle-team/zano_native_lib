@@ -42,6 +42,8 @@ if [ -z "$CONFIG_TYPE" ]; then
     CONFIG_TYPE="Release"
 fi
 
+echo "Config type: $CONFIG_TYPE"
+
 
 export ZANO_MOBILE_IOS_BUILD_FOLDER_ARM64="$MOBILE_PROJECT_ROOT/_builds_ios/arm64"
 export ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64="$MOBILE_PROJECT_ROOT/_install_ios/arm64"
@@ -58,7 +60,7 @@ rm -r "${ZANO_MOBILE_IOS_INSTALL_FOLDER}/lib"
 rm -r "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64_x86_64_SIMULATOR_TEMP}/lib"
 
 
-if false; then ###### delete this
+#if false; then ###### delete this
 
 
 echo "Building ARM64...."
@@ -97,17 +99,17 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-cmake --build "${ZANO_MOBILE_IOS_BUILD_FOLDER_ARM64}" --config Release  --target install -- -j 4
+cmake --build "${ZANO_MOBILE_IOS_BUILD_FOLDER_ARM64}" --config $CONFIG_TYPE  --target install -- -j 4
 if [ $? -ne 0 ]; then
     echo "Failed to perform command"
     exit 1
 fi
 
-fi  ###### delete this
+#fi  ###### delete this
 
 #############   Build for x86_64    #######################################
 
-if false; then ###### delete this
+#if false; then ###### delete this
 
 echo "Building x86_64...."
 
@@ -149,17 +151,17 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-cmake --build "${ZANO_MOBILE_IOS_BUILD_FOLDER_x86_64}" --config Release  --target install -- -j 4
+cmake --build "${ZANO_MOBILE_IOS_BUILD_FOLDER_x86_64}" --config $CONFIG_TYPE  --target install -- -j 4
 if [ $? -ne 0 ]; then
     echo "Failed to perform command"
     exit 1
 fi
 
-fi ###### delete this
+#fi ###### delete this
 
 #############   Build for arm64_simulator  #######################################
 
- if false; then ###### delete this
+ #if false; then ###### delete this
 
 echo "Building arm64_simulator...."
 
@@ -201,13 +203,13 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-cmake --build "${ZANO_MOBILE_IOS_BUILD_FOLDER_ARM64_SIMULATOR}" --config Release  --target install -- -j 4
+cmake --build "${ZANO_MOBILE_IOS_BUILD_FOLDER_ARM64_SIMULATOR}" --config $CONFIG_TYPE  --target install -- -j 4
 if [ $? -ne 0 ]; then
     echo "Failed to perform command"
     exit 1
 fi
 
-fi ###### delete this
+#fi ###### delete this
 
 
 mkdir -p "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64_x86_64_SIMULATOR_TEMP}/lib"
