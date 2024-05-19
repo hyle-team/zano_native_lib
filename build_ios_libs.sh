@@ -42,6 +42,8 @@ if [ -z "$CONFIG_TYPE" ]; then
     CONFIG_TYPE="Release"
 fi
 
+echo "Config type: $CONFIG_TYPE"
+
 
 export ZANO_MOBILE_IOS_BUILD_FOLDER_ARM64="$MOBILE_PROJECT_ROOT/_builds_ios/arm64"
 export ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64="$MOBILE_PROJECT_ROOT/_install_ios/arm64"
@@ -50,10 +52,13 @@ export ZANO_MOBILE_IOS_INSTALL_FOLDER_x86_64="$MOBILE_PROJECT_ROOT/_install_ios/
 export ZANO_MOBILE_IOS_BUILD_FOLDER_ARM64_SIMULATOR="$MOBILE_PROJECT_ROOT/_builds_ios/arm64_simulator"
 export ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64_SIMULATOR="$MOBILE_PROJECT_ROOT/_install_ios/arm64_simulator"
 
+export ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64_x86_64_SIMULATOR_TEMP="$MOBILE_PROJECT_ROOT/_install_ios/arm64_x86_64_simulator_temp"
 
 export ZANO_MOBILE_IOS_INSTALL_FOLDER="$MOBILE_PROJECT_ROOT/_install_ios"
 
 rm -r "${ZANO_MOBILE_IOS_INSTALL_FOLDER}/lib"
+rm -r "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64_x86_64_SIMULATOR_TEMP}/lib"
+
 
 #if false; then ###### delete this
 
@@ -94,7 +99,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-cmake --build "${ZANO_MOBILE_IOS_BUILD_FOLDER_ARM64}" --config Release  --target install -- -j 4
+cmake --build "${ZANO_MOBILE_IOS_BUILD_FOLDER_ARM64}" --config $CONFIG_TYPE  --target install -- -j 4
 if [ $? -ne 0 ]; then
     echo "Failed to perform command"
     exit 1
@@ -146,7 +151,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-cmake --build "${ZANO_MOBILE_IOS_BUILD_FOLDER_x86_64}" --config Release  --target install -- -j 4
+cmake --build "${ZANO_MOBILE_IOS_BUILD_FOLDER_x86_64}" --config $CONFIG_TYPE  --target install -- -j 4
 if [ $? -ne 0 ]; then
     echo "Failed to perform command"
     exit 1
@@ -156,7 +161,7 @@ fi
 
 #############   Build for arm64_simulator  #######################################
 
-if false; then ###### delete this
+ #if false; then ###### delete this
 
 echo "Building arm64_simulator...."
 
@@ -198,18 +203,21 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-cmake --build "${ZANO_MOBILE_IOS_BUILD_FOLDER_ARM64_SIMULATOR}" --config Release  --target install -- -j 4
+cmake --build "${ZANO_MOBILE_IOS_BUILD_FOLDER_ARM64_SIMULATOR}" --config $CONFIG_TYPE  --target install -- -j 4
 if [ $? -ne 0 ]; then
     echo "Failed to perform command"
     exit 1
 fi
 
-fi ###### delete this
+#fi ###### delete this
 
+
+mkdir -p "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64_x86_64_SIMULATOR_TEMP}/lib"
 
 # due to the conflict between names in openssl/libcrypto.a and zano/libcrypto.a we're renaming our lib before creating xcframowork
 mv "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64}/lib/libcrypto.a" "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64}/lib/libcrypto_.a"
 mv "${ZANO_MOBILE_IOS_INSTALL_FOLDER_x86_64}/lib/libcrypto.a" "${ZANO_MOBILE_IOS_INSTALL_FOLDER_x86_64}/lib/libcrypto_.a"
+mv "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64_SIMULATOR}/lib/libcrypto.a" "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64_SIMULATOR}/lib/libcrypto_.a"
 
 
 mkdir "${ZANO_MOBILE_IOS_INSTALL_FOLDER}/lib"
@@ -218,10 +226,17 @@ libs_list=("libcommon.a" "libwallet.a" "libcrypto_.a" "libcurrency_core.a" "libz
 for LIB_NAME in "${libs_list[@]}"
 do
     echo "Creating xcframwork for: $LIB_NAME"
-    #xcodebuild -create-xcframework -library "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64}/lib/$LIB_NAME" -library "${ZANO_MOBILE_IOS_INSTALL_FOLDER_x86_64}/lib/$LIB_NAME"  -library "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64_SIMULATOR}/lib/$LIB_NAME" -output "${ZANO_MOBILE_IOS_INSTALL_FOLDER}/lib/${LIB_NAME}.xcframework"
-    xcodebuild -create-xcframework -library "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64}/lib/$LIB_NAME" -library "${ZANO_MOBILE_IOS_INSTALL_FOLDER_x86_64}/lib/$LIB_NAME"  -output "${ZANO_MOBILE_IOS_INSTALL_FOLDER}/lib/${LIB_NAME}.xcframework"
+    #create a temporary lib with both x86_64 simulator libs and ARM64 simulator libs
+    lipo -create "${ZANO_MOBILE_IOS_INSTALL_FOLDER_x86_64}/lib/$LIB_NAME" "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64_SIMULATOR}/lib/$LIB_NAME" -output "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64_x86_64_SIMULATOR_TEMP}/lib/$LIB_NAME" 
     if [ $? -ne 0 ]; then
-        echo "Failed to perform command"
+        echo "Failed to lipo -create"
+        exit 1
+    fi
+
+    xcodebuild -create-xcframework -library "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64}/lib/$LIB_NAME" -library "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64_x86_64_SIMULATOR_TEMP}/lib/$LIB_NAME" -output "${ZANO_MOBILE_IOS_INSTALL_FOLDER}/lib/${LIB_NAME}.xcframework"
+    #xcodebuild -create-xcframework -library "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64}/lib/$LIB_NAME" -library "${ZANO_MOBILE_IOS_INSTALL_FOLDER_x86_64}/lib/$LIB_NAME"  -output "${ZANO_MOBILE_IOS_INSTALL_FOLDER}/lib/${LIB_NAME}.xcframework"
+    if [ $? -ne 0 ]; then
+        echo "Failed to xcodebuild -create-xcframework"
         exit 1
     fi
 done
