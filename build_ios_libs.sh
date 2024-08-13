@@ -236,7 +236,10 @@ do
     if [ "$LIB_NAME" = "libwallet.a" ]; then
         echo "making header for wallet lib"
         export ZANO_WALLET_HEADERS_PATH="-headers $ZANO_PATH/src/wallet"
+    else 
+        export ZANO_WALLET_HEADERS_PATH=""
     fi
+
     echo "ZANO_WALLET_HEADERS_PATH: $ZANO_WALLET_HEADERS_PATH"
 
     xcodebuild -create-xcframework -library "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64}/lib/$LIB_NAME" $ZANO_WALLET_HEADERS_PATH -library "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64_x86_64_SIMULATOR_TEMP}/lib/$LIB_NAME" $ZANO_WALLET_HEADERS_PATH -output "${ZANO_MOBILE_IOS_INSTALL_FOLDER}/lib/${LIB_NAME}.xcframework"
