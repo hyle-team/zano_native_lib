@@ -17,6 +17,19 @@ To build Android libraries run build_android_libs.sh script, a result will be bu
 - `std::string init(const std::string& address, const std::string& working_dir, int log_level)`<br>Initializes the wallet using the specified address(http://127.0.0.1:2222), working directory, and log level.<br><br>
 - `std::string init(const std::string& ip, const std::string& port, const std::string& working_dir, int log_level)`<br>Initializes the wallet using the specified IP address, port, working directory, and log level.<br><br>
 
+Note: The path that passed to **init** as **working_dir** should be available for writing, here is a possible code for iOS/Android: 
+Code for android it use this code (java):
+```
+String myString = getReactApplicationContext().getFilesDir().getAbsolutePath();
+```
+Code for ios it use this code (objectiveC)
+```
+NSFileManager *fileManager = [NSFileManager defaultManager];
+NSURL *docsDir = [fileManager URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
+NSString *strX = [docsDir path];
+```
+
+
 ### Utility Functions
 - `std::string reset()`<br>Quicly close all opened wallets(withut saving files).<br><br>
 - `std::string set_log_level(int log_level)`<br>Sets the log level for the wallet.(default is 0, -1 disabled)<br><br>
