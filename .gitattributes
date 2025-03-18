@@ -3,3 +3,4 @@ _libs_ios/boost/stage/iphoneos/libboost.a filter=lfs diff=lfs merge=lfs -text
 _libs_ios/boost/stage/iphonesimulator/arm64/libboost.a filter=lfs diff=lfs merge=lfs -text
 _libs_ios/boost/stage/iphonesimulator/libboost.a filter=lfs diff=lfs merge=lfs -text
 _libs_ios/boost/stage/iphonesimulator/x86_64/libboost.a filter=lfs diff=lfs merge=lfs -text
+_install_ios/lib/**/*.a filter=lfs diff=lfs merge=lfs -text

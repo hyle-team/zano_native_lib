@@ -2,3 +2,6 @@ _builds_ios/
 _builds_android/
 _install_android/
 _install_ios/
+# Except the lib folder and its contents
+!/_install_ios/lib/
+!/_install_ios/lib/**
