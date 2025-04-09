@@ -1,0 +1,13 @@
+prefix=/Users/roky/projects/Zano/mobile_repo/mobile/zano_native_lib/_install_android
+exec_prefix=/Users/roky/projects/Zano/mobile_repo/mobile/zano_native_lib/_install_android
+libdir=/Users/roky/projects/Zano/mobile_repo/mobile/zano_native_lib/_install_android/lib
+sharedlibdir=/Users/roky/projects/Zano/mobile_repo/mobile/zano_native_lib/_install_android/lib
+includedir=/Users/roky/projects/Zano/mobile_repo/mobile/zano_native_lib/_install_android/include
+
+Name: zlib
+Description: zlib compression library
+Version: 1.2.11
+
+Requires:
+Libs: -L${libdir} -L${sharedlibdir} -lz
+Cflags: -I${includedir}
