@@ -15,7 +15,7 @@ export ZANO_MOBILE_ANDROID_BOOST_VERSION_STR="Boost 1.84.0"
 export ZANO_MOBILE_ANDROID_BOOST_LIBRARY_PATH="${ZANO_MOBILE_ANDROID_PROJECT_ROOT}/_libs_android/boost"
 export ZANO_MOBILE_ANDROID_BOOST_INCLUDE_PATH="${ZANO_MOBILE_ANDROID_PROJECT_ROOT}/_libs_android/boost/include"
 export ZANO_OPENSSL_ROOT_DIR="${ZANO_MOBILE_ANDROID_PROJECT_ROOT}/_libs_android/openssl"
-export ZANO_PATH="${ZANO_MOBILE_ANDROID_PROJECT_ROOT}/Zano" 
+export ZANO_PATH="${ZANO_MOBILE_ANDROID_PROJECT_ROOT}/Zano"
 
 export ANDROID_NDK_PATH="/Users/${LOGNAME}/Library/Android/sdk/ndk/26.2.11394342"
 export ZANO_ANDROID_API_VERSION=23
@@ -58,8 +58,8 @@ fi
 ARCHS_TO_BUILD=("armeabi-v7a" "x86" "arm64-v8a" "x86_64")
 
 
-export ZANO_ANDROID_LIB_BUILD_PATH="${ZANO_MOBILE_ANDROID_PROJECT_ROOT}/_builds_android" 
-export ZANO_ANDROID_LIB_INSTALL_PATH="${ZANO_MOBILE_ANDROID_PROJECT_ROOT}/_install_android" 
+export ZANO_ANDROID_LIB_BUILD_PATH="${ZANO_MOBILE_ANDROID_PROJECT_ROOT}/_builds_android"
+export ZANO_ANDROID_LIB_INSTALL_PATH="${ZANO_MOBILE_ANDROID_PROJECT_ROOT}/_install_android"
 
 
 # Enumerate over the archs
@@ -71,7 +71,7 @@ do
     OPENSSL_CRYPTO_LIBRARY="${ZANO_OPENSSL_ROOT_DIR}/${CURRENT_ARCH_ABI}/lib/libcrypto.a"
     OPENSSL_SSL_LIBRARY="${ZANO_OPENSSL_ROOT_DIR}/${CURRENT_ARCH_ABI}/lib/libssl.a"
 
-    rm -r "${ZANO_ANDROID_LIB_BUILD_PATH}"
+    rm -rf "${ZANO_ANDROID_LIB_BUILD_PATH}"
     cmake -S. -B"${ZANO_ANDROID_LIB_BUILD_PATH}" \
         -DBoost_VERSION="${ZANO_MOBILE_ANDROID_BOOST_VERSION_STR}" \
         -DBoost_LIBRARY_DIRS="${ZANO_MOBILE_ANDROID_BOOST_LIBRARY_PATH}" \
@@ -106,4 +106,3 @@ done
 echo "+++++++++++++++++++++++++++++++++++++++++++++++++++"
 echo "        Successfully built all platforms           "
 echo "+++++++++++++++++++++++++++++++++++++++++++++++++++"
-
