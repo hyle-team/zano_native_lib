@@ -554,8 +554,15 @@ namespace tools
     }
     else
     {
-      res.tx_hash = epee::string_tools::pod_to_hex(currency::get_transaction_hash(result.tx));
+      crypto::hash tx_id = currency::get_transaction_hash(result.tx);
+      res.tx_hash = epee::string_tools::pod_to_hex(tx_id);
       res.tx_size = get_object_blobsize(result.tx);
+      //try to get wallet_transfer_info
+      wallet_public::wallet_transfer_info wti = AUTO_VAL_INIT(wti);
+      if (w.get_wallet()->find_unconfirmed_tx(tx_id, wti))
+      {
+        res.tx_details = wti;
+      }
     }
     return true;
 
@@ -568,6 +575,16 @@ namespace tools
     w.get_wallet()->store();
     boost::system::error_code ec = AUTO_VAL_INIT(ec);
     res.wallet_file_size = w.get_wallet()->get_wallet_file_size();
+    WALLET_RPC_CATCH_TRY_ENTRY();
+    return true;
+  }
+  //------------------------------------------------------------------------------------------------------------------------------
+  bool wallet_rpc_server::force_rescan_tx_pool(const wallet_public::COMMAND_RPC_FORCE_RESCAN_TX_POOL::request& req, wallet_public::COMMAND_RPC_FORCE_RESCAN_TX_POOL::response& res, epee::json_rpc::error& er, connection_context& cntx)
+  {
+    WALLET_RPC_BEGIN_TRY_ENTRY();
+    bool dummy = false;
+    w.get_wallet()->scan_tx_pool(dummy);
+    res.status = API_RETURN_CODE_OK;
     WALLET_RPC_CATCH_TRY_ENTRY();
     return true;
   }
@@ -1463,7 +1480,7 @@ namespace tools
     try
     {
       currency::transaction result_tx{};
-      if (req.regular_sig != currency::null_sig)
+      if (!req.regular_sig.is_zero())
       {
         w.get_wallet()->submit_externally_signed_asset_tx(ft, req.regular_sig, req.unlock_transfers_on_fail, result_tx, res.transfers_were_unlocked);
       }
@@ -1495,14 +1512,15 @@ namespace tools
   {
     WALLET_RPC_BEGIN_TRY_ENTRY();
     currency::asset_owner_pub_key_v new_owner_v;
-    if (req.new_owner!= currency::null_pkey)
+    if (req.new_owner != currency::null_pkey && req.new_owner_eth_pub_key == currency::null_eth_public_key)
     {
       new_owner_v = req.new_owner;
     }
-    else if(req.new_owner_eth_pub_key != currency::null_eth_public_key)
+    else if(req.new_owner_eth_pub_key != currency::null_eth_public_key && req.new_owner == currency::null_pkey)
     {
       new_owner_v = req.new_owner_eth_pub_key;
-    }else
+    }
+    else
     {
       res.status = API_RETURN_CODE_BAD_ARG_INVALID_ADDRESS;
       return true;
@@ -1510,7 +1528,7 @@ namespace tools
 
     try
     {
-      currency::finalized_tx ft;
+      currency::finalized_tx ft{};
       w.get_wallet()->transfer_asset_ownership(req.asset_id, new_owner_v, ft);
       if (ft.ftp.ado_sign_thirdparty)
       {
