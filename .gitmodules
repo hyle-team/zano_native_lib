@@ -7,3 +7,6 @@
 [submodule "ios-cmake"]
 	path = ios-cmake
 	url = https://github.com/leetal/ios-cmake
+[submodule "contrib/android/Boost-for-Android"]
+	path = contrib/android/Boost-for-Android
+	url = https://github.com/moritz-wundke/Boost-for-Android.git
