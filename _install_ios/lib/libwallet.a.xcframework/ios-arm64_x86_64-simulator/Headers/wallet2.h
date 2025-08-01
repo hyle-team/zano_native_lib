@@ -449,7 +449,7 @@ namespace tools
     void burn_asset(const crypto::public_key& asset_id, uint64_t amount_to_burn, currency::finalized_tx& ft, const std::vector<currency::tx_service_attachment>& service_entries = std::vector<currency::tx_service_attachment>(), const std::string& address_to_point = std::string(), uint64_t native_amount_to_point = 0);
     void transfer_asset_ownership(const crypto::public_key& asset_id, const currency::asset_owner_pub_key_v& new_owner_v, currency::finalized_tx& ft);
 
-    bool daemon_get_asset_info(const crypto::public_key& asset_id, currency::asset_descriptor_base& adb);
+    bool daemon_get_asset_info(const crypto::public_key& asset_id, currency::asset_descriptor_base& adb) const;
     bool set_core_proxy(const std::shared_ptr<i_core_proxy>& proxy);
     void set_defragmentation_tx_settings(bool enabled, uint64_t min_outs, uint64_t max_outs, uint64_t max_allowed_amount = CURRENCY_BLOCK_REWARD, size_t decoys_count = SIZE_MAX);
     void set_pos_required_decoys_count(size_t v) { m_required_decoys_count = v; }
@@ -466,8 +466,8 @@ namespace tools
 
     uint64_t unlocked_balance() const;
     
-    enum asset_info_flags_t : uint32_t { aif_none = 0, aif_whitelisted = 1 << 0, aif_own = 1 << 1 };
-    bool get_asset_info(const crypto::public_key& asset_id, currency::asset_descriptor_base& asset_info, uint32_t& asset_flags) const;
+    enum asset_info_flags_t : uint32_t { aif_none = 0, aif_native_coin = 1 << 0, aif_whitelisted = 1 << 1, aif_own = 1 << 2, aif_custom = 1 << 3, aif_unknown = 1 << 4 };
+    bool get_asset_info(const crypto::public_key& asset_id, currency::asset_descriptor_base& asset_info, uint32_t& asset_flags, bool ask_daemon_for_unknown = false) const;
     size_t get_asset_decimal_point(const crypto::public_key& asset_id, size_t result_if_not_found = 0) const;
     bool get_asset_decimal_point(const crypto::public_key& asset_id, size_t* p_decimal_point_result) const;
 
@@ -585,6 +585,13 @@ namespace tools
     bool check_connection();
     bool truncate_transfers_and_history(const std::list<size_t>& items_to_remove);
     bool truncate_wallet();
+
+    void set_tids_to_be_only_used_in_the_next_transfer(const std::vector<uint64_t>& tids)
+    {
+      WLT_THROW_IF_FALSE_WALLET_CMN_ERR_EX(std::all_of(tids.cbegin(), tids.cend(), [&](size_t i){ return i < m_transfers.size(); }), "some transfers IDs are out of range");
+      m_found_free_amounts.clear();
+      add_transfers_to_transfers_cache(tids);
+    }
 
     // PoS mining
     void do_pos_mining_prepare_entry(mining_context& cxt, const transfer_details& td);
@@ -730,17 +737,6 @@ namespace tools
 
     void set_connectivity_options(unsigned int timeout);
     
-    /*
-    create_htlc_proposal: if htlc_hash == null_hash, then this wallet is originator of the atomic process, and 
-    we use deterministic origin, if given some particular htlc_hash, then we use this hash, and this means that 
-    opener-hash will be given by other side
-    */
-    void create_htlc_proposal(uint64_t amount, const currency::account_public_address& addr, uint64_t lock_blocks_count, currency::transaction &tx, const crypto::hash& htlc_hash, std::string &origin);
-    void get_list_of_active_htlc(std::list<wallet_public::htlc_entry_info>& htlcs, bool only_redeem_txs);
-    void redeem_htlc(const crypto::hash& htlc_tx_id, const std::string& origin, currency::transaction& result_tx);
-    void redeem_htlc(const crypto::hash& htlc_tx_id, const std::string& origin);
-    bool check_htlc_redeemed(const crypto::hash& htlc_tx_id, std::string& origin, crypto::hash& redeem_tx_id);
-
     void set_votes_config_path(const std::string& path_to_config_file);
     const tools::wallet_public::wallet_vote_config& get_current_votes() { return m_votes_config; }
 
@@ -913,7 +909,6 @@ private:
     bool generate_utxo_defragmentation_transaction_if_needed(currency::transaction& tx);
     bool store_unsigned_tx_to_file_and_reserve_transfers(const currency::finalize_tx_param& ftp, const std::string& filename, std::string* p_unsigned_tx_blob_str = nullptr);
     void check_and_throw_if_self_directed_tx_with_payment_id_requested(const construct_tx_param& ctp);
-    void check_and_throw_if_smth_not_good_with_comment_or_payment_id(const construct_tx_param& ctp);
     void push_new_block_id(const crypto::hash& id, uint64_t height);
     bool lookup_item_around(uint64_t i, std::pair<uint64_t, crypto::hash>& result);
     //void get_short_chain_history(std::list<crypto::hash>& ids);

@@ -1613,7 +1613,7 @@ std::string wallets_manager::transfer(uint64_t wallet_id, const view::transfer_p
       
     
   //process attachments
-  if (tp.comment.size())
+  if (tp.comment.size() && payment_id.empty())
   {
     currency::tx_comment tc = AUTO_VAL_INIT(tc);
     tc.comment = tp.comment;
@@ -1922,11 +1922,10 @@ std::string wallets_manager::get_wallet_restore_info(uint64_t wallet_id, std::st
 {
   GET_WALLET_OPT_BY_ID(wallet_id, wo);
 
-  seed_phrase = wo.w.unlocked_get()->get_account().get_seed_phrase(seed_password);
+  if (wo.wallet_state != view::wallet_status_info::wallet_state_ready || wo.long_refresh_in_progress)
+    return API_RETURN_CODE_CORE_BUSY;
 
-  //if (wo.wallet_state != view::wallet_status_info::wallet_state_ready || wo.long_refresh_in_progress)
-  //  return API_RETURN_CODE_CORE_BUSY;
-  //seed_phrase = wo.w->get()->get_account().get_seed_phrase(seed_password);
+  seed_phrase = wo.w->get()->get_account().get_seed_phrase(seed_password);
 
   return API_RETURN_CODE_OK;
 }

@@ -38,25 +38,25 @@ POP_VS_WARNINGS
         catch (const tools::error::daemon_busy& e) \
         { \
           er.code = WALLET_RPC_ERROR_CODE_DAEMON_IS_BUSY; \
-          er.message = std::string("WALLET_RPC_ERROR_CODE_DAEMON_IS_BUSY: ") + e.what(); \
+          er.message = std::string("WALLET_RPC_ERROR_CODE_DAEMON_IS_BUSY") + e.what(); \
           return false; \
         } \
         catch (const tools::error::not_enough_money& e) \
         { \
           er.code = WALLET_RPC_ERROR_CODE_NOT_ENOUGH_MONEY; \
-          er.message = std::string("WALLET_RPC_ERROR_CODE_NOT_ENOUGH_MONEY: ") + e.what(); \
+          er.message = std::string("WALLET_RPC_ERROR_CODE_NOT_ENOUGH_MONEY") + e.error_code(); \
           return false; \
         } \
         catch (const tools::error::wallet_error& e) \
         { \
           er.code = WALLET_RPC_ERROR_CODE_GENERIC_TRANSFER_ERROR; \
-          er.message = std::string("WALLET_RPC_ERROR_CODE_GENERIC_TRANSFER_ERROR: ") + e.what(); \
+          er.message = e.error_code(); \
           return false; \
         } \
         catch (const std::exception& e) \
         { \
-          er.code = WALLET_RPC_ERROR_CODE_GENERIC_ERROR; \
-          er.message = std::string("WALLET_RPC_ERROR_CODE_GENERIC_ERROR: ") + e.what(); \
+          er.code = WALLET_RPC_ERROR_CODE_GENERIC_TRANSFER_ERROR; \
+          er.message = std::string("WALLET_RPC_ERROR_CODE_GENERIC_TRANSFER_ERROR: ") + e.what(); \
           return false; \
         } \
         catch (...) \
@@ -73,11 +73,11 @@ void exception_handler()
 namespace tools
 {
   //-----------------------------------------------------------------------------------
-  const command_line::arg_descriptor<std::string> wallet_rpc_server::arg_rpc_bind_port    ("rpc-bind-port",   "Starts wallet as rpc server for wallet operations, sets bind port for server");
-  const command_line::arg_descriptor<std::string> wallet_rpc_server::arg_rpc_bind_ip      ("rpc-bind-ip",     "Specify ip to bind rpc server", "127.0.0.1");
-  const command_line::arg_descriptor<std::string> wallet_rpc_server::arg_miner_text_info  ("miner-text-info", "Wallet password");
-  const command_line::arg_descriptor<bool>        wallet_rpc_server::arg_deaf_mode        ("deaf",            "Put wallet into 'deaf' mode make it ignore any rpc commands(usable for safe PoS mining)");
-  const command_line::arg_descriptor<std::string> wallet_rpc_server::arg_jwt_secret       ("jwt-secret",      "Enables JWT auth over secret string provided");
+  const command_line::arg_descriptor<std::string> wallet_rpc_server::arg_rpc_bind_port  ("rpc-bind-port", "Starts wallet as rpc server for wallet operations, sets bind port for server");
+  const command_line::arg_descriptor<std::string> wallet_rpc_server::arg_rpc_bind_ip  ("rpc-bind-ip", "Specify ip to bind rpc server", "127.0.0.1");
+  const command_line::arg_descriptor<std::string> wallet_rpc_server::arg_miner_text_info  ( "miner-text-info", "Wallet password");
+  const command_line::arg_descriptor<bool>        wallet_rpc_server::arg_deaf_mode  ( "deaf", "Put wallet into 'deaf' mode make it ignore any rpc commands(usable for safe PoS mining)");
+  const command_line::arg_descriptor<std::string> wallet_rpc_server::arg_jwt_secret("jwt-secret", "Enables JWT auth over secret string provided");
 
   void wallet_rpc_server::init_options(boost::program_options::options_description& desc)
   {
@@ -428,7 +428,7 @@ namespace tools
     return true;
     WALLET_RPC_CATCH_TRY_ENTRY();
   }
-  //------------------------------------------------------------------------------------------------------------------------------
+  
   bool wallet_rpc_server::on_transfer(const wallet_public::COMMAND_RPC_TRANSFER::request& req, wallet_public::COMMAND_RPC_TRANSFER::response& res, epee::json_rpc::error& er, connection_context& cntx)
   {
     WALLET_RPC_BEGIN_TRY_ENTRY();
@@ -505,12 +505,6 @@ namespace tools
           er.message = std::string("embedded payment id: ") + embedded_payment_id + " conflicts with previously set payment id: " + payment_id;
           return false;
         }
-        if (it != req.destinations.begin())
-        {
-          er.code = WALLET_RPC_ERROR_CODE_WRONG_PAYMENT_ID;
-          er.message = std::string("payment id: ") + embedded_payment_id + " currently can only be set for the first destination (an so you can use integrated address only for the fist destination)";
-          return false;
-        }
         payment_id = embedded_payment_id;
       }
       de.amount = it->amount;
@@ -527,7 +521,7 @@ namespace tools
       return false;
     }
 
-    if (!req.comment.empty())
+    if (!req.comment.empty() && payment_id.empty())
     {
       currency::tx_comment comment = AUTO_VAL_INIT(comment);
       comment.comment = req.comment;
@@ -1146,44 +1140,6 @@ namespace tools
     res.tx_blob_size = currency::get_object_blobsize(res_tx);
     return true;
     WALLET_RPC_CATCH_TRY_ENTRY();
-  }
-  //------------------------------------------------------------------------------------------------------------------------------
-  bool wallet_rpc_server::on_create_htlc_proposal(const wallet_public::COMMAND_CREATE_HTLC_PROPOSAL::request& req, wallet_public::COMMAND_CREATE_HTLC_PROPOSAL::response& res, epee::json_rpc::error& er, connection_context& cntx)
-  {
-    WALLET_RPC_BEGIN_TRY_ENTRY();
-    currency::transaction tx = AUTO_VAL_INIT(tx);
-    w.get_wallet()->create_htlc_proposal(req.amount, req.counterparty_address, req.lock_blocks_count, tx, req.htlc_hash, res.derived_origin_secret);
-    res.result_tx_blob = currency::tx_to_blob(tx);
-    res.result_tx_id = get_transaction_hash(tx);
-    WALLET_RPC_CATCH_TRY_ENTRY();
-    return true;
-  }
-  //------------------------------------------------------------------------------------------------------------------------------
-  bool wallet_rpc_server::on_get_list_of_active_htlc(const wallet_public::COMMAND_GET_LIST_OF_ACTIVE_HTLC::request& req, wallet_public::COMMAND_GET_LIST_OF_ACTIVE_HTLC::response& res, epee::json_rpc::error& er, connection_context& cntx)
-  {
-    WALLET_RPC_BEGIN_TRY_ENTRY();
-    w.get_wallet()->get_list_of_active_htlc(res.htlcs, req.income_redeem_only);
-    WALLET_RPC_CATCH_TRY_ENTRY();
-    return true;
-  }
-  //------------------------------------------------------------------------------------------------------------------------------
-  bool wallet_rpc_server::on_redeem_htlc(const wallet_public::COMMAND_REDEEM_HTLC::request& req, wallet_public::COMMAND_REDEEM_HTLC::response& res, epee::json_rpc::error& er, connection_context& cntx)
-  {
-    WALLET_RPC_BEGIN_TRY_ENTRY();
-    currency::transaction tx = AUTO_VAL_INIT(tx);
-    w.get_wallet()->redeem_htlc(req.tx_id, req.origin_secret, tx);
-    res.result_tx_blob = currency::tx_to_blob(tx);
-    res.result_tx_id = get_transaction_hash(tx);
-    WALLET_RPC_CATCH_TRY_ENTRY();
-    return true;
-  }
-  //------------------------------------------------------------------------------------------------------------------------------
-  bool wallet_rpc_server::on_check_htlc_redeemed(const wallet_public::COMMAND_CHECK_HTLC_REDEEMED::request& req, wallet_public::COMMAND_CHECK_HTLC_REDEEMED::response& res, epee::json_rpc::error& er, connection_context& cntx)
-  {
-    WALLET_RPC_BEGIN_TRY_ENTRY();
-    w.get_wallet()->check_htlc_redeemed(req.htlc_tx_id, res.origin_secrete, res.redeem_tx_id);
-    WALLET_RPC_CATCH_TRY_ENTRY();
-    return true;
   }
   //------------------------------------------------------------------------------------------------------------------------------
   bool wallet_rpc_server::on_ionic_swap_generate_proposal(const wallet_public::COMMAND_IONIC_SWAP_GENERATE_PROPOSAL::request& req, wallet_public::COMMAND_IONIC_SWAP_GENERATE_PROPOSAL::response& res, epee::json_rpc::error& er, connection_context& cntx)
