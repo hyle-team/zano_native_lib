@@ -114,6 +114,7 @@ namespace tools
         MAP_JON_RPC_WE("get_recent_txs_and_info2",  on_get_recent_txs_and_info2,  wallet_public::COMMAND_RPC_GET_RECENT_TXS_AND_INFO2)
         MAP_JON_RPC_WE("transfer",                  on_transfer,                  wallet_public::COMMAND_RPC_TRANSFER)
         MAP_JON_RPC_WE("store",                     on_store,                     wallet_public::COMMAND_RPC_STORE)
+        MAP_JON_RPC_WE("force_rescan_tx_pool",      force_rescan_tx_pool,         wallet_public::COMMAND_RPC_FORCE_RESCAN_TX_POOL)
         MAP_JON_RPC_WE("get_payments",              on_get_payments,              wallet_public::COMMAND_RPC_GET_PAYMENTS)
         MAP_JON_RPC_WE("get_bulk_payments",         on_get_bulk_payments,         wallet_public::COMMAND_RPC_GET_BULK_PAYMENTS)
         MAP_JON_RPC_WE("make_integrated_address",   on_make_integrated_address,   wallet_public::COMMAND_RPC_MAKE_INTEGRATED_ADDRESS)
@@ -143,11 +144,6 @@ namespace tools
         MAP_JON_RPC_WE("marketplace_push_offer",              on_marketplace_push_offer,        wallet_public::COMMAND_MARKETPLACE_PUSH_OFFER)
         MAP_JON_RPC_WE("marketplace_push_update_offer",       on_marketplace_push_update_offer, wallet_public::COMMAND_MARKETPLACE_PUSH_UPDATE_OFFER)
         MAP_JON_RPC_WE("marketplace_cancel_offer",            on_marketplace_cancel_offer,      wallet_public::COMMAND_MARKETPLACE_CANCEL_OFFER)
-        //HTLC API
-        //MAP_JON_RPC_WE("atomics_create_htlc_proposal",        on_create_htlc_proposal,          wallet_public::COMMAND_CREATE_HTLC_PROPOSAL)
-        //MAP_JON_RPC_WE("atomics_get_list_of_active_htlc",     on_get_list_of_active_htlc,       wallet_public::COMMAND_GET_LIST_OF_ACTIVE_HTLC)
-        //MAP_JON_RPC_WE("atomics_redeem_htlc",                 on_redeem_htlc,                   wallet_public::COMMAND_REDEEM_HTLC)
-        //MAP_JON_RPC_WE("atomics_check_htlc_redeemed",         on_check_htlc_redeemed,           wallet_public::COMMAND_CHECK_HTLC_REDEEMED)
 
         //IONIC_SWAPS API
         MAP_JON_RPC_WE("ionic_swap_generate_proposal",        on_ionic_swap_generate_proposal,  wallet_public::COMMAND_IONIC_SWAP_GENERATE_PROPOSAL)
@@ -164,6 +160,8 @@ namespace tools
         MAP_JON_RPC_WE("update_asset",                        on_asset_update,                  wallet_public::COMMAND_ASSETS_UPDATE)
         MAP_JON_RPC_WE("burn_asset",                          on_asset_burn,                    wallet_public::COMMAND_ASSETS_BURN)
         MAP_JON_RPC_WE("send_ext_signed_asset_tx",            on_asset_send_ext_signed_tx,      wallet_public::COMMAND_ASSET_SEND_EXT_SIGNED_TX)
+        MAP_JON_RPC_WE("attach_asset_descriptor",             on_attach_asset_descriptor,       wallet_public::COMMAND_ATTACH_ASSET_DESCRIPTOR)
+        MAP_JON_RPC_WE("transfer_asset_ownership",            on_transfer_asset_ownership,      wallet_public::COMMAND_TRANSFER_ASSET_OWNERSHIP)
 
         //MULTIWALLET APIs
         MAP_JON_RPC_WE("mw_get_wallets",                      on_mw_get_wallets,                wallet_public::COMMAND_MW_GET_WALLETS)
@@ -190,6 +188,7 @@ namespace tools
     bool on_get_recent_txs_and_info2(const wallet_public::COMMAND_RPC_GET_RECENT_TXS_AND_INFO2::request& req, wallet_public::COMMAND_RPC_GET_RECENT_TXS_AND_INFO2::response& res, epee::json_rpc::error& er, connection_context& cntx);
     bool on_transfer(const wallet_public::COMMAND_RPC_TRANSFER::request& req, wallet_public::COMMAND_RPC_TRANSFER::response& res, epee::json_rpc::error& er, connection_context& cntx);
     bool on_store(const wallet_public::COMMAND_RPC_STORE::request& req, wallet_public::COMMAND_RPC_STORE::response& res, epee::json_rpc::error& er, connection_context& cntx);
+    bool force_rescan_tx_pool(const wallet_public::COMMAND_RPC_FORCE_RESCAN_TX_POOL::request& req, wallet_public::COMMAND_RPC_FORCE_RESCAN_TX_POOL::response& res, epee::json_rpc::error& er, connection_context& cntx);
     bool on_get_payments(const wallet_public::COMMAND_RPC_GET_PAYMENTS::request& req, wallet_public::COMMAND_RPC_GET_PAYMENTS::response& res, epee::json_rpc::error& er, connection_context& cntx);
     bool on_get_bulk_payments(const wallet_public::COMMAND_RPC_GET_BULK_PAYMENTS::request& req, wallet_public::COMMAND_RPC_GET_BULK_PAYMENTS::response& res, epee::json_rpc::error& er, connection_context& cntx);
     bool on_make_integrated_address(const wallet_public::COMMAND_RPC_MAKE_INTEGRATED_ADDRESS::request& req, wallet_public::COMMAND_RPC_MAKE_INTEGRATED_ADDRESS::response& res, epee::json_rpc::error& er, connection_context& cntx);
@@ -218,11 +217,6 @@ namespace tools
     bool on_marketplace_push_update_offer(const wallet_public::COMMAND_MARKETPLACE_PUSH_UPDATE_OFFER::request& req, wallet_public::COMMAND_MARKETPLACE_PUSH_UPDATE_OFFER::response& res, epee::json_rpc::error& er, connection_context& cntx);
     bool on_marketplace_cancel_offer(const wallet_public::COMMAND_MARKETPLACE_CANCEL_OFFER::request& req, wallet_public::COMMAND_MARKETPLACE_CANCEL_OFFER::response& res, epee::json_rpc::error& er, connection_context& cntx);
 
-    bool on_create_htlc_proposal(const wallet_public::COMMAND_CREATE_HTLC_PROPOSAL::request& req, wallet_public::COMMAND_CREATE_HTLC_PROPOSAL::response& res, epee::json_rpc::error& er, connection_context& cntx);
-    bool on_get_list_of_active_htlc(const wallet_public::COMMAND_GET_LIST_OF_ACTIVE_HTLC::request& req, wallet_public::COMMAND_GET_LIST_OF_ACTIVE_HTLC::response& res, epee::json_rpc::error& er, connection_context& cntx);
-    bool on_redeem_htlc(const wallet_public::COMMAND_REDEEM_HTLC::request& req, wallet_public::COMMAND_REDEEM_HTLC::response& res, epee::json_rpc::error& er, connection_context& cntx);
-    bool on_check_htlc_redeemed(const wallet_public::COMMAND_CHECK_HTLC_REDEEMED::request& req, wallet_public::COMMAND_CHECK_HTLC_REDEEMED::response& res, epee::json_rpc::error& er, connection_context& cntx);
-
     bool on_ionic_swap_generate_proposal(const wallet_public::COMMAND_IONIC_SWAP_GENERATE_PROPOSAL::request& req, wallet_public::COMMAND_IONIC_SWAP_GENERATE_PROPOSAL::response& res, epee::json_rpc::error& er, connection_context& cntx);
     bool on_ionic_swap_get_proposal_info(const wallet_public::COMMAND_IONIC_SWAP_GET_PROPOSAL_INFO::request& req, wallet_public::COMMAND_IONIC_SWAP_GET_PROPOSAL_INFO::response& res, epee::json_rpc::error& er, connection_context& cntx);
     bool on_ionic_swap_accept_proposal(const wallet_public::COMMAND_IONIC_SWAP_ACCEPT_PROPOSAL::request& req, wallet_public::COMMAND_IONIC_SWAP_ACCEPT_PROPOSAL::response& res, epee::json_rpc::error& er, connection_context& cntx);
@@ -236,6 +230,9 @@ namespace tools
     bool on_asset_update(const wallet_public::COMMAND_ASSETS_UPDATE::request& req, wallet_public::COMMAND_ASSETS_UPDATE::response& res, epee::json_rpc::error& er, connection_context& cntx);
     bool on_asset_burn(const wallet_public::COMMAND_ASSETS_BURN::request& req, wallet_public::COMMAND_ASSETS_BURN::response& res, epee::json_rpc::error& er, connection_context& cntx);
     bool on_asset_send_ext_signed_tx(const wallet_public::COMMAND_ASSET_SEND_EXT_SIGNED_TX::request& req, wallet_public::COMMAND_ASSET_SEND_EXT_SIGNED_TX::response& res, epee::json_rpc::error& er, connection_context& cntx);
+    bool on_attach_asset_descriptor(const wallet_public::COMMAND_ATTACH_ASSET_DESCRIPTOR::request& req, wallet_public::COMMAND_ATTACH_ASSET_DESCRIPTOR::response& res, epee::json_rpc::error& er, connection_context& cntx);
+    bool on_transfer_asset_ownership(const wallet_public::COMMAND_TRANSFER_ASSET_OWNERSHIP::request& req, wallet_public::COMMAND_TRANSFER_ASSET_OWNERSHIP::response& res, epee::json_rpc::error& er, connection_context& cntx);
+    
 
     bool on_mw_get_wallets(const wallet_public::COMMAND_MW_GET_WALLETS::request& req, wallet_public::COMMAND_MW_GET_WALLETS::response& res, epee::json_rpc::error& er, connection_context& cntx);
     bool on_mw_select_wallet(const wallet_public::COMMAND_MW_SELECT_WALLET::request& req, wallet_public::COMMAND_MW_SELECT_WALLET::response& res, epee::json_rpc::error& er, connection_context& cntx);

@@ -18,7 +18,7 @@ export ZANO_MOBILE_IOS_BOOST_INCLUDE_PATH="$ZANO_MOBILE_IOS_BOOST_ROOT/include"
 export ZANO_MOBILE_IOS_BOOST_LIBRARY_PATH="$MOBILE_PROJECT_ROOT/_libs_ios/boost/lib"
 export ZANO_OPENSSL_ROOT="$MOBILE_PROJECT_ROOT/_libs_ios/OpenSSL"
 
-export ZANO_PATH="$MOBILE_PROJECT_ROOT/zano"
+export ZANO_PATH="$MOBILE_PROJECT_ROOT/Zano"
 
 export NO_DEFAULT_PATH
 
@@ -56,8 +56,8 @@ export ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64_x86_64_SIMULATOR_TEMP="$MOBILE_PROJE
 
 export ZANO_MOBILE_IOS_INSTALL_FOLDER="$MOBILE_PROJECT_ROOT/_install_ios"
 
-rm -r "${ZANO_MOBILE_IOS_INSTALL_FOLDER}/lib"
-rm -r "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64_x86_64_SIMULATOR_TEMP}/lib"
+rm -rf "${ZANO_MOBILE_IOS_INSTALL_FOLDER}/lib"
+rm -rf "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64_x86_64_SIMULATOR_TEMP}/lib"
 
 
 #if false; then ###### delete this
@@ -69,8 +69,8 @@ export OPENSSL_INCLUDE_DIR="$ZANO_OPENSSL_ROOT/iphoneos/include"
 export OPENSSL_CRYPTO_LIBRARY="$ZANO_OPENSSL_ROOT/iphoneos/lib/libcrypto.a"
 export OPENSSL_SSL_LIBRARY="$ZANO_OPENSSL_ROOT/iphoneos/lib/libssl.a"
 
-rm -r "${ZANO_MOBILE_IOS_BUILD_FOLDER_ARM64}"          #  ../_builds_ios
-rm -r "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64}"                         #../_install_ios
+rm -rf "${ZANO_MOBILE_IOS_BUILD_FOLDER_ARM64}"          #  ../_builds_ios
+rm -rf "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64}"                         #../_install_ios
 mkdir -p "${ZANO_MOBILE_IOS_BUILD_FOLDER_ARM64}"
 mkdir -p "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64}"
 
@@ -89,10 +89,13 @@ cmake -DCMAKE_BUILD_TYPE=$CONFIG_TYPE \
       -DCMAKE_SYSTEM_NAME=iOS \
       -DCMAKE_INSTALL_PREFIX="${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64}" \
       -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO \
-      -DDISABLE_TOR=TRUE 
+      -DDISABLE_TOR=TRUE \
+      -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED=NO \
+      -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO \
+      -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY=""
 
-#      -DCMAKE_OSX_ARCHITECTURES="arm64" 
-#      -DCMAKE_IOS_INSTALL_COMBINED=YES 
+#      -DCMAKE_OSX_ARCHITECTURES="arm64"
+#      -DCMAKE_IOS_INSTALL_COMBINED=YES
 
 if [ $? -ne 0 ]; then
     echo "Failed to perform command"
@@ -117,8 +120,8 @@ export OPENSSL_INCLUDE_DIR="$ZANO_OPENSSL_ROOT/iphonesimulator/include"
 export OPENSSL_CRYPTO_LIBRARY="$ZANO_OPENSSL_ROOT/iphonesimulator/lib/libcrypto.a"
 export OPENSSL_SSL_LIBRARY="$ZANO_OPENSSL_ROOT/iphonesimulator/lib/libssl.a"
 
-rm -r "${ZANO_MOBILE_IOS_BUILD_FOLDER_x86_64}"                           #../_builds_ios
-rm -r "${ZANO_MOBILE_IOS_INSTALL_FOLDER_x86_64}"                         #../_install_ios
+rm -rf "${ZANO_MOBILE_IOS_BUILD_FOLDER_x86_64}"                           #../_builds_ios
+rm -rf "${ZANO_MOBILE_IOS_INSTALL_FOLDER_x86_64}"                         #../_install_ios
 mkdir -p "${ZANO_MOBILE_IOS_BUILD_FOLDER_x86_64}"
 mkdir -p "${ZANO_MOBILE_IOS_INSTALL_FOLDER_x86_64}"
 
@@ -137,14 +140,18 @@ cmake -DCMAKE_BUILD_TYPE=$CONFIG_TYPE \
       -DCMAKE_SYSTEM_NAME=iOS \
       -DCMAKE_INSTALL_PREFIX="${ZANO_MOBILE_IOS_INSTALL_FOLDER_x86_64}" \
       -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO \
-      -DDISABLE_TOR=TRUE 
+      -DDISABLE_TOR=TRUE \
+      -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED=NO \
+      -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO \
+      -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY=""
+
 
 
 #       -DCMAKE_OSX_ARCHITECTURES="x86_64" \
 
 
 
-#      -DCMAKE_IOS_INSTALL_COMBINED=YES 
+#      -DCMAKE_IOS_INSTALL_COMBINED=YES
 
 if [ $? -ne 0 ]; then
     echo "Failed to perform command"
@@ -169,8 +176,8 @@ export OPENSSL_INCLUDE_DIR="$ZANO_OPENSSL_ROOT/iphonesimulator/include"
 export OPENSSL_CRYPTO_LIBRARY="$ZANO_OPENSSL_ROOT/iphonesimulator/lib/libcrypto.a"
 export OPENSSL_SSL_LIBRARY="$ZANO_OPENSSL_ROOT/iphonesimulator/lib/libssl.a"
 
-rm -r "${ZANO_MOBILE_IOS_BUILD_FOLDER_ARM64_SIMULATOR}"                           #../_builds_ios
-rm -r "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64_SIMULATOR}"                         #../_install_ios
+rm -rf "${ZANO_MOBILE_IOS_BUILD_FOLDER_ARM64_SIMULATOR}"                           #../_builds_ios
+rm -rf "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64_SIMULATOR}"                         #../_install_ios
 mkdir -p "${ZANO_MOBILE_IOS_BUILD_FOLDER_ARM64_SIMULATOR}"
 mkdir -p "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64_SIMULATOR}"
 
@@ -189,14 +196,18 @@ cmake -DCMAKE_BUILD_TYPE=$CONFIG_TYPE \
       -DCMAKE_SYSTEM_NAME=iOS \
       -DCMAKE_INSTALL_PREFIX="${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64_SIMULATOR}" \
       -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO \
-      -DDISABLE_TOR=TRUE 
+      -DDISABLE_TOR=TRUE \
+      -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED=NO \
+      -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO \
+      -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY=""
+
 
 
 #       -DCMAKE_OSX_ARCHITECTURES="x86_64" \
 
 
 
-#      -DCMAKE_IOS_INSTALL_COMBINED=YES 
+#      -DCMAKE_IOS_INSTALL_COMBINED=YES
 
 if [ $? -ne 0 ]; then
     echo "Failed to perform command"
@@ -227,7 +238,7 @@ for LIB_NAME in "${libs_list[@]}"
 do
     echo "Creating xcframwork for: $LIB_NAME"
     #create a temporary lib with both x86_64 simulator libs and ARM64 simulator libs
-    lipo -create "${ZANO_MOBILE_IOS_INSTALL_FOLDER_x86_64}/lib/$LIB_NAME" "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64_SIMULATOR}/lib/$LIB_NAME" -output "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64_x86_64_SIMULATOR_TEMP}/lib/$LIB_NAME" 
+    lipo -create "${ZANO_MOBILE_IOS_INSTALL_FOLDER_x86_64}/lib/$LIB_NAME" "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64_SIMULATOR}/lib/$LIB_NAME" -output "${ZANO_MOBILE_IOS_INSTALL_FOLDER_ARM64_x86_64_SIMULATOR_TEMP}/lib/$LIB_NAME"
     if [ $? -ne 0 ]; then
         echo "Failed to lipo -create"
         exit 1
@@ -236,7 +247,7 @@ do
     if [ "$LIB_NAME" = "libwallet.a" ]; then
         echo "making header for wallet lib"
         export ZANO_WALLET_HEADERS_PATH="-headers $ZANO_PATH/src/wallet"
-    else 
+    else
         export ZANO_WALLET_HEADERS_PATH=""
     fi
 
