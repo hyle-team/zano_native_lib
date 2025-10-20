@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zano WASM Wallet Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .section h2 {
+            margin-bottom: 15px;
+            color: #667eea;
+            font-size: 1.5em;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .output {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .wallet-info {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+
+        .wallet-info p {
+            margin: 8px 0;
+        }
+
+        .wallet-info strong {
+            color: #667eea;
+        }
+
+        code {
+            background: #f1f3f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #e83e8c;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 24px;
+            background: #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 Zano WASM Wallet</h1>
+            <p>Non-Custodial Cryptocurrency Wallet in Your Browser</p>
+        </div>
+
+        <div class="content">
+            <!-- Initialization Section -->
+            <div class="section">
+                <h2>1. Initialize</h2>
+                <div class="input-group">
+                    <label for="daemonUrl">Daemon URL</label>
+                    <input type="text" id="daemonUrl" value="https://daemon.zano.org:11211" placeholder="https://daemon.zano.org:11211">
+                </div>
+                <button id="btnInit">Initialize Wallet System</button>
+                <div id="initStatus" class="hidden"></div>
+            </div>
+
+            <!-- Generate Wallet Section -->
+            <div class="section">
+                <h2>2. Generate New Wallet</h2>
+                <div class="input-group">
+                    <label for="genWalletName">Wallet Name</label>
+                    <input type="text" id="genWalletName" value="my_wallet" placeholder="my_wallet">
+                </div>
+                <div class="input-group">
+                    <label for="genPassword">Password</label>
+                    <input type="password" id="genPassword" value="password123" placeholder="Strong password">
+                </div>
+                <button id="btnGenerate" disabled>Generate Wallet</button>
+                <div id="generateStatus" class="hidden"></div>
+                <div id="walletInfo" class="hidden"></div>
+            </div>
+
+            <!-- Restore Wallet Section -->
+            <div class="section">
+                <h2>3. Restore from Seed</h2>
+                <div class="input-group">
+                    <label for="seedPhrase">Seed Phrase</label>
+                    <textarea id="seedPhrase" placeholder="Enter 25-word seed phrase"></textarea>
+                </div>
+                <div class="input-group">
+                    <label for="restoreWalletName">Wallet Name</label>
+                    <input type="text" id="restoreWalletName" value="restored_wallet" placeholder="restored_wallet">
+                </div>
+                <div class="input-group">
+                    <label for="restorePassword">Password</label>
+                    <input type="password" id="restorePassword" placeholder="Strong password">
+                </div>
+                <button id="btnRestore" disabled>Restore Wallet</button>
+                <div id="restoreStatus" class="hidden"></div>
+            </div>
+
+            <!-- Wallet Operations Section -->
+            <div class="section">
+                <h2>4. Wallet Operations</h2>
+                <div class="button-group">
+                    <button id="btnGetStatus" disabled>Get Status</button>
+                    <button id="btnGetFiles" disabled>List Wallet Files</button>
+                    <button id="btnGetVersion" disabled>Get Version</button>
+                    <button id="btnValidateAddress" disabled>Validate Address</button>
+                </div>
+                <div id="operationStatus" class="hidden"></div>
+                <div id="syncProgress" class="hidden">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%">0%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Output Console -->
+            <div class="section">
+                <h2>Output Console</h2>
+                <div id="console" class="output">Ready to connect...</div>
+                <button id="btnClearConsole" style="margin-top: 10px;">Clear Console</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Note: In production, import from your built module
+        // import { ZanoWalletWasm } from './dist/index.mjs';
+
+        // For demo, we'll use inline implementation
+        let wallet = null;
+        let currentWalletId = null;
+
+        const console_el = document.getElementById('console');
+        const btnInit = document.getElementById('btnInit');
+        const btnGenerate = document.getElementById('btnGenerate');
+        const btnRestore = document.getElementById('btnRestore');
+        const btnGetStatus = document.getElementById('btnGetStatus');
+        const btnGetFiles = document.getElementById('btnGetFiles');
+        const btnGetVersion = document.getElementById('btnGetVersion');
+        const btnValidateAddress = document.getElementById('btnValidateAddress');
+        const btnClearConsole = document.getElementById('btnClearConsole');
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
+            console_el.textContent += `[${timestamp}] ${prefix} ${message}\n`;
+            console_el.scrollTop = console_el.scrollHeight;
+        }
+
+        function showStatus(elementId, message, type) {
+            const el = document.getElementById(elementId);
+            el.className = `status ${type}`;
+            el.textContent = message;
+            el.classList.remove('hidden');
+        }
+
+        function hideStatus(elementId) {
+            document.getElementById(elementId).classList.add('hidden');
+        }
+
+        btnInit.addEventListener('click', async () => {
+            try {
+                btnInit.disabled = true;
+                btnInit.innerHTML = '<span class="spinner"></span> Initializing...';
+                showStatus('initStatus', 'Loading WASM module...', 'info');
+                log('Initializing wallet system...');
+
+                const daemonUrl = document.getElementById('daemonUrl').value;
+
+                // In real implementation, create wallet instance here
+                // wallet = new ZanoWalletWasm('/worker.js');
+                // await wallet.init(daemonUrl);
+
+                // For demo, simulate initialization
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
+                showStatus('initStatus', '✅ Wallet system initialized successfully!', 'success');
+                log('Wallet system ready', 'success');
+                log(`Connected to daemon: ${daemonUrl}`);
+
+                // Enable other buttons
+                btnGenerate.disabled = false;
+                btnRestore.disabled = false;
+                btnGetFiles.disabled = false;
+                btnGetVersion.disabled = false;
+                btnValidateAddress.disabled = false;
+
+            } catch (error) {
+                showStatus('initStatus', `❌ Initialization failed: ${error.message}`, 'error');
+                log(`Error: ${error.message}`, 'error');
+            } finally {
+                btnInit.innerHTML = 'Reinitialize';
+                btnInit.disabled = false;
+            }
+        });
+
+        btnGenerate.addEventListener('click', async () => {
+            try {
+                btnGenerate.disabled = true;
+                btnGenerate.innerHTML = '<span class="spinner"></span> Generating...';
+                hideStatus('generateStatus');
+                log('Generating new wallet...');
+
+                const walletName = document.getElementById('genWalletName').value;
+                const password = document.getElementById('genPassword').value;
+
+                // In real implementation:
+                // const walletInfo = await wallet.generate(walletName, password);
+                // currentWalletId = walletInfo.wallet_id;
+
+                // Demo simulation
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                const mockWalletInfo = {
+                    wallet_id: 1,
+                    address: 'ZxBkXtnk5NA1X7VDdetzUyQsvHtn6E5KfGax32JdGwghabhYYRSpdJnQEdtkvyLHLogoQFXs2MqJTSnHhazLPwf92bXtw4vup',
+                    seed: 'invite invite invite invite invite invite invite invite invite invite invite invite invite invite invite invite invite invite limb total season behind burden after hour please',
+                    path: walletName
+                };
+
+                currentWalletId = mockWalletInfo.wallet_id;
+
+                showStatus('generateStatus', '✅ Wallet generated successfully!', 'success');
+                log(`Wallet created: ${mockWalletInfo.address}`, 'success');
+
+                const walletInfoDiv = document.getElementById('walletInfo');
+                walletInfoDiv.innerHTML = `
+                    <div class="wallet-info">
+                        <h3>Wallet Created!</h3>
+                        <p><strong>Wallet ID:</strong> ${mockWalletInfo.wallet_id}</p>
+                        <p><strong>Address:</strong> <code>${mockWalletInfo.address}</code></p>
+                        <p><strong>Seed Phrase:</strong></p>
+                        <textarea readonly style="font-size: 12px;">${mockWalletInfo.seed}</textarea>
+                        <p style="color: red; font-weight: bold; margin-top: 10px;">⚠️ Save your seed phrase securely!</p>
+                    </div>
+                `;
+                walletInfoDiv.classList.remove('hidden');
+
+                btnGetStatus.disabled = false;
+
+            } catch (error) {
+                showStatus('generateStatus', `❌ Generation failed: ${error.message}`, 'error');
+                log(`Error: ${error.message}`, 'error');
+            } finally {
+                btnGenerate.innerHTML = 'Generate Wallet';
+                btnGenerate.disabled = false;
+            }
+        });
+
+        btnGetStatus.addEventListener('click', async () => {
+            try {
+                if (!currentWalletId) {
+                    throw new Error('No wallet opened');
+                }
+
+                log('Getting wallet status...');
+
+                // In real implementation:
+                // const status = await wallet.getStatus(currentWalletId);
+
+                // Demo simulation
+                const mockStatus = {
+                    wallet_state: 1,
+                    current_wallet_height: 1500000,
+                    current_daemon_height: 2800000,
+                    is_daemon_connected: true,
+                    progress: 53.57
+                };
+
+                log(`Sync progress: ${mockStatus.progress.toFixed(2)}%`, 'success');
+                log(`Wallet height: ${mockStatus.current_wallet_height}`);
+                log(`Daemon height: ${mockStatus.current_daemon_height}`);
+
+                document.getElementById('syncProgress').classList.remove('hidden');
+                const progressFill = document.getElementById('progressFill');
+                progressFill.style.width = mockStatus.progress + '%';
+                progressFill.textContent = mockStatus.progress.toFixed(1) + '%';
+
+            } catch (error) {
+                log(`Error: ${error.message}`, 'error');
+            }
+        });
+
+        btnGetVersion.addEventListener('click', async () => {
+            try {
+                log('Getting library version...');
+                // const version = await wallet.getVersion();
+                const version = '2.1.9.431[demo]';
+                log(`Library version: ${version}`, 'success');
+            } catch (error) {
+                log(`Error: ${error.message}`, 'error');
+            }
+        });
+
+        btnClearConsole.addEventListener('click', () => {
+            console_el.textContent = '';
+            log('Console cleared');
+        });
+
+        log('Demo loaded. Click "Initialize Wallet System" to begin.');
+        log('Note: This is a DEMO with simulated responses. Real implementation requires building the WASM module.');
+    </script>
+</body>
+</html>

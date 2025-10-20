@@ -4,3 +4,8 @@ _install_ios/
 # Except the lib folder and its contents
 !/_install_ios/lib/
 !/_install_ios/lib/**
+.claude
+wasm/node_modules
+wasm/_build
+wasm/_install
+wasm/dist
