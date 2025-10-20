@@ -361,13 +361,26 @@ source ./emsdk_env.sh
 
 # 2. Build Boost (following Zano pattern)
 # Download Boost 1.84.0
-wget https://boostorg.jfrog.io/artifactory/main/release/1.84.0/source/boost_1_84_0.tar.gz
+wget https://archives.boost.io/release/1.84.0/source/boost_1_84_0.tar.gz
 tar -xzf boost_1_84_0.tar.gz
 cd boost_1_84_0
 
+# Create Emscripten toolchain configuration
+cat > tools/build/src/user-config.jam << 'EOF'
+import os ;
+using clang : emscripten
+    : em++
+    : <cxxflags>-fPIC
+      <cflags>-fPIC
+      <archiver>emar
+      <ranlib>emranlib
+    ;
+EOF
+
 # Bootstrap and build with Emscripten
 ./bootstrap.sh --with-libraries=system,filesystem,thread,date_time,chrono,regex,serialization,atomic,program_options,locale,timer,log
-./b2 toolset=clang-emscripten
+./b2 toolset=clang-emscripten link=static threading=single variant=release -j4
+./b2 toolset=clang-emscripten link=static threading=single variant=release install --prefix=$HOME/boost_emscripten
 
 # 3. Build OpenSSL (following Zano pattern)
 # Download OpenSSL 1.1.1w
@@ -404,11 +417,17 @@ export OPENSSL_ROOT_DIR=$HOME/openssl
 source /path/to/emsdk/emsdk_env.sh
 ```
 
+### "clang++-emscripten not found" when building Boost
+This error occurs because Boost.Build doesn't have a built-in Emscripten toolchain. The solution is to create a `user-config.jam` file (see Build Steps above). Make sure you:
+1. Activate Emscripten: `source /path/to/emsdk/emsdk_env.sh`
+2. Create `tools/build/src/user-config.jam` in the Boost directory with the configuration shown in Build Steps
+3. Use the correct build flags: `./b2 toolset=clang-emscripten link=static threading=single variant=release -j4`
+
 ### "Could NOT find OpenSSL" or "Could NOT find Boost"
 Set the environment variables before building:
 ```bash
 export OPENSSL_ROOT_DIR=$HOME/openssl
-export BOOST_ROOT=/path/to/boost_1_84_0
+export BOOST_ROOT=$HOME/boost_emscripten
 ```
 
 ### "QuotaExceeded" error
