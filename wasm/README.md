@@ -405,12 +405,17 @@ emmake make install
 
 # 4. Build WASM module
 cd zano_native_lib/wasm
-export BOOST_ROOT=/path/to/boost_1_84_0
+export BOOST_ROOT=$HOME/boost_1_84_0
 export OPENSSL_ROOT_DIR=$HOME/openssl
 ./build-wasm.sh
 ```
 
 ## Troubleshooting
+
+### Clear Cache
+```bash
+emcc --clear-cache && emcc --clear-ports
+```
 
 ### "EMSDK not found"
 ```bash

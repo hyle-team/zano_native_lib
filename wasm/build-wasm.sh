@@ -8,6 +8,22 @@
 
 set -euo pipefail
 
+# Default dependency locations (override by exporting before running this script)
+: "${EMSDK:=$HOME/emsdk}"
+: "${BOOST_ROOT:=$HOME/boost_emscripten}"
+: "${OPENSSL_ROOT_DIR:=$HOME/openssl}"
+
+# Ensure Emscripten environment is loaded (ignore if already sourced)
+if [ -d "${EMSDK}" ] && [ -f "${EMSDK}/emsdk_env.sh" ]; then
+  # shellcheck disable=SC1090
+  source "${EMSDK}/emsdk_env.sh" >/dev/null 2>&1 || true
+fi
+
+# Export for downstream tools
+export EMSDK
+export BOOST_ROOT
+export OPENSSL_ROOT_DIR
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -95,11 +111,23 @@ cd "${BUILD_DIR}"
 
 # Run emcmake to configure
 emcmake cmake .. \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" \
-    -DBUILD_TESTS=OFF \
-    -DDISABLE_TOR=ON \
-    -DBUILD_GUI=OFF
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" \
+  -DBUILD_TESTS=OFF \
+  -DDISABLE_TOR=ON \
+  -DBUILD_GUI=OFF \
+  -DBoost_ROOT="${BOOST_ROOT}" \
+  -DBoost_NO_SYSTEM_PATHS=ON \
+  -DBoost_INCLUDE_DIR="${BOOST_ROOT}/include" \
+  -DBoost_LIBRARY_DIR="${BOOST_ROOT}/lib" \
+  -DBoost_LIBRARY_DIRS="${BOOST_ROOT}/lib" \
+  -DBoost_USE_STATIC_LIBS=ON \
+  -DCMAKE_TOOLCHAIN_FILE="${EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake" \
+  -DCMAKE_CROSSCOMPILING_EMULATOR="${EMSDK}/node/22.16.0_64bit/bin/node" \
+  -DOPENSSL_ROOT_DIR="${OPENSSL_ROOT_DIR}" \
+  -DOPENSSL_INCLUDE_DIR="${OPENSSL_ROOT_DIR}/include" \
+  -DOPENSSL_CRYPTO_LIBRARY="${OPENSSL_ROOT_DIR}/lib/libcrypto.a" \
+  -DOPENSSL_SSL_LIBRARY="${OPENSSL_ROOT_DIR}/lib/libssl.a"
 
 if [ $? -ne 0 ]; then
     echo -e "${RED}✗ CMake configuration failed${NC}"
