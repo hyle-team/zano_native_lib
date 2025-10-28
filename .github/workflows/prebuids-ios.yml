@@ -15,6 +15,7 @@ jobs:
       - name: Build
         run: |
           ./build_ios_libs.sh
+          rm -rf _install_ios/arm64 arm64_simulator arm64_x86_64_simulator_temp x86_64
       - name: Pack
         run: |
           tar -czvf _install_ios.tar.gz _install_ios
