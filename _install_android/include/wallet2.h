@@ -262,7 +262,7 @@ namespace tools
     wallet2(const wallet2&) = delete;
   public:
     wallet2();
-    virtual ~wallet2() {}
+    virtual ~wallet2();
 
     static std::string transfer_flags_to_str(uint32_t flags);
 
@@ -449,7 +449,7 @@ namespace tools
     void burn_asset(const crypto::public_key& asset_id, uint64_t amount_to_burn, currency::finalized_tx& ft, const std::vector<currency::tx_service_attachment>& service_entries = std::vector<currency::tx_service_attachment>(), const std::string& address_to_point = std::string(), uint64_t native_amount_to_point = 0);
     void transfer_asset_ownership(const crypto::public_key& asset_id, const currency::asset_owner_pub_key_v& new_owner_v, currency::finalized_tx& ft);
 
-    bool daemon_get_asset_info(const crypto::public_key& asset_id, currency::asset_descriptor_base& adb);
+    bool daemon_get_asset_info(const crypto::public_key& asset_id, currency::asset_descriptor_base& adb) const;
     bool set_core_proxy(const std::shared_ptr<i_core_proxy>& proxy);
     void set_defragmentation_tx_settings(bool enabled, uint64_t min_outs, uint64_t max_outs, uint64_t max_allowed_amount = CURRENCY_BLOCK_REWARD, size_t decoys_count = SIZE_MAX);
     void set_pos_required_decoys_count(size_t v) { m_required_decoys_count = v; }
@@ -466,8 +466,8 @@ namespace tools
 
     uint64_t unlocked_balance() const;
     
-    enum asset_info_flags_t : uint32_t { aif_none = 0, aif_whitelisted = 1 << 0, aif_own = 1 << 1 };
-    bool get_asset_info(const crypto::public_key& asset_id, currency::asset_descriptor_base& asset_info, uint32_t& asset_flags) const;
+    enum asset_info_flags_t : uint32_t { aif_none = 0, aif_native_coin = 1 << 0, aif_whitelisted = 1 << 1, aif_own = 1 << 2, aif_custom = 1 << 3, aif_unknown = 1 << 4 };
+    bool get_asset_info(const crypto::public_key& asset_id, currency::asset_descriptor_base& asset_info, uint32_t& asset_flags, bool ask_daemon_for_unknown = false) const;
     size_t get_asset_decimal_point(const crypto::public_key& asset_id, size_t result_if_not_found = 0) const;
     bool get_asset_decimal_point(const crypto::public_key& asset_id, size_t* p_decimal_point_result) const;
 
@@ -586,6 +586,12 @@ namespace tools
     bool truncate_transfers_and_history(const std::list<size_t>& items_to_remove);
     bool truncate_wallet();
 
+    void set_tids_to_be_only_used_in_the_next_transfer(const std::vector<uint64_t>& tids)
+    {
+      m_found_free_amounts.clear();
+      add_transfers_to_transfers_cache(tids);
+    }
+
     // PoS mining
     void do_pos_mining_prepare_entry(mining_context& cxt, const transfer_details& td);
     bool do_pos_mining_iteration(mining_context& cxt, uint64_t ts);
@@ -617,6 +623,9 @@ namespace tools
     void submit_transfer_files(const std::string& signed_tx_file, currency::transaction& tx);
     void submit_externally_signed_asset_tx(const currency::finalized_tx& ft, const crypto::generic_schnorr_sig_s& gss_sig, bool unlock_transfers_on_fail, currency::transaction& result_tx, bool& transfers_unlocked);
     void submit_externally_signed_asset_tx(const currency::finalized_tx& ft, const crypto::eth_signature& eth_sig, bool unlock_transfers_on_fail, currency::transaction& result_tx, bool& transfers_unlocked);
+    
+    void restore_key_images_in_wo_wallet(const std::wstring& filename, const std::string& password) const;
+    void clear_utxo_cold_sig_reservation(std::vector<uint64_t>& affected_transfer_ids);
 
     void sweep_below(size_t fake_outs_count, const currency::account_public_address& destination_addr, uint64_t threshold_amount, const currency::payment_id_t& payment_id,
       uint64_t fee, size_t& outs_total, uint64_t& amount_total, size_t& outs_swept, uint64_t& amount_swept, currency::transaction* p_result_tx = nullptr, std::string* p_filename_or_unsigned_tx_blob_str = nullptr);
@@ -683,8 +692,8 @@ namespace tools
 
     void scan_tx_to_key_inputs(std::vector<uint64_t>& found_transfers, const currency::transaction& tx);
     // asset_id = null_pkey means no filtering by asset id
-    void dump_trunsfers(std::stringstream& ss, bool verbose = true, const crypto::public_key& asset_id = currency::null_pkey) const;
-    std::string dump_trunsfers(bool verbose = false, const crypto::public_key& asset_id = currency::null_pkey) const;
+    void dump_transfers(std::stringstream& ss, bool verbose = true, const crypto::public_key& asset_id = currency::null_pkey) const;
+    std::string dump_transfers(bool verbose = false, const crypto::public_key& asset_id = currency::null_pkey) const;
     void dump_key_images(std::stringstream& ss);
     void get_multisig_transfers(multisig_transfer_container& ms_transfers);
     const multisig_transfer_container& get_multisig_transfers() const { return m_multisig_transfers; }
@@ -730,17 +739,6 @@ namespace tools
 
     void set_connectivity_options(unsigned int timeout);
     
-    /*
-    create_htlc_proposal: if htlc_hash == null_hash, then this wallet is originator of the atomic process, and 
-    we use deterministic origin, if given some particular htlc_hash, then we use this hash, and this means that 
-    opener-hash will be given by other side
-    */
-    void create_htlc_proposal(uint64_t amount, const currency::account_public_address& addr, uint64_t lock_blocks_count, currency::transaction &tx, const crypto::hash& htlc_hash, std::string &origin);
-    void get_list_of_active_htlc(std::list<wallet_public::htlc_entry_info>& htlcs, bool only_redeem_txs);
-    void redeem_htlc(const crypto::hash& htlc_tx_id, const std::string& origin, currency::transaction& result_tx);
-    void redeem_htlc(const crypto::hash& htlc_tx_id, const std::string& origin);
-    bool check_htlc_redeemed(const crypto::hash& htlc_tx_id, std::string& origin, crypto::hash& redeem_tx_id);
-
     void set_votes_config_path(const std::string& path_to_config_file);
     const tools::wallet_public::wallet_vote_config& get_current_votes() { return m_votes_config; }
 

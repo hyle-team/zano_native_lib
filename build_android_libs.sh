@@ -71,6 +71,12 @@ do
     OPENSSL_CRYPTO_LIBRARY="${ZANO_OPENSSL_ROOT_DIR}/${CURRENT_ARCH_ABI}/lib/libcrypto.a"
     OPENSSL_SSL_LIBRARY="${ZANO_OPENSSL_ROOT_DIR}/${CURRENT_ARCH_ABI}/lib/libssl.a"
 
+    EXTRA_FLAGS=""
+    if [ "$CURRENT_ARCH_ABI" = "armeabi-v7a" ]; then
+        EXTRA_FLAGS="-DCMAKE_C_FLAGS=-mno-unaligned-access -DCMAKE_CXX_FLAGS=-mno-unaligned-access"
+        echo "Applying -mno-unaligned-access for $CURRENT_ARCH_ABI"
+    fi
+
     rm -rf "${ZANO_ANDROID_LIB_BUILD_PATH}"
     cmake -S. -B"${ZANO_ANDROID_LIB_BUILD_PATH}" \
         -DBoost_VERSION="${ZANO_MOBILE_ANDROID_BOOST_VERSION_STR}" \
@@ -87,7 +93,8 @@ do
         -DOPENSSL_CRYPTO_LIBRARY="${OPENSSL_CRYPTO_LIBRARY}" \
         -DOPENSSL_SSL_LIBRARY="${OPENSSL_SSL_LIBRARY}" \
         -DCMAKE_INSTALL_PREFIX="${ZANO_ANDROID_LIB_INSTALL_PATH}" \
-        -DANDROID_PLATFORM="${ZANO_ANDROID_API_MIN_SDK_VERSION}"
+        -DANDROID_PLATFORM="${ZANO_ANDROID_API_MIN_SDK_VERSION}" \
+        ${EXTRA_FLAGS}
 
     if [ $? -ne 0 ]; then
         echo "Failed to perform command"
