@@ -12,6 +12,11 @@ jobs:
         with:
           java-version: 17
           distribution: temurin
+      - name: Install Android NDK
+        id: setup-ndk
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r26c
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -20,6 +25,8 @@ jobs:
       - name: Build
         run: |
           ./build_android_libs.sh
+        env:
+          ANDROID_NDK_PATH: ${{ steps.setup-ndk.outputs.ndk-path }}
       - name: Commit and push prebuilds
         uses: devops-infra/action-commit-push@v1.0.3
         with:
