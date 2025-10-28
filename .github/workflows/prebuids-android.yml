@@ -1,10 +1,10 @@
-name: "Build prebuilds"
+name: "Build android prebuilds"
 
 on:
   workflow_dispatch:
 
 jobs:
-  build-linux:
+  build-android:
     runs-on: ubuntu-latest
     steps:
       - name: Install Java
@@ -27,23 +27,6 @@ jobs:
           ./build_android_libs.sh
         env:
           ANDROID_NDK_PATH: ${{ steps.setup-ndk.outputs.ndk-path }}
-      - name: Commit and push prebuilds
-        uses: devops-infra/action-commit-push@v1.0.3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          commit_prefix: "[AUTO] "
-          commit_message: "build from ${{ github.sha }}"
-  build-macosx:
-    runs-on: macos-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          lfs: true
-          submodules: recursive
-      - name: Build
-        run: |
-          ./build_ios_libs.sh
       - name: Commit and push prebuilds
         uses: devops-infra/action-commit-push@v1.0.3
         with:
