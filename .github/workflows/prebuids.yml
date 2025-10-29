@@ -29,7 +29,12 @@ jobs:
           ANDROID_NDK_PATH: ${{ steps.setup-ndk.outputs.ndk-path }}
       - name: Pack
         run: |
-          tar -czvf android.tar.gz $(git ls-files --modified)
+          modified_files=$(git ls-files --modified)
+          if [ -n "$modified_files" ]; then
+            tar -czvf android.tar.gz $modified_files
+          else
+            tar -czvf android.tar.gz --files-from=/dev/null
+          fi
       - name: Store artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -50,7 +55,12 @@ jobs:
           ./build_ios_libs.sh
       - name: Pack
         run: |
-          tar -czvf ios.tar.gz $(git ls-files --modified)
+          modified_files=$(git ls-files --modified)
+          if [ -n "$modified_files" ]; then
+            tar -czvf ios.tar.gz $modified_files
+          else
+            tar -czvf ios.tar.gz --files-from=/dev/null
+          fi
       - name: Store artifacts
         uses: actions/upload-artifact@v4
         with:
