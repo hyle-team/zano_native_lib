@@ -1,0 +1,96 @@
+name: "Build prebuilds"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: temurin
+      - name: Install Android NDK
+        id: setup-ndk
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r26c
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          submodules: recursive
+      - name: Build
+        run: |
+          ./build_android_libs.sh
+        env:
+          ANDROID_NDK_PATH: ${{ steps.setup-ndk.outputs.ndk-path }}
+      - name: Pack
+        run: |
+          modified_files=$(git ls-files --modified)
+          if [ -n "$modified_files" ]; then
+            tar -czvf changes.tar.gz $modified_files
+          else
+            tar -czvf changes.tar.gz --files-from=/dev/null
+          fi
+      - name: Store artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: libzano.android
+          path: |
+            changes.tar.gz
+          retention-days: 1
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          submodules: recursive
+      - name: Build
+        run: |
+          ./build_ios_libs.sh
+      - name: Pack
+        run: |
+          modified_files=$(git ls-files --modified)
+          if [ -n "$modified_files" ]; then
+            tar -czvf changes.tar.gz $modified_files
+          else
+            tar -czvf changes.tar.gz --files-from=/dev/null
+          fi
+      - name: Store artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: libzano.ios
+          path: |
+            changes.tar.gz
+          retention-days: 1
+  upload:
+    needs:
+      - build-ios
+      - build-android
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+      - name: Download app artifacts
+        uses: actions/download-artifact@v4
+      - name: Unpack
+        run: |
+          mv libzano.android/changes.tar.gz ./libzano.android.tar.gz
+          tar -xzvf libzano.android.tar.gz
+          rm -f libzano.android.tar.gz
+          mv libzano.ios/changes.tar.gz ./libzano.ios.tgz
+          tar -xzvf libzano.ios.tgz
+          rm -f libzano.ios.tgz
+      - name: Commit and push prebuilds
+        uses: devops-infra/action-commit-push@v1.0.3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          commit_prefix: "[AUTO] "
+          commit_message: "build from ${{ github.sha }}"

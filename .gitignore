@@ -4,3 +4,4 @@ _install_ios/
 # Except the lib folder and its contents
 !/_install_ios/lib/
 !/_install_ios/lib/**
+.DS_Store
