@@ -31,16 +31,16 @@ jobs:
         run: |
           modified_files=$(git ls-files --modified)
           if [ -n "$modified_files" ]; then
-            tar -czvf android.tar.gz $modified_files
+            tar -czvf changes.tar.gz $modified_files
           else
-            tar -czvf android.tar.gz --files-from=/dev/null
+            tar -czvf changes.tar.gz --files-from=/dev/null
           fi
       - name: Store artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: libzano
+          name: libzano.android
           path: |
-            android.tar.gz
+            changes.tar.gz
           retention-days: 1
   build-ios:
     runs-on: macos-latest
@@ -57,16 +57,16 @@ jobs:
         run: |
           modified_files=$(git ls-files --modified)
           if [ -n "$modified_files" ]; then
-            tar -czvf ios.tar.gz $modified_files
+            tar -czvf changes.tar.gz $modified_files
           else
-            tar -czvf ios.tar.gz --files-from=/dev/null
+            tar -czvf changes.tar.gz --files-from=/dev/null
           fi
       - name: Store artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: libzano
+          name: libzano.ios
           path: |
-            ios.tar.gz
+            changes.tar.gz
           retention-days: 1
   upload:
     needs:
@@ -82,12 +82,12 @@ jobs:
         uses: actions/download-artifact@v4
       - name: Unpack
         run: |
-          mv libzano/android.tar.gz ./
-          tar -xzvf android.tar.gz
-          rm -f android.tar.gz
-          mv libzano/ios.tar.gz ./
-          tar -xzvf ios.tar.gz
-          rm -f ios.tar.gz
+          mv libzano.android/changes.tar.gz ./libzano.android.tar.gz
+          tar -xzvf libzano.android.tar.gz
+          rm -f libzano.android.tar.gz
+          mv libzano.ios/changes.tar.gz ./libzano.ios.tgz
+          tar -xzvf libzano.ios.tgz
+          rm -f libzano.ios.tgz
       - name: Commit and push prebuilds
         uses: devops-infra/action-commit-push@v1.0.3
         with:
