@@ -27,7 +27,7 @@ jobs:
 
           # Fetch latest changes from remote
           echo "[INFO] Fetching latest changes from remote..."
-          git fetch origin
+          git fetch
       - name: Commit and push artifacts
         run: |
           # Commit if there are changes (even without changes)
@@ -36,4 +36,4 @@ jobs:
 
           # Check if branch has upstream tracking
           echo "[INFO] Pushing changes"
-          git push origin "${BRANCH}:${BRANCH}"
+          git push
