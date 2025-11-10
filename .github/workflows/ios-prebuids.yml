@@ -17,6 +17,7 @@ jobs:
           submodules: recursive
       - name: Build
         run: |
+          git tag v1.0
           ./build_ios_libs.sh
       - name: Configure git
         run: |

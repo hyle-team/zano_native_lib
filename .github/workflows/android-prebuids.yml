@@ -27,6 +27,7 @@ jobs:
           submodules: recursive
       - name: Build
         run: |
+          git tag v1.0
           ./build_android_libs.sh
         env:
           ANDROID_NDK_PATH: ${{ steps.setup-ndk.outputs.ndk-path }}
