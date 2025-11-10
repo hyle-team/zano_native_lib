@@ -1,0 +1,39 @@
+name: "Build Test prebuilds"
+
+on:
+  workflow_dispatch:
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Build
+        run: |
+          touch test_counter.txt
+          COUNTER=$(cat test_counter.txt)
+          COUTNER=${COUTNER:-0}
+          COUNTER=$(( COUTNER + 1 ))
+          echo $COUNTER > test_counter.txt
+      - name: Configure git
+        run: |
+          # Set git credentials
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR}@zano.org"
+
+          # Fetch latest changes from remote
+          echo "[INFO] Fetching latest changes from remote..."
+          git fetch
+      - name: Commit and push artifacts
+        run: |
+          # Commit if there are changes (even without changes)
+          echo "[INFO] Commiting changes"
+          git commit --allow-empty -m "[AUTO] build test from ${{ github.sha }}"
+
+          # Check if branch has upstream tracking
+          echo "[INFO] Pushing changes"
+          git push
