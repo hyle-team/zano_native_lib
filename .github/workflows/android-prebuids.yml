@@ -33,36 +33,14 @@ jobs:
       - name: Configure git
         run: |
           # Set git credentials
-          git config --global safe.directory "${GITHUB_WORKSPACE}"
-          git config --global safe.directory /github/workspace
-          git remote set-url origin "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@${INPUT_ORGANIZATION_DOMAIN}/${GITHUB_REPOSITORY}"
           git config --global user.name "${GITHUB_ACTOR}"
-          git config --global user.email "${GITHUB_ACTOR}@users.noreply.${INPUT_ORGANIZATION_DOMAIN}"
-
-          # Setting branch name
-          BRANCH="${INPUT_TARGET_BRANCH:-$(git symbolic-ref --short -q HEAD)}"
-          echo -e "\n[INFO] Target branch: ${BRANCH}"
+          git config --global user.email "${GITHUB_ACTOR}@zano.org"
 
           # Fetch latest changes from remote
           echo "[INFO] Fetching latest changes from remote..."
           git fetch origin
-
-          echo "[INFO] Remote branch '${BRANCH}' exists, checking out and updating..."
-          # Check if local branch exists
-          if git show-ref --verify --quiet "refs/heads/${BRANCH}"; then
-            echo "[INFO] Local branch '${BRANCH}' exists, switching to it..."
-            git checkout "${BRANCH}" || {
-              echo "[ERROR] Failed to checkout branch ${BRANCH}"
-              exit 1
-            }
-          else
-            echo "[INFO] Creating local branch '${BRANCH}' from remote..."
-            git checkout -b "${BRANCH}" "origin/${BRANCH}" || {
-              echo "[ERROR] Failed to create local branch from remote"
-              exit 1
-            }
-          fi
-
+      - name: Commit and push artifacts
+        run: |
           # Commit if there are changes (even without changes)
           echo "[INFO] Commiting changes"
           git commit --allow-empty -m "[AUTO] build ios from ${{ github.sha }}"
