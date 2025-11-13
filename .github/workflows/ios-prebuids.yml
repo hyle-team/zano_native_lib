@@ -24,12 +24,12 @@ jobs:
           # Set git credentials
           git config --global user.name "${GITHUB_ACTOR}"
           git config --global user.email "${GITHUB_ACTOR}@zano.org"
-
-          # Fetch latest changes from remote
-          echo "[INFO] Fetching latest changes from remote..."
-          git fetch
       - name: Commit and push artifacts
         run: |
+          # Fetch latest changes from remote
+          echo "[INFO] Pulling latest changes from remote..."
+          git pull
+
           # Commit if there are changes (even without changes)
           echo "[INFO] Commiting changes"
           git commit --allow-empty -m "[AUTO] build ios from ${{ github.sha }}"
