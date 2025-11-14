@@ -21,21 +21,21 @@ jobs:
           # Set git credentials
           git config --global user.name "${GITHUB_ACTOR}"
           git config --global user.email "${GITHUB_ACTOR}@zano.org"
-      - name: Commit and push artifacts
+      - name: Aquire push lock
         run: |
-          # Push lock
           attempt=0
-          while git fetch origin && git rev-parse --verify origin/push-lock > /dev/null 2>&1; do
+          while git ls-remote --exit-code --heads origin push-lock >/dev/null 2>&1 > /dev/null 2>&1; do
             echo "[$(date)]: Waiting for push lock to end"
             sleep 5
-            ((attempt++))
+            attempt=$((attempt+1))
             if [ $attempt -ge 12 ]; then
               echo "Timeout exceeded"
               exit 1
             fi
           done
           git push origin HEAD:push-lock
-
+      - name: Commit and push artifacts
+        run: |
           # Fetch latest changes from remote
           echo "[INFO] Pulling latest changes from remote..."
           git pull
@@ -47,6 +47,6 @@ jobs:
           # Check if branch has upstream tracking
           echo "[INFO] Pushing changes"
           git push
-
-          # Unlock push
+      - name: Release push lock
+        run: |
           git push origin :push-lock
