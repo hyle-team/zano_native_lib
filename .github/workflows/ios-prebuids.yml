@@ -12,15 +12,16 @@ jobs:
         with:
           lfs: true
           submodules: recursive
-      - name: Build
-        run: |
-          git tag v1.0
-          ./build_ios_libs.sh
+          fetch-depth: 2
       - name: Configure git
         run: |
           # Set git credentials
           git config --global user.name "${GITHUB_ACTOR}"
           git config --global user.email "${GITHUB_ACTOR}@zano.org"
+      - name: Build
+        run: |
+          (cd Zano && git tag -a v1.0 -m build HEAD^1)
+          ./build_ios_libs.sh
       - name: Aquire push lock
         run: |
           attempt=0
@@ -42,6 +43,7 @@ jobs:
 
           # Commit if there are changes (even without changes)
           echo "[INFO] Commiting changes"
+          git add .
           git commit --allow-empty -m "[AUTO] build ios from ${{ github.sha }}"
 
           # Check if branch has upstream tracking
