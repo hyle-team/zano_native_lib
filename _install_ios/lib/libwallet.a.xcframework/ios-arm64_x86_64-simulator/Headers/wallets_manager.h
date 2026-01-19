@@ -102,11 +102,13 @@ public:
   std::string open_wallet(const std::wstring& path, const std::string& password, uint64_t txs_to_return, view::open_wallet_response& owr, bool exclude_mining_txs = false);
   std::string generate_wallet(const std::wstring& path, const std::string& password, view::open_wallet_response& owr);
   std::string restore_wallet(const std::wstring& path, const std::string& password, const std::string& seed_phrase, const std::string& seed_password, view::open_wallet_response& owr);
+  std::string restore_wallet(const std::wstring& path, const std::string& password, const std::string& secret_derivation, bool auditable_walet, uint64_t creation_timestamp, view::open_wallet_response& owr);
   std::string invoke(uint64_t wallet_id, std::string params);
   std::string get_wallet_status(uint64_t wallet_id);
   std::string run_wallet(uint64_t wallet_id);
   std::string get_recent_transfers(size_t wallet_id, uint64_t offset, uint64_t count, view::transfers_array& tr_hist, bool exclude_mining_txs = false);
   std::string get_wallet_info(uint64_t wallet_id, view::wallet_info& wi);
+  std::string get_wallet_info_unlocked(uint64_t wallet_id, view::wallet_info& wi);
   std::string get_wallet_info_extra(uint64_t wallet_id, view::wallet_info_extra& wi);
   std::string get_contracts(size_t wallet_id, std::vector<tools::wallet_public::escrow_contract_details>& contracts);
   std::string create_proposal(const view::create_proposal_param_gui& cpp);
@@ -117,6 +119,7 @@ public:
   
   std::string get_connectivity_status();
   std::string get_wallet_info(wallet_vs_options& w, view::wallet_info& wi);
+  std::string get_wallet_info_unlocked(wallet_vs_options& w, view::wallet_info& wi);
   std::string close_wallet(size_t wallet_id);
   std::string push_offer(size_t wallet_id, const bc_services::offer_details_ex& od, currency::transaction& res_tx);
   std::string cancel_offer(const view::cancel_offer_param& co, currency::transaction& res_tx);
@@ -181,6 +184,7 @@ public:
   bool is_remote_node_mode() const { return m_remote_node_mode; }
 
 private:
+  std::string restore_wallet(const std::wstring& path, const std::string& password, const std::function<bool(tools::wallet2&)>& cb, view::open_wallet_response& owr);
   void main_worker(const po::variables_map& vm);
   bool init_local_daemon();
   bool deinit_local_daemon();
@@ -254,6 +258,7 @@ private:
   std::atomic<bool> m_dont_save_wallet_at_stop;
   std::atomic<bool> m_core_initialized = false;
 
+  std::string m_daemon_address;
   std::string m_data_dir;
   view::gui_options m_ui_opt;
   

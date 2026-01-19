@@ -202,6 +202,11 @@ namespace tools
     return invoke_http_json_rpc_update_is_disconnect("get_alias_reward", req, rsp);
   }
   //------------------------------------------------------------------------------------------------------------------------------
+  bool default_http_core_proxy::call_COMMAND_RPC_ALIAS_LOOKUP(const currency::COMMAND_RPC_ALIAS_LOOKUP::request& req, currency::COMMAND_RPC_ALIAS_LOOKUP::response& rsp)
+  {
+    return invoke_http_json_rpc_update_is_disconnect("alias_lookup", req, rsp);
+  }
+  //------------------------------------------------------------------------------------------------------------------------------
   bool default_http_core_proxy::call_COMMAND_RPC_GET_POOL_INFO(const currency::COMMAND_RPC_GET_POOL_INFO::request& req, currency::COMMAND_RPC_GET_POOL_INFO::response& res)
   {
     return invoke_http_json_rpc_update_is_disconnect("get_pool_info", req, res);
@@ -222,6 +227,11 @@ namespace tools
 //     CRITICAL_REGION_LOCAL(m_lock);
 //     m_plast_daemon_is_disconnected = plast_daemon_is_disconnected ? plast_daemon_is_disconnected : &m_last_daemon_is_disconnected_stub;
 //   }
+  //------------------------------------------------------------------------------------------------------------------------------
+  uint64_t default_http_core_proxy::get_download_speed()
+  {
+    return m_http_client.get_download_speed();
+  }
   //------------------------------------------------------------------------------------------------------------------------------
   void default_http_core_proxy::set_connectivity(unsigned int connection_timeout, size_t repeats_count)
   {
