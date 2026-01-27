@@ -1,4 +1,4 @@
-set -x #echo on
+if [[ $1 != "silent" ]]; then set -x; else shift; fi
 
 # configuring paths
 
@@ -17,7 +17,7 @@ export ZANO_MOBILE_ANDROID_BOOST_INCLUDE_PATH="${ZANO_MOBILE_ANDROID_PROJECT_ROO
 export ZANO_OPENSSL_ROOT_DIR="${ZANO_MOBILE_ANDROID_PROJECT_ROOT}/_libs_android/openssl"
 export ZANO_PATH="${ZANO_MOBILE_ANDROID_PROJECT_ROOT}/Zano"
 
-export ANDROID_NDK_PATH=${ANDROID_NDK_PATH:-"/Users/${LOGNAME}/Library/Android/sdk/ndk/26.2.11394342"}
+export ANDROID_NDK_ROOT=${ANDROID_NDK_ROOT:-"/Users/${LOGNAME}/Library/Android/sdk/ndk/26.2.11394342"}
 export ZANO_ANDROID_API_VERSION=23
 export ZANO_ANDROID_API_MIN_SDK_VERSION=android-23
 
@@ -26,7 +26,7 @@ echo "Boost Include:  $ZANO_MOBILE_ANDROID_BOOST_INCLUDE_PATH"
 echo "Boost Lib:      $ZANO_MOBILE_ANDROID_BOOST_LIBRARY_PATH"
 echo "Native Zano:    $ZANO_PATH"
 echo "OpenSSL:        $ZANO_OPENSSL_ROOT_DIR"
-echo "Android NDK:    $ANDROID_NDK_PATH"
+echo "Android NDK:    $ANDROID_NDK_ROOT"
 echo "Android API v:  $ZANO_ANDROID_API_VERSION"
 echo "==============================================================================="
 echo "Building..."
@@ -86,7 +86,7 @@ do
         -DCMAKE_SYSTEM_NAME=Android \
         -DCMAKE_SYSTEM_VERSION=$ZANO_ANDROID_API_VERSION \
         -DCMAKE_ANDROID_ARCH_ABI=$CURRENT_ARCH_ABI \
-        -DCMAKE_ANDROID_NDK="${ANDROID_NDK_PATH}" \
+        -DCMAKE_ANDROID_NDK="${ANDROID_NDK_ROOT}" \
         -DCMAKE_ANDROID_STL_TYPE=c++_static \
         -DDISABLE_TOR=TRUE \
         -DOPENSSL_INCLUDE_DIR="${OPENSSL_INCLUDE_DIR}" \
