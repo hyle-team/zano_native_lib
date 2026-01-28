@@ -1,9 +1,12 @@
 [submodule "Zano"]
 	path = Zano
 	url = https://github.com/hyle-team/zano.git
-[submodule "_libs_ios/OpenSSL"]
-	path = _libs_ios/OpenSSL
-	url = https://github.com/krzyzanowskim/OpenSSL
 [submodule "ios-cmake"]
 	path = ios-cmake
 	url = https://github.com/leetal/ios-cmake
+[submodule "thirdparty/boost-ios"]
+	path = thirdparty/boost-ios
+	url = git@github.com:faithfracture/Apple-Boost-BuildScript.git
+[submodule "thirdparty/boost-android"]
+	path = thirdparty/boost-android
+	url = git@github.com:moritz-wundke/Boost-for-Android.git
