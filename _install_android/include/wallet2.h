@@ -386,6 +386,7 @@ namespace tools
     void assign_account(const currency::account_base& acc);
     void generate(const std::wstring& path, const std::string& password, bool auditable_wallet);
     void restore(const std::wstring& path, const std::string& pass, const std::string& seed_or_tracking_seed, bool tracking_wallet, const std::string& seed_password);
+    void restore(const std::wstring& path, const std::string& pass, const std::string& secret_derivation, bool is_auditabe_wallet, uint64_t creation_timestamp);
     void load(const std::wstring& path, const std::string& password);
     void store();
     void store(const std::wstring& path);
@@ -407,6 +408,9 @@ namespace tools
 
     void stop() { m_stop.store(true, std::memory_order_relaxed); }
     void reset_creation_time(uint64_t timestamp);
+
+    void reset_connection_addr(const std::string& daemon_address);
+    uint64_t get_sync_speed()const;
 
     //i_wallet2_callback* callback() const { return m_wcallback; }
     //void callback(i_wallet2_callback* callback) { m_callback = callback; }
@@ -470,6 +474,7 @@ namespace tools
     bool get_asset_info(const crypto::public_key& asset_id, currency::asset_descriptor_base& asset_info, uint32_t& asset_flags, bool ask_daemon_for_unknown = false) const;
     size_t get_asset_decimal_point(const crypto::public_key& asset_id, size_t result_if_not_found = 0) const;
     bool get_asset_decimal_point(const crypto::public_key& asset_id, size_t* p_decimal_point_result) const;
+    std::unordered_map<crypto::public_key, size_t> get_assets_decimal_points_map() const;
 
     void transfer(uint64_t amount, const currency::account_public_address& acc, const crypto::public_key& asset_id = currency::native_coin_asset_id);
     void transfer(uint64_t amount, size_t fake_outs_count, const currency::account_public_address& acc, uint64_t fee = TX_DEFAULT_FEE, const crypto::public_key& asset_id = currency::native_coin_asset_id);
@@ -615,6 +620,10 @@ namespace tools
     template<typename callback_t>
     void enumerate_unconfirmed_transfers(callback_t cb) const;
 
+    // callback: (const crypto::hash& tx_id, const crypto::secret_key& tx_key) -> bool, true -- continue, false -- stop
+    template<typename callback_t>
+    void enumerate_tx_keys(callback_t cb) const;
+
     bool is_watch_only() const { return m_watch_only; }
     bool is_auditable() const { return m_account.get_public_address().is_auditable(); }
     void sign_transfer(const std::string& tx_sources_blob, std::string& signed_tx_blob, currency::transaction& tx);
@@ -709,6 +718,7 @@ namespace tools
     bool get_contracts(escrow_contracts_container& contracts);
     const std::list<expiration_entry_info>& get_expiration_entries() const { return m_money_expirations; };
     bool get_tx_key(const crypto::hash &txid, crypto::secret_key &tx_key) const;
+    size_t get_tx_keys_count() const { return m_tx_keys.size(); }
 
     bool prepare_transaction(construct_tx_param& ctp, currency::finalize_tx_param& ftp, const mode_separate_context& emode_separate = mode_separate_context());
 
@@ -717,10 +727,12 @@ namespace tools
 
     std::string get_log_prefix() const { return m_log_prefix; }
     static uint64_t get_max_unlock_time_from_receive_indices(const currency::transaction& tx, const wallet_public::employed_tx_entries& td);
-    bool get_utxo_distribution(std::map<uint64_t, uint64_t>& distribution);
+    bool get_utxo_distribution(std::unordered_map<crypto::public_key, std::map<uint64_t, uint64_t>>& distribution);
     uint64_t get_sync_progress();
+    bool get_is_remote_daemon_connected();
     uint64_t get_wallet_file_size()const;
     void set_use_deffered_global_outputs(bool use);
+    void set_do_not_unlock_reserved_on_idle(bool val) {m_do_not_unlock_reserved_on_idle = val;}
     void set_use_assets_whitelisting(bool use);
     construct_tx_param get_default_construct_tx_param_inital();
     void set_disable_tor_relay(bool disable);
@@ -767,6 +779,7 @@ namespace tools
     void set_concise_mode(bool enabled) { m_concise_mode = enabled; }
     void set_concise_mode_reorg_max_reorg_blocks(uint64_t max_blocks) { m_wallet_concise_mode_max_reorg_blocks = max_blocks; }
     void set_concise_mode_truncate_history(uint64_t max_entries) { m_truncate_history_max_entries = max_entries; }
+    bool get_concise_mode() const { return m_concise_mode; }
     bool find_unconfirmed_tx(const crypto::hash& tx_id, wallet_public::wallet_transfer_info& res) const;
 
     construct_tx_param get_default_construct_tx_param();
@@ -934,9 +947,9 @@ private:
 
     void submit_externally_signed_asset_tx_impl(const currency::finalized_tx& ft, const currency::transaction& tx, bool unlock_transfers_on_fail, currency::transaction& result_tx, bool& transfers_unlocked);
 
-    static void wti_to_csv_entry(std::ostream& ss, const wallet_public::wallet_transfer_info& wti, size_t index);
-    static void wti_to_txt_line(std::ostream& ss, const wallet_public::wallet_transfer_info& wti, size_t index);
-    static void wti_to_json_line(std::ostream& ss, const wallet_public::wallet_transfer_info& wti, size_t index);
+    void wti_to_csv_entry(std::ostream& ss, const wallet_public::wallet_transfer_info& wti, size_t index) const;
+    void wti_to_txt_line(std::ostream& ss, const wallet_public::wallet_transfer_info& wti, size_t index) const;
+    void wti_to_json_line(std::ostream& ss, const wallet_public::wallet_transfer_info& wti, size_t index) const;
 
 
 
@@ -960,6 +973,7 @@ private:
    
 
     bool m_do_rise_transfer;
+    bool m_do_not_unlock_reserved_on_idle = false;
     
     bool m_defragmentation_tx_enabled;
     uint64_t m_max_allowed_output_amount_for_defragmentation_tx;
@@ -1137,8 +1151,8 @@ namespace tools
       }
       else
       {
-        WLT_LOG_L0("Spent asset " << print16(td.get_asset_id()) << " , transfer #" << tr_index << ", amount: " << currency::print_money_brief(td.amount()) << ", with tx: " << get_transaction_hash(tx) << ", at height " << ptc.height <<
-          "; flags: " << flags_before << " -> " << td.m_flags);
+        WLT_LOG_L0("Spent asset " << print16(td.get_asset_id()) << " , transfer #" << tr_index << ", amount: " << currency::print_money_brief(td.amount(), get_asset_decimal_point(td.get_asset_id(), CURRENCY_DISPLAY_DECIMAL_POINT))
+          << ", with tx: " << get_transaction_hash(tx) << ", at height " << ptc.height << "; flags: " << flags_before << " -> " << td.m_flags);
       }
       
       ptc.employed_entries.spent.push_back(wallet_public::employed_tx_entry{ ptc.i, td.amount(), td.get_asset_id()});
@@ -1262,6 +1276,15 @@ namespace tools
       if (!cb(el.second))
         break;
   }
+
+  template<typename callback_t>
+  void wallet2::enumerate_tx_keys(callback_t cb) const
+  {
+    for(auto it = m_tx_keys.begin(); it != m_tx_keys.end(); ++it)
+      if (!cb(it->first, it->second))
+        break;
+  }
+
 
 } // namespace tools
 
