@@ -9,7 +9,7 @@ endif()
 
 # layout=system
 
-# toolset=clang-darwin
+# toolset=clang
 
 # link=static
 
