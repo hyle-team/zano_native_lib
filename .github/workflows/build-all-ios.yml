@@ -10,17 +10,18 @@ permissions:
 jobs:
   libboost-ios:
     name: Build libboost iOS prebuilds
-    needs: libzano-ios
     uses: ./.github/workflows/libboost-ios.yml
     secrets: inherit
 
   libopenssl-ios:
     name: Build libopenssl iOS prebuilds
-    needs: libboost-ios
     uses: ./.github/workflows/libopenssl-ios.yml
     secrets: inherit
 
   libzano-ios:
     name: Build libzano iOS prebuilds
-    uses: ./.github/workflows/libzano-ios.yml
+    needs:
+      - libopenssl-ios
+      - libboost-ios
+    uses: ./.github/workflows/libzano-ios.yml    
     secrets: inherit
