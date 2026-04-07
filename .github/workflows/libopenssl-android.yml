@@ -2,6 +2,7 @@ name: "Build libopenssl Android prebuilds"
 
 on:
   workflow_dispatch:
+  workflow_call:
 concurrency:
   group: push-artifacts-group
 
