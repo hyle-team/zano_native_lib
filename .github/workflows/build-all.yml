@@ -1,0 +1,19 @@
+name: "Build all"
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-all-ios:
+    name: Build all iOS
+    uses: ./.github/workflows/build-all-ios.yml
+    secrets: inherit
+
+  build-all-android:
+    name: Build all Android
+    needs: build-all-ios
+    uses: ./.github/workflows/build-all-android.yml
+    secrets: inherit
