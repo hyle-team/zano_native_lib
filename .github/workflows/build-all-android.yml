@@ -15,12 +15,13 @@ jobs:
 
   libboost-android:
     name: Build libboost Android prebuilds
-    needs: libopenssl-android
     uses: ./.github/workflows/libboost-android.yml
     secrets: inherit
 
   libzano-android:
     name: Build libzano Android prebuilds
-    needs: libboost-android
+    needs: 
+      - libboost-android
+      - libopenssl-android
     uses: ./.github/workflows/libzano-android.yml
     secrets: inherit
