@@ -1,4 +1,4 @@
-name: Driver build all sequentially
+name: Driver build Zano libs only
 
 on:
   workflow_dispatch:
