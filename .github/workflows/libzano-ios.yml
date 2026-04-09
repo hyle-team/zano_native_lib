@@ -24,7 +24,7 @@ jobs:
       - name: Build
         run: |
           (cd Zano && git tag -a v1.0 -m build HEAD^1)
-          ./build_ios_libs.sh silent
+          ./ios/build.sh
       - name: Commit and push artifacts
         run: |
           # Fetch latest changes from remote
@@ -33,7 +33,7 @@ jobs:
 
           # Commit if there are changes (even without changes)
           echo "[INFO] Commiting changes"
-          git add .
+          git add ios
           git commit --allow-empty -m "[AUTO] build libzano ios from ${{ github.sha }}"
 
           # Check if branch has upstream tracking

@@ -23,7 +23,7 @@ jobs:
           git config --global user.email "${GITHUB_ACTOR}@zano.org"
       - name: Build
         run: |
-          ./thirdparty/build-openssl-ios.sh
+          ./thirdparty/openssl/ios/build.sh
       - name: Commit and push artifacts
         run: |
           # Fetch latest changes from remote
@@ -32,7 +32,7 @@ jobs:
 
           # Commit if there are changes (even without changes)
           echo "[INFO] Commiting changes"
-          git add .
+          git add thirdparty/openssl/ios
           git commit --allow-empty -m "[AUTO] build libopenssl ios from ${{ github.sha }}"
 
           # Check if branch has upstream tracking
