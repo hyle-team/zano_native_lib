@@ -7,7 +7,7 @@ OPENSSL_FRAMEWORK="${OPENSSL}/libopenssl.xcframework"
 
 cd "${OPENSSL}"
 
-./build-arch.sh iphoneos arm64
+./builder.sh iphoneos arm64
 if [ ! -f build-iphoneos-arm64/libssl.a ]; then
   echo openssl failed to build iphoneos-arm64 >&2
   exit 1
@@ -17,14 +17,14 @@ libtool -static -o build-iphoneos-arm64/libopenssl.a -arch_only arm64 build-ipho
 mkdir build-iphoneos
 cp build-iphoneos-arm64/libopenssl.a build-iphoneos/libopenssl.a
 
-./build-arch.sh iphonesimulator arm64
+./builder.sh iphonesimulator arm64
 if [ ! -f build-iphonesimulator-arm64/libssl.a ]; then
   echo openssl failed to build iphonesimulator-arm64 >&2
   exit 1
 fi
 libtool -static -o build-iphonesimulator-arm64/libopenssl.a -arch_only arm64 build-iphonesimulator-arm64/libssl.a build-iphonesimulator-arm64/libcrypto.a
 
-./build-arch.sh iphonesimulator x86_64
+./builder.sh iphonesimulator x86_64
 if [ ! -f build-iphonesimulator-x86_64/libssl.a ]; then
   echo openssl failed to build iphonesimulator-x86_64 >&2
   exit 1
@@ -41,11 +41,6 @@ xcrun xcodebuild -create-xcframework \
   -library build-iphonesimulator/libopenssl.a \
   -headers build-iphoneos-arm64/include \
   -output "${OPENSSL_FRAMEWORK}"
-OPENSSL_CURRENT_VERSION=$(\
-  cat build-iphoneos-arm64/VERSION.dat | grep 'MAJOR=' | sed 's/MAJOR=\([^"]*\)/\1/' \
-).$(\
-  cat build-iphoneos-arm64/VERSION.dat | grep 'MINOR=' | sed 's/MINOR=\([^"]*\)/\1/' \
-).$(\
-  cat build-iphoneos-arm64/VERSION.dat | grep 'PATCH=' | sed 's/PATCH=\([^"]*\)/\1/' \
-)
-echo "${OPENSSL_CURRENT_VERSION}" > "${OPENSSL_FRAMEWORK}/VERSION"
+
+source build-iphoneos-arm64/VERSION.dat
+echo "${MAJOR}.${MINOR}.${PATCH}" > "${OPENSSL_FRAMEWORK}/VERSION"

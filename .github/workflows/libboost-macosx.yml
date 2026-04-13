@@ -1,0 +1,40 @@
+name: "Build libboost iOS prebuilds"
+
+on:
+  workflow_dispatch:
+  workflow_call:
+concurrency:
+  group: push-artifacts-group
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 1
+          submodules: recursive
+      - name: Configure git
+        run: |
+          # Set git credentials
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR}@zano.org"
+      - name: Build
+        run: |
+          ./thirdparty/boost/macosx/build.sh
+      - name: Commit and push artifacts
+        run: |
+          # Fetch latest changes from remote
+          echo "[INFO] Pulling latest changes from remote..."
+          git pull
+
+          # Commit if there are changes (even without changes)
+          echo "[INFO] Commiting changes"
+          git add thirdparty/boost/ios
+          git commit --allow-empty -m "[AUTO] build libboost macosx from ${{ github.sha }}"
+
+          # Check if branch has upstream tracking
+          echo "[INFO] Pushing changes"
+          git push

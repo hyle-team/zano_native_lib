@@ -2,9 +2,6 @@
 
 ROOT=$(realpath $(dirname $0)/../../..)
 BOOST=$(realpath "${ROOT}/thirdparty/boost/ios")
-BOOST_FRAMEWORK=${BOOST}/libboost.xcframework
-
-rm -rf "${BOOST_FRAMEWORK}"
 
 cd $(dirname $0)/Apple-Boost-BuildScript
 rm -rf dist/boost.xcframework
@@ -23,6 +20,8 @@ if [ ! -f build/boost/${BOOST_VERSION}/ios/release/build/iphoneos/arm64/libboost
 fi
 lipo -create build/boost/${BOOST_VERSION}/ios/release/build/iphonesimulator/*/libboost.a -output build/boost/${BOOST_VERSION}/ios/release/build/iphonesimulator/libboost.a
 
+BOOST_FRAMEWORK=${BOOST}/libboost.xcframework
+rm -rf "${BOOST_FRAMEWORK}"
 xcodebuild -create-xcframework \
   -library build/boost/${BOOST_VERSION}/ios/release/build/iphoneos/arm64/libboost.a \
   -headers build/boost/${BOOST_VERSION}/ios/release/prefix/include \
@@ -30,3 +29,6 @@ xcodebuild -create-xcframework \
   -headers build/boost/${BOOST_VERSION}/ios/release/prefix/include \
   -output ${BOOST_FRAMEWORK}
 echo "${BOOST_VERSION}" > "${BOOST_FRAMEWORK}/VERSION"
+
+cd Apple-Boost-BuildScript
+git restore boost.sh
