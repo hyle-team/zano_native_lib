@@ -11,10 +11,8 @@ if ! [[ $ARCH == "arm64" || $ARCH == "x86_64" ]]; then
 fi
 
 echo "Preparing build folder: $BUILD_DIR"
-rm -rf $BUILD_DIR
-mkdir $BUILD_DIR
+"${SCRIPT_ROOT}/../download-boost.sh" "$BUILD_DIR"
 cd $BUILD_DIR
-"${SCRIPT_ROOT}/../download-boost.sh"
 
 # ./bootstrap.sh "--with-libraries=atomic,chrono,date_time,filesystem,regex,serialization,system,thread,timer,program_options,locale"
 ./bootstrap.sh "--with-libraries=atomic,chrono,date_time,filesystem,regex,serialization,system,thread,timer,program_options"

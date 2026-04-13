@@ -1,27 +1,20 @@
 #!/bin/bash
 
 SCRIPT_ROOT=$(realpath $(dirname $0))
-PLATFORM=$1; shift
 ARCH=$1; shift
-BUILD_DIR=build-${PLATFORM}-${ARCH}
+BUILD_DIR=build-macosx-${ARCH}
 
-MIN_VERSION=$(xcrun --sdk $PLATFORM --show-sdk-version)
-SDK_PATH=$(xcrun --sdk $PLATFORM --show-sdk-path)
+MIN_VERSION=$(xcrun --sdk macosx --show-sdk-version)
+SDK_PATH=$(xcrun --sdk macosx --show-sdk-path)
 
-if [[ $PLATFORM != "macosx" ]]; then
-  echo "ERROR: Unsupported platform: '${PLATFORM}-${ARCH}'" >&2
-  exit 1
-fi
 if ! [[ $ARCH == "arm64" || $ARCH == "x86_64" ]]; then
-  echo "ERROR: Unsupported architecture: '${PLATFORM}-${ARCH}'" >&2
+  echo "ERROR: Unsupported architecture: '${ARCH}'" >&2
   exit 1
 fi
 
 echo "Preparing build folder: $BUILD_DIR"
-rm -rf $BUILD_DIR
-mkdir $BUILD_DIR
+"${SCRIPT_ROOT}/../download-openssl.sh" "$BUILD_DIR"
 cd $BUILD_DIR
-"${SCRIPT_ROOT}/../download-openssl.sh"
 
 CONFIGURE_FLAGS=("no-shared")
 CFLAGS=""

@@ -5,14 +5,14 @@ OPENSSL=$(realpath ${ROOT}/thirdparty/openssl/macosx)
 
 cd "${OPENSSL}"
 
-./builder.sh macosx arm64
+./builder.sh arm64
 if [ ! -f build-macosx-arm64/libssl.a ]; then
   echo openssl failed to build macosx-arm64 >&2
   exit 1
 fi
 libtool -static -o build-macosx-arm64/libopenssl.a -arch_only arm64 build-macosx-arm64/libssl.a build-macosx-arm64/libcrypto.a
 
-./builder.sh macosx x86_64
+./builder.sh x86_64
 if [ ! -f build-macosx-x86_64/libssl.a ]; then
   echo openssl failed to build macosx-x86_64 >&2
   exit 1

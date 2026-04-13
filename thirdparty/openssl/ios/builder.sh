@@ -3,7 +3,7 @@
 SCRIPT_ROOT=$(realpath $(dirname $0))
 PLATFORM=$1; shift
 ARCH=$1; shift
-build_dir=build-${PLATFORM}-${ARCH}
+BUILD_DIR=build-${PLATFORM}-${ARCH}
 
 MIN_VERSION=$(xcrun --sdk $PLATFORM --show-sdk-version)
 SDK_PATH=$(xcrun --sdk $PLATFORM --show-sdk-path)
@@ -23,11 +23,9 @@ else
   exit 1
 fi
 
-echo "Preparing build folder: $build_dir"
-rm -rf $build_dir
-mkdir $build_dir
-cd $build_dir
-"${SCRIPT_ROOT}/../download-openssl.sh"
+echo "Preparing build folder: $BUILD_DIR"
+"${SCRIPT_ROOT}/../download-openssl.sh" "$BUILD_DIR"
+cd $BUILD_DIR
 
 CONFIGURE_FLAGS=("no-shared")
 CFLAGS=""
