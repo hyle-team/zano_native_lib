@@ -1,4 +1,4 @@
-name: "Build libboost iOS prebuilds"
+name: "Build libopenssl iOS prebuilds"
 
 on:
   workflow_dispatch:
@@ -7,15 +7,15 @@ concurrency:
   group: push-artifacts-group
 
 jobs:
-  build-linux:
-    runs-on: ubuntu-latest
+  build-macosx:
+    runs-on: macos-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           lfs: true
-          fetch-depth: 1
           submodules: recursive
+          fetch-depth: 1
       - name: Configure git
         run: |
           # Set git credentials
@@ -23,7 +23,7 @@ jobs:
           git config --global user.email "${GITHUB_ACTOR}@zano.org"
       - name: Build
         run: |
-          ./thirdparty/boost/linux/build.sh
+          ./thirdparty/openssl/macosx/build.sh
       - name: Commit and push artifacts
         run: |
           # Fetch latest changes from remote
@@ -32,8 +32,8 @@ jobs:
 
           # Commit if there are changes (even without changes)
           echo "[INFO] Commiting changes"
-          git add thirdparty/boost/linux
-          git commit --allow-empty -m "[AUTO] build libboost linux from ${{ github.sha }}"
+          git add thirdparty/openssl/macosx
+          git commit --allow-empty -m "[AUTO] build libopenssl macosx from ${{ github.sha }}"
 
           # Check if branch has upstream tracking
           echo "[INFO] Pushing changes"

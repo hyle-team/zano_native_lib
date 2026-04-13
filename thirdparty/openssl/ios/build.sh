@@ -2,8 +2,6 @@
 
 ROOT=$(realpath $(dirname $0)/../../..)
 OPENSSL=$(realpath ${ROOT}/thirdparty/openssl/ios)
-OPENSSL_VERSION=${OPENSSL_VERSION:-3.1.8}
-OPENSSL_FRAMEWORK="${OPENSSL}/libopenssl.xcframework"
 
 cd "${OPENSSL}"
 
@@ -34,6 +32,7 @@ libtool -static -o build-iphonesimulator-x86_64/libopenssl.a -arch_only x86_64 b
 mkdir build-iphonesimulator
 lipo -create build-iphonesimulator-*/libopenssl.a -output build-iphonesimulator/libopenssl.a
 
+OPENSSL_FRAMEWORK="${OPENSSL}/libopenssl.xcframework"
 rm -rf "${OPENSSL_FRAMEWORK}"
 xcrun xcodebuild -create-xcframework \
   -library build-iphoneos/libopenssl.a \
