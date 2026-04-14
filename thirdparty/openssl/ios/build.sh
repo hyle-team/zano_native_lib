@@ -5,7 +5,7 @@ OPENSSL=$(realpath ${ROOT}/thirdparty/openssl/ios)
 
 cd "${OPENSSL}"
 
-./builder.sh iphoneos arm64
+./builder.sh iphoneos arm64 || exit 1
 if [ ! -f build-iphoneos-arm64/libssl.a ]; then
   echo openssl failed to build iphoneos-arm64 >&2
   exit 1
@@ -15,14 +15,14 @@ libtool -static -o build-iphoneos-arm64/libopenssl.a -arch_only arm64 build-ipho
 mkdir build-iphoneos
 cp build-iphoneos-arm64/libopenssl.a build-iphoneos/libopenssl.a
 
-./builder.sh iphonesimulator arm64
+./builder.sh iphonesimulator arm64 || exit 1
 if [ ! -f build-iphonesimulator-arm64/libssl.a ]; then
   echo openssl failed to build iphonesimulator-arm64 >&2
   exit 1
 fi
 libtool -static -o build-iphonesimulator-arm64/libopenssl.a -arch_only arm64 build-iphonesimulator-arm64/libssl.a build-iphonesimulator-arm64/libcrypto.a
 
-./builder.sh iphonesimulator x86_64
+./builder.sh iphonesimulator x86_64 || exit 1
 if [ ! -f build-iphonesimulator-x86_64/libssl.a ]; then
   echo openssl failed to build iphonesimulator-x86_64 >&2
   exit 1

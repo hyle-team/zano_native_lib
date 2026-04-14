@@ -7,13 +7,15 @@ cd $(dirname $0)/Apple-Boost-BuildScript
 rm -rf dist/boost.xcframework
 if ! (cat boost.sh | grep 'archives.boost.io'); then patch -p1 < ../fixes.patch; fi
 BOOST_VERSION=${BOOST_VERSION:-1.76.0}
-./boost.sh \
-  -ios \
-  --boost-version ${BOOST_VERSION} \
-  --boost-libs "atomic chrono date_time filesystem program_options regex serialization system thread timer" \
-  --no-thinning \
-  --no-framework \
-  --cxxflags "-Wno-enum-constexpr-conversion"
+MIN_VERSION=${MIN_IOS_VERSION:-$(xcrun --sdk $PLATFORM --show-sdk-version)}
+MIN_IOS_VERSION=${MIN_VERSION} \
+  ./boost.sh \
+    -ios \
+    --boost-version ${BOOST_VERSION} \
+    --boost-libs "atomic chrono date_time filesystem program_options regex serialization system thread timer" \
+    --no-thinning \
+    --no-framework \
+    --cxxflags "-Wno-enum-constexpr-conversion"
 if [ ! -f build/boost/${BOOST_VERSION}/ios/release/build/iphoneos/arm64/libboost.a ]; then
   echo boost failed to build >&2
   exit 1

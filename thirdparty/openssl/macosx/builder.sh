@@ -4,7 +4,7 @@ SCRIPT_ROOT=$(realpath $(dirname $0))
 ARCH=$1; shift
 BUILD_DIR=build-macosx-${ARCH}
 
-MIN_VERSION=$(xcrun --sdk macosx --show-sdk-version)
+MIN_VERSION=${MIN_MACOSX_VERSION:-$(xcrun --sdk macosx --show-sdk-version)}
 SDK_PATH=$(xcrun --sdk macosx --show-sdk-path)
 
 if ! [[ $ARCH == "arm64" || $ARCH == "x86_64" ]]; then
@@ -13,7 +13,7 @@ if ! [[ $ARCH == "arm64" || $ARCH == "x86_64" ]]; then
 fi
 
 echo "Preparing build folder: $BUILD_DIR"
-"${SCRIPT_ROOT}/../download-openssl.sh" "$BUILD_DIR"
+"${SCRIPT_ROOT}/../download-openssl.sh" "$BUILD_DIR" || exit 1
 cd $BUILD_DIR
 
 CONFIGURE_FLAGS=("no-shared")

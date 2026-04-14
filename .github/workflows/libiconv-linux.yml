@@ -1,0 +1,36 @@
+name: "26 - libiconv Linux prebuilds"
+
+on:
+  workflow_dispatch:
+  workflow_call:
+concurrency:
+  group: push-artifacts-group
+
+jobs:
+  build-libiconv-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 1
+          submodules: false
+      - name: Cache iconv sources
+        uses: actions/cache@v4
+        with:
+          path: ./thirdparty/iconv/libiconv*.tar.gz
+          key: iconv-1.18
+      - uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: g++-aarch64-linux-gnu gcc-aarch64-linux-gnu
+          version: 1.0
+      - name: Load env
+        uses: ./.github/actions/env
+      - name: Build
+        run: ./thirdparty/iconv/linux/build.sh
+      - name: Configure git and stage artifacts for push
+        uses: ./.github/actions/artifacts
+        with:
+          folder: thirdparty/iconv/linux
+          name: libiconv linux

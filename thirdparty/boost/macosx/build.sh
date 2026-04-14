@@ -4,17 +4,13 @@ ROOT=$(realpath $(dirname $0)/../../..)
 BOOST=$(realpath "${ROOT}/thirdparty/boost/macosx")
 cd "$BOOST"
 
-${BOOST}/builder.sh arm64
-if [ ! -f build-macosx-arm64/libboost.a ]; then
-  echo boost failed to build arm64 >&2
-  exit 1
-fi
-
-${BOOST}/builder.sh x86_64
-if [ ! -f build-macosx-x86_64/libboost.a ]; then
-  echo boost failed to build x86_64 >&2
-  exit 1
-fi
+for ARCH in arm64 x86_64; do
+  ${BOOST}/builder.sh ${ARCH} || exit 1
+  if [ ! -f build-macosx-${ARCH}/libboost.a ]; then
+    echo boost failed to build ${ARCH} >&2
+    exit 1
+  fi
+done
 
 rm -rf "${BOOST}/build-macosx"
 mkdir -p "${BOOST}/build-macosx"
@@ -32,5 +28,4 @@ if [ ! -d ${BOOST_FRAMEWORK} ]; then
   exit 1
 fi
 
-cd ${BOOST}/build-macosx-arm64
-${BOOST}/../get-boost-version.sh > "${BOOST_FRAMEWORK}/VERSION"
+${BOOST}/../get-boost-version.sh "${BOOST}/build-macosx-arm64" > "${BOOST_FRAMEWORK}/VERSION"

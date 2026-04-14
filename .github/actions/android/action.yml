@@ -1,0 +1,21 @@
+name: "Setup Android build environment"
+description: "ConfigInstalls Java and Android NDK"
+
+outputs:
+  ndk-path:
+    description: "Path to the Android NDK"
+    value: ${{ steps.setup-ndk.outputs.ndk-path }}
+
+runs:
+  using: composite
+  steps:
+    - name: Install Java
+      uses: actions/setup-java@v4
+      with:
+        java-version: 17
+        distribution: temurin
+    - name: Install Android NDK
+      id: setup-ndk
+      uses: nttld/setup-ndk@v1
+      with:
+        ndk-version: r26c

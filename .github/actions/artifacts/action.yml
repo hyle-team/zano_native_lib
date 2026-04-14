@@ -1,0 +1,31 @@
+name: "Commit and push artifacts"
+description: "Configures git and commits and pushes artifacts to the repository"
+
+inputs:
+  folder:
+    description: "Folder to stage and commit"
+    required: true
+  name:
+    description: "Build name used in the commit message"
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        git config --global user.name "github-actions[bot]${GITHUB_ACTOR}"
+        git config --global user.email "github-actions[bot]${GITHUB_ACTOR}@zano.org"
+
+        echo "[INFO] Pulling latest changes from remote..."
+        git add "${{ inputs.folder }}"
+        git stash push
+        git pull --rebase origin "${GITHUB_REF_NAME}"
+
+        echo "[INFO] Committing changes..."
+        git stash pop
+        git add "${{ inputs.folder }}"
+        git commit --allow-empty -m "[AUTO] build ${{ inputs.name }} from ${GITHUB_SHA}"
+
+        echo "[INFO] Pushing changes..."
+        git push

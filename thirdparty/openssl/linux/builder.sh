@@ -10,7 +10,7 @@ if ! [[ $ARCH == "arm64" || $ARCH == "x86_64" ]]; then
 fi
 
 echo "Preparing build folder: $BUILD_DIR"
-"${SCRIPT_ROOT}/../download-openssl.sh" "$BUILD_DIR"
+"${SCRIPT_ROOT}/../download-openssl.sh" "$BUILD_DIR" || exit 1
 cd $BUILD_DIR
 
 CONFIGURE_FLAGS=("no-shared")

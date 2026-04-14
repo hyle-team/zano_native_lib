@@ -1,4 +1,4 @@
-name: "Build libzano Android prebuilds"
+name: "20 - libzano Android prebuilds"
 
 on:
   workflow_dispatch:
@@ -7,47 +7,30 @@ concurrency:
   group: push-artifacts-group
 
 jobs:
-  build-android:
+  build-libzano-android:
     runs-on: ubuntu-latest
     steps:
-      - name: Install Java
-        uses: actions/setup-java@v4
-        with:
-          java-version: 17
-          distribution: temurin
-      - name: Install Android NDK
-        id: setup-ndk
-        uses: nttld/setup-ndk@v1
-        with:
-          ndk-version: r26c
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           lfs: true
           fetch-depth: 2
           submodules: recursive
-      - name: Configure git
-        run: |
-          # Set git credentials
-          git config --global user.name "${GITHUB_ACTOR}"
-          git config --global user.email "${GITHUB_ACTOR}@zano.org"
+      - name: Setup Android build environment
+        id: android
+        uses: ./.github/actions/android
+      - name: Load env
+        uses: ./.github/actions/env
       - name: Build
         run: |
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR}@zano.org"
           (cd Zano && git tag -a v1.0 -m build HEAD^1)
           ./android/build.sh
         env:
-          ANDROID_NDK_ROOT: ${{ steps.setup-ndk.outputs.ndk-path }}
-      - name: Commit and push artifacts
-        run: |
-          # Fetch latest changes from remote
-          echo "[INFO] Pulling latest changes from remote..."
-          git pull
-
-          # Commit if there are changes (even without changes)
-          echo "[INFO] Commiting changes"
-          git add android
-          git commit --allow-empty -m "[AUTO] build libzano android from ${{ github.sha }}"
-
-          # Check if branch has upstream tracking
-          echo "[INFO] Pushing changes"
-          git push
+          ANDROID_NDK_ROOT: ${{ steps.android.outputs.ndk-path }}
+      - name: Configure git and stage artifacts for push
+        uses: ./.github/actions/artifacts
+        with:
+          folder: android
+          name: libzano android

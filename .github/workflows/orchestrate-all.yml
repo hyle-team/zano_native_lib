@@ -1,0 +1,47 @@
+name: "00 - Build all"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  trigger-all:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: false
+          fetch-depth: 1
+          submodules: false
+      - name: Build iconv
+        run: |
+          gh workflow run orchestrate-iconv.yml --ref ${{ github.ref_name }}
+          sleep 5
+          RUN_ID=$(gh run list --workflow=orchestrate-iconv.yml --limit 1 --json databaseId --jq '.[0].databaseId')
+          gh run watch $RUN_ID --interval 30 --exit-status
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build Boost
+        run: |
+          gh workflow run orchestrate-boost.yml --ref ${{ github.ref_name }}
+          sleep 5
+          RUN_ID=$(gh run list --workflow=orchestrate-boost.yml --limit 1 --json databaseId --jq '.[0].databaseId')
+          gh run watch $RUN_ID --interval 30 --exit-status
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build OpenSSL
+        run: |
+          gh workflow run orchestrate-openssl.yml --ref ${{ github.ref_name }}
+          sleep 5
+          RUN_ID=$(gh run list --workflow=orchestrate-openssl.yml --limit 1 --json databaseId --jq '.[0].databaseId')
+          gh run watch $RUN_ID --interval 30 --exit-status
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build Zano
+        run: |
+          gh workflow run orchestrate-zano.yml --ref ${{ github.ref_name }}
+          sleep 5
+          RUN_ID=$(gh run list --workflow=orchestrate-zano.yml --limit 1 --json databaseId --jq '.[0].databaseId')
+          gh run watch $RUN_ID --interval 30 --exit-status
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

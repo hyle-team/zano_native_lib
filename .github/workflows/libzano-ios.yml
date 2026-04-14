@@ -1,4 +1,4 @@
-name: "Build libzano iOS prebuilds"
+name: "20 - libzano iOS prebuilds"
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ concurrency:
   group: push-artifacts-group
 
 jobs:
-  build-ios:
+  build-libzano-ios:
     runs-on: macos-latest
     steps:
       - name: Checkout repository
@@ -16,26 +16,16 @@ jobs:
           lfs: true
           fetch-depth: 2
           submodules: recursive
-      - name: Configure git
-        run: |
-          # Set git credentials
-          git config --global user.name "${GITHUB_ACTOR}"
-          git config --global user.email "${GITHUB_ACTOR}@zano.org"
+      - name: Load env
+        uses: ./.github/actions/env
       - name: Build
         run: |
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR}@zano.org"
           (cd Zano && git tag -a v1.0 -m build HEAD^1)
           ./ios/build.sh
-      - name: Commit and push artifacts
-        run: |
-          # Fetch latest changes from remote
-          echo "[INFO] Pulling latest changes from remote..."
-          git pull
-
-          # Commit if there are changes (even without changes)
-          echo "[INFO] Commiting changes"
-          git add ios
-          git commit --allow-empty -m "[AUTO] build libzano ios from ${{ github.sha }}"
-
-          # Check if branch has upstream tracking
-          echo "[INFO] Pushing changes"
-          git push
+      - name: Configure git and stage artifacts for push
+        uses: ./.github/actions/artifacts
+        with:
+          folder: ios
+          name: libzano ios

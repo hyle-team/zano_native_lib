@@ -1,8 +1,10 @@
-ROOT=$(dirname "$(realpath "${0}/..")")
-ZANO="${ROOT}/ios"
+#!/bin/bash
 
-BOOST_VERSION=$(cat "${ROOT}/thirdparty/boost/ios/libboost.xcframework/VERSION")
-OPENSSL_VERSION=$(cat "${ROOT}/thirdparty/openssl/ios/libopenssl.xcframework/VERSION")
+PROJECT_ROOT=$(realpath "$(dirname $0)/..")
+ZANO="${PROJECT_ROOT}/ios"
+
+BOOST_VERSION=$(cat "${PROJECT_ROOT}/thirdparty/boost/ios/libboost.xcframework/VERSION")
+OPENSSL_VERSION=$(cat "${PROJECT_ROOT}/thirdparty/openssl/ios/libopenssl.xcframework/VERSION")
 
 MAX_TASKS=${MAX_TASKS:-$(sysctl -n hw.logicalcpu)}
 
@@ -19,27 +21,27 @@ fi
 function BUILD() {
   local PLATFORM=$1
   local ARCH=$2
-  local BUILD_PATH="${ROOT}/ios/build-${PLATFORM}-${ARCH}"
+  local BUILD_PATH="${PROJECT_ROOT}/ios/build-${PLATFORM}-${ARCH}"
   echo "Building: $PLATFORM $ARCH in '${BUILD_PATH}'"
 
-  local CMAKE_C_FLAGS=""
-  local CMAKE_CXX_FLAGS=""
+  local CMAKE_C_FLAGS=()
+  local CMAKE_CXX_FLAGS=()
 
-  CMAKE_CXX_FLAGS+=" -Wno-deprecated-copy"
-  CMAKE_CXX_FLAGS+=" -Wno-deprecated-copy-with-user-provided-copy"
-  CMAKE_CXX_FLAGS+=" -Wno-unknown-warning-option"
-  CMAKE_CXX_FLAGS+=" -Wno-shorten-64-to-32"
-  CMAKE_CXX_FLAGS+=" -Wno-deprecated-ofast"
-  CMAKE_CXX_FLAGS+=" -Wno-shorten-64-to-32"
-  CMAKE_CXX_FLAGS+=" -Wno-inconsistent-missing-override"
-  CMAKE_CXX_FLAGS+=" -Wno-deprecated-declarations"
-  CMAKE_CXX_FLAGS+=" -Wno-shift-count-overflow"
-  CMAKE_CXX_FLAGS+=" -Wno-delete-non-abstract-non-virtual-dtor"
-  CMAKE_CXX_FLAGS+=" -Wno-pessimizing-move"
-  CMAKE_CXX_FLAGS+=" -Wno-logical-not-parentheses"
-  CMAKE_C_FLAGS+=" -Wno-unknown-warning-option"
-  CMAKE_C_FLAGS+=" -Wno-shorten-64-to-32"
-  CMAKE_C_FLAGS+=" -Wno-deprecated-ofast"
+  CMAKE_CXX_FLAGS+=("-Wno-deprecated-copy")
+  CMAKE_CXX_FLAGS+=("-Wno-deprecated-copy-with-user-provided-copy")
+  CMAKE_CXX_FLAGS+=("-Wno-unknown-warning-option")
+  CMAKE_CXX_FLAGS+=("-Wno-shorten-64-to-32")
+  CMAKE_CXX_FLAGS+=("-Wno-deprecated-ofast")
+  CMAKE_CXX_FLAGS+=("-Wno-shorten-64-to-32")
+  CMAKE_CXX_FLAGS+=("-Wno-inconsistent-missing-override")
+  CMAKE_CXX_FLAGS+=("-Wno-deprecated-declarations")
+  CMAKE_CXX_FLAGS+=("-Wno-shift-count-overflow")
+  CMAKE_CXX_FLAGS+=("-Wno-delete-non-abstract-non-virtual-dtor")
+  CMAKE_CXX_FLAGS+=("-Wno-pessimizing-move")
+  CMAKE_CXX_FLAGS+=("-Wno-logical-not-parentheses")
+  CMAKE_C_FLAGS+=("-Wno-unknown-warning-option")
+  CMAKE_C_FLAGS+=("-Wno-shorten-64-to-32")
+  CMAKE_C_FLAGS+=("-Wno-deprecated-ofast")
 
   local IOS_CMAKE_PLATFORM=
   local FRAMEWORK_PLATFORM=
@@ -54,19 +56,24 @@ function BUILD() {
     FRAMEWORK_PLATFORM=ios-arm64_x86_64-simulator
   fi
 
+  MIN_VERSION=${MIN_IOS_VERSION:-$(xcrun --sdk $PLATFORM --show-sdk-version)}
+
   rm -rf "${BUILD_PATH}"
-  cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
-    -DCMAKE_TOOLCHAIN_FILE="${ROOT}/ios-cmake/ios.toolchain.cmake" \
+  CMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS[*]}"
+  CMAKE_C_FLAGS="${CMAKE_C_FLAGS[*]}"
+  cmake -S"${PROJECT_ROOT}/Zano" -B"${BUILD_PATH}" \
+    -Wno-dev \
+    -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+    -DCMAKE_TOOLCHAIN_FILE="${PROJECT_ROOT}/ios-cmake/ios.toolchain.cmake" \
     -DPLATFORM=${IOS_CMAKE_PLATFORM} \
-    -S"${ROOT}/Zano" \
-    -B"${BUILD_PATH}" \
+    -DDEPLOYMENT_TARGET=${MIN_VERSION} \
     -GXcode \
-    -DOPENSSL_INCLUDE_DIR="${ROOT}/thirdparty/openssl/ios/libopenssl.xcframework/${FRAMEWORK_PLATFORM}/Headers" \
-    -DOPENSSL_CRYPTO_LIBRARY="${ROOT}/thirdparty/openssl/ios/libopenssl.xcframework/${FRAMEWORK_PLATFORM}/libopenssl.a" \
-    -DOPENSSL_SSL_LIBRARY="${ROOT}/thirdparty/openssl/ios/libopenssl.xcframework/${FRAMEWORK_PLATFORM}/libopenssl.a" \
+    -DOPENSSL_INCLUDE_DIR="${PROJECT_ROOT}/thirdparty/openssl/ios/libopenssl.xcframework/${FRAMEWORK_PLATFORM}/Headers" \
+    -DOPENSSL_CRYPTO_LIBRARY="${PROJECT_ROOT}/thirdparty/openssl/ios/libopenssl.xcframework/${FRAMEWORK_PLATFORM}/libopenssl.a" \
+    -DOPENSSL_SSL_LIBRARY="${PROJECT_ROOT}/thirdparty/openssl/ios/libopenssl.xcframework/${FRAMEWORK_PLATFORM}/libopenssl.a" \
     -DBoost_VERSION="Boost ${BOOST_VERSION}" \
-    -DBoost_FATLIB="${ROOT}/thirdparty/boost/ios/libboost.xcframework/${FRAMEWORK_PLATFORM}/libboost.a" \
-    -DBoost_INCLUDE_DIRS="${ROOT}/thirdparty/boost/ios/libboost.xcframework/${FRAMEWORK_PLATFORM}/Headers/" \
+    -DBoost_FATLIB="${PROJECT_ROOT}/thirdparty/boost/ios/libboost.xcframework/${FRAMEWORK_PLATFORM}/libboost.a" \
+    -DBoost_INCLUDE_DIRS="${PROJECT_ROOT}/thirdparty/boost/ios/libboost.xcframework/${FRAMEWORK_PLATFORM}/Headers/" \
     -DCMAKE_SYSTEM_NAME=iOS \
     -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO \
     -DDISABLE_TOR=TRUE \
@@ -107,7 +114,7 @@ fi
 
 rm -rf "${ZANO}/build-include"
 mkdir -p "${ZANO}/build-include"
-cp "${ROOT}"/Zano/src/wallet/*.h "${ZANO}/build-include/"
+cp "${PROJECT_ROOT}"/Zano/src/wallet/*.h "${ZANO}/build-include/"
 
 ZANO_FRAMEWORK="${ZANO}/libzano.xcframework"
 rm -rf "${ZANO_FRAMEWORK}"
@@ -118,17 +125,17 @@ xcrun xcodebuild -create-xcframework \
   -headers "${ZANO}/build-include/" \
   -output "${ZANO_FRAMEWORK}"
 
-"${ROOT}/scripts/zano-version.sh" "${ZANO}/build-iphoneos-arm64" > "${ZANO_FRAMEWORK}/VERSION"
+"${PROJECT_ROOT}/scripts/zano-version.sh" "${ZANO}/build-iphoneos-arm64" > "${ZANO_FRAMEWORK}/VERSION"
 
 
-libtool -static -o "${ZANO}/build-iphoneos-arm64/libzano-plain-wallet.a" -arch_only arm64 "${ZANO}"/build-iphoneos-arm64/src/Release-iphoneos/lib{common,crypto,currency_core,wallet}.a "${ZANO}/build-iphoneos-arm64/contrib/zlib/Release-iphoneos/libz.a" "${ROOT}/thirdparty/boost/ios/libboost.xcframework/ios-arm64/libboost.a" "${ROOT}/thirdparty/openssl/ios/libopenssl.xcframework/ios-arm64/libopenssl.a"
-libtool -static -o "${ZANO}/build-iphonesimulator-arm64/libzano-plain-wallet.a" -arch_only arm64 "${ZANO}"/build-iphonesimulator-arm64/src/Release-iphonesimulator/lib{common,crypto,currency_core,wallet}.a "${ZANO}/build-iphonesimulator-arm64/contrib/zlib/Release-iphonesimulator/libz.a" "${ROOT}/thirdparty/boost/ios/libboost.xcframework/ios-arm64_x86_64-simulator/libboost.a" "${ROOT}/thirdparty/openssl/ios/libopenssl.xcframework/ios-arm64_x86_64-simulator/libopenssl.a"
-libtool -static -o "${ZANO}/build-iphonesimulator-x86_64/libzano-plain-wallet.a" -arch_only x86_64 "${ZANO}"/build-iphonesimulator-x86_64/src/Release-iphonesimulator/lib{common,crypto,currency_core,wallet}.a "${ZANO}/build-iphonesimulator-x86_64/contrib/zlib/Release-iphonesimulator/libz.a" "${ROOT}/thirdparty/boost/ios/libboost.xcframework/ios-arm64_x86_64-simulator/libboost.a" "${ROOT}/thirdparty/openssl/ios/libopenssl.xcframework/ios-arm64_x86_64-simulator/libopenssl.a"
+libtool -static -o "${ZANO}/build-iphoneos-arm64/libzano-plain-wallet.a" -arch_only arm64 "${ZANO}"/build-iphoneos-arm64/src/Release-iphoneos/lib{common,crypto,currency_core,wallet}.a "${ZANO}/build-iphoneos-arm64/contrib/zlib/Release-iphoneos/libz.a" "${PROJECT_ROOT}/thirdparty/boost/ios/libboost.xcframework/ios-arm64/libboost.a" "${PROJECT_ROOT}/thirdparty/openssl/ios/libopenssl.xcframework/ios-arm64/libopenssl.a"
+libtool -static -o "${ZANO}/build-iphonesimulator-arm64/libzano-plain-wallet.a" -arch_only arm64 "${ZANO}"/build-iphonesimulator-arm64/src/Release-iphonesimulator/lib{common,crypto,currency_core,wallet}.a "${ZANO}/build-iphonesimulator-arm64/contrib/zlib/Release-iphonesimulator/libz.a" "${PROJECT_ROOT}/thirdparty/boost/ios/libboost.xcframework/ios-arm64_x86_64-simulator/libboost.a" "${PROJECT_ROOT}/thirdparty/openssl/ios/libopenssl.xcframework/ios-arm64_x86_64-simulator/libopenssl.a"
+libtool -static -o "${ZANO}/build-iphonesimulator-x86_64/libzano-plain-wallet.a" -arch_only x86_64 "${ZANO}"/build-iphonesimulator-x86_64/src/Release-iphonesimulator/lib{common,crypto,currency_core,wallet}.a "${ZANO}/build-iphonesimulator-x86_64/contrib/zlib/Release-iphonesimulator/libz.a" "${PROJECT_ROOT}/thirdparty/boost/ios/libboost.xcframework/ios-arm64_x86_64-simulator/libboost.a" "${PROJECT_ROOT}/thirdparty/openssl/ios/libopenssl.xcframework/ios-arm64_x86_64-simulator/libopenssl.a"
 lipo -create "${ZANO}/build-iphonesimulator-arm64/libzano-plain-wallet.a" "${ZANO}/build-iphonesimulator-x86_64/libzano-plain-wallet.a" -output "${ZANO}/build-iphonesimulator/libzano-plain-wallet.a"
 
 rm -rf "${ZANO}/build-plain-wallet-include"
 mkdir -p "${ZANO}/build-plain-wallet-include"
-cp "${ROOT}"/Zano/src/wallet/plain_wallet_api.h "${ZANO}/build-plain-wallet-include/"
+cp "${PROJECT_ROOT}"/Zano/src/wallet/plain_wallet_api.h "${ZANO}/build-plain-wallet-include/"
 
 ZANO_PLAIN_WALLET_FRAMEWORK="${ZANO}/libzano-plain-wallet.xcframework"
 rm -rf "${ZANO_PLAIN_WALLET_FRAMEWORK}"
@@ -139,4 +146,4 @@ xcrun xcodebuild -create-xcframework \
   -headers "${ZANO}/build-plain-wallet-include/" \
   -output "${ZANO_PLAIN_WALLET_FRAMEWORK}"
 
-"${ROOT}/scripts/zano-version.sh" "${ZANO}/build-iphoneos-arm64" > "${ZANO_PLAIN_WALLET_FRAMEWORK}/VERSION"
+"${PROJECT_ROOT}/scripts/zano-version.sh" "${ZANO}/build-iphoneos-arm64" > "${ZANO_PLAIN_WALLET_FRAMEWORK}/VERSION"

@@ -10,7 +10,7 @@ STORE_DIR=${4}
 TARGET_DIR=${5}
 
 echo "${LIB_NAME} version: $LIB_TAR_NAME"
-if [[ ! -e $LIB_TAR_NAME ]]; then
+if [[ ! -e "${STORE_DIR}/${LIB_TAR_NAME}" ]]; then
   echo "Downloading ${LIB_NAME} tarball: '$LIB_TAR_URL'"
   curl -L $LIB_TAR_URL -o "${STORE_DIR}/${LIB_TAR_NAME}"
 fi

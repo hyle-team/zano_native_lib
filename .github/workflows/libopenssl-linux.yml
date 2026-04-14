@@ -1,4 +1,4 @@
-name: "Build libopenssl iOS prebuilds"
+name: "25 - libopenssl Linux prebuilds"
 
 on:
   workflow_dispatch:
@@ -7,34 +7,30 @@ concurrency:
   group: push-artifacts-group
 
 jobs:
-  build-linux:
+  build-libopenssl-linux:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           lfs: true
-          submodules: recursive
           fetch-depth: 1
-      - name: Configure git
-        run: |
-          # Set git credentials
-          git config --global user.name "${GITHUB_ACTOR}"
-          git config --global user.email "${GITHUB_ACTOR}@zano.org"
+          submodules: false
+      - uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: g++-aarch64-linux-gnu gcc-aarch64-linux-gnu
+          version: 1.0
+      - name: Cache OpenSSL sources
+        uses: actions/cache@v4
+        with:
+          path: ./thirdparty/openssl/openssl*.tar.gz
+          key: openssl-3.1.8
+      - name: Load env
+        uses: ./.github/actions/env
       - name: Build
-        run: |
-          ./thirdparty/openssl/linux/build.sh
-      - name: Commit and push artifacts
-        run: |
-          # Fetch latest changes from remote
-          echo "[INFO] Pulling latest changes from remote..."
-          git pull
-
-          # Commit if there are changes (even without changes)
-          echo "[INFO] Commiting changes"
-          git add thirdparty/openssl/linux
-          git commit --allow-empty -m "[AUTO] build libopenssl linux from ${{ github.sha }}"
-
-          # Check if branch has upstream tracking
-          echo "[INFO] Pushing changes"
-          git push
+        run: ./thirdparty/openssl/linux/build.sh
+      - name: Configure git and stage artifacts for push
+        uses: ./.github/actions/artifacts
+        with:
+          folder: thirdparty/openssl/linux
+          name: libopenssl linux

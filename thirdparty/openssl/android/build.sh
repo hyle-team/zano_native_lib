@@ -9,7 +9,7 @@ mkdir -p "${OPENSSL}/include/../lib/arm64-v8a/../armeabi-v7a/../x86/../x86_64"
 
 cd "${OPENSSL}"
 for ARCH in arm64-v8a armeabi-v7a x86 x86_64; do
-  ANDROID_TARGET=26 ./builder.sh $ARCH "$ANDROID_NDK_ROOT"
+  ./builder.sh $ARCH "$ANDROID_NDK_ROOT" || exit 1
   if [ ! -f build-$ARCH/libssl.a ]; then
     echo openssl failed to build >&2
     exit 1

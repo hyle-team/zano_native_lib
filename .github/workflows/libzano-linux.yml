@@ -1,0 +1,35 @@
+name: "20 - libzano Linux prebuilds"
+
+on:
+  workflow_dispatch:
+  workflow_call:
+concurrency:
+  group: push-artifacts-group
+
+jobs:
+  build-libzano-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 2
+          submodules: recursive
+      - uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: g++-aarch64-linux-gnu gcc-aarch64-linux-gnu
+          version: 1.0
+      - name: Load env
+        uses: ./.github/actions/env
+      - name: Build
+        run: |
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR}@zano.org"
+          (cd Zano && git tag -a v1.0 -m build HEAD^1)
+          ./linux/build.sh
+      - name: Configure git and stage artifacts for push
+        uses: ./.github/actions/artifacts
+        with:
+          folder: linux
+          name: libzano linux

@@ -1,4 +1,4 @@
-name: "Build libopenssl Android prebuilds"
+name: "25 - libopenssl Android prebuilds"
 
 on:
   workflow_dispatch:
@@ -7,46 +7,26 @@ concurrency:
   group: push-artifacts-group
 
 jobs:
-  build-android:
+  build-libopenssl-android:
     runs-on: ubuntu-latest
     steps:
-      - name: Install Java
-        uses: actions/setup-java@v4
-        with:
-          java-version: 17
-          distribution: temurin
-      - name: Install Android NDK
-        id: setup-ndk
-        uses: nttld/setup-ndk@v1
-        with:
-          ndk-version: r26c
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           lfs: true
-          submodules: recursive
-          fetch-depth: 2
-      - name: Configure git
-        run: |
-          # Set git credentials
-          git config --global user.name "${GITHUB_ACTOR}"
-          git config --global user.email "${GITHUB_ACTOR}@zano.org"
+          fetch-depth: 1
+          submodules: false
+      - name: Setup Android build environment
+        id: android
+        uses: ./.github/actions/android
+      - name: Load env
+        uses: ./.github/actions/env
       - name: Build
-        run: |
-          ./thirdparty/openssl/android/build.sh
+        run: ./thirdparty/openssl/android/build.sh
         env:
-          ANDROID_NDK_ROOT: ${{ steps.setup-ndk.outputs.ndk-path }}
-      - name: Commit and push artifacts
-        run: |
-          # Fetch latest changes from remote
-          echo "[INFO] Pulling latest changes from remote..."
-          git pull
-
-          # Commit if there are changes (even without changes)
-          echo "[INFO] Commiting changes"
-          git add thirdparty/openssl/android
-          git commit --allow-empty -m "[AUTO] build libopenssl android from ${{ github.sha }}"
-
-          # Check if branch has upstream tracking
-          echo "[INFO] Pushing changes"
-          git push
+          ANDROID_NDK_ROOT: ${{ steps.android.outputs.ndk-path }}
+      - name: Configure git and stage artifacts for push
+        uses: ./.github/actions/artifacts
+        with:
+          folder: thirdparty/openssl/android
+          name: libopenssl android

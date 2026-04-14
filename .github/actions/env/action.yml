@@ -1,0 +1,8 @@
+name: "Load env"
+description: "Load environment variables from .env"
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: cat .env | grep -v '^#' | grep -v '^[[:space:]]*$' >> $GITHUB_ENV

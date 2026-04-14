@@ -5,7 +5,7 @@ PLATFORM=$1; shift
 ARCH=$1; shift
 BUILD_DIR=build-${PLATFORM}-${ARCH}
 
-MIN_VERSION=$(xcrun --sdk $PLATFORM --show-sdk-version)
+MIN_VERSION=${MIN_IOS_VERSION:-$(xcrun --sdk $PLATFORM --show-sdk-version)}
 SDK_PATH=$(xcrun --sdk $PLATFORM --show-sdk-path)
 
 if [[ $PLATFORM == "iphoneos" ]]; then
@@ -24,7 +24,7 @@ else
 fi
 
 echo "Preparing build folder: $BUILD_DIR"
-"${SCRIPT_ROOT}/../download-openssl.sh" "$BUILD_DIR"
+"${SCRIPT_ROOT}/../download-openssl.sh" "$BUILD_DIR" || exit 1
 cd $BUILD_DIR
 
 CONFIGURE_FLAGS=("no-shared")

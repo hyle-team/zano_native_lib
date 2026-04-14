@@ -1,6 +1,7 @@
 #!/bin/bash
 
 SCRIPT_ROOT=$(realpath $(dirname $0))
+PROJECT_ROOT=$(realpath ${SCRIPT_ROOT}/../../..)
 
 ARCH=$1; shift
 BUILD_DIR=build-linux-${ARCH}
@@ -11,11 +12,10 @@ if ! [[ $ARCH == "arm64" || $ARCH == "x86_64" ]]; then
 fi
 
 echo "Preparing build folder: $BUILD_DIR"
-"${SCRIPT_ROOT}/../download-boost.sh" "$BUILD_DIR"
+"${SCRIPT_ROOT}/../download-boost.sh" "$BUILD_DIR" || exit 1
 cd $BUILD_DIR
 
-# ./bootstrap.sh "--with-libraries=atomic,chrono,date_time,filesystem,regex,serialization,system,thread,timer,program_options,locale"
-./bootstrap.sh "--with-libraries=atomic,chrono,date_time,filesystem,regex,serialization,system,thread,timer,program_options"
+./bootstrap.sh "--with-libraries=atomic,chrono,date_time,filesystem,regex,serialization,system,thread,timer,program_options,locale"
 
 if [[ $ARCH == 'arm64' ]]; then
   LINUX_ARCH="aarch64"
@@ -38,13 +38,11 @@ CXX_FLAGS+=("-Wno-sign-compare")
 CXX_FLAGS+=("-Wno-uninitialized")
 if [[ $ARCH != $HOST_ARCH ]]; then
   CXXFLAGS+=("-fPIC")
-  CXXFLAGS+=("--sysroot=/usr/${LINUX_ARCH}-linux-gnu/")
 fi
 
 LINK_FLAGS=(${LINK_FLAGS})
 if [[ $ARCH != $HOST_ARCH ]]; then
   LINK_FLAGS+=("-L/usr/${LINUX_ARCH}-linux-gnu/lib")
-  LINK_FLAGS+=("--sysroot=/usr/${LINUX_ARCH}-linux-gnu/")
 fi
 
 B2_FLAGS=(${B2_FLAGS})
@@ -66,14 +64,18 @@ fi
 B2_FLAGS+=("--user-config=../users-config.jam")
 B2_FLAGS+=("toolset=gcc-cxx")
 
-# local ICONV_PATH=$(realpath ${PROJECT_ROOT}/iconv/build-${platform}-${ARCH}/stage)
-# report-error $?
-# B2_FLAGS+=" -sICONV_PATH=$ICONV_PATH"
+ICONV_PATH=$(realpath ${PROJECT_ROOT}/thirdparty/iconv/linux)
+mkdir -p ./iconv/include/../lib/../bin/
+cp ${ICONV_PATH}/lib/${ARCH}/libiconv.a ./iconv/lib/
+cp ${ICONV_PATH}/include/* ./iconv/include/
+B2_FLAGS+=("-sICONV_PATH=$(realpath ./iconv)")
+B2_FLAGS+=("boost.locale.icu=off" "boost.locale.iconv=on")
+CXX_FLAGS+=("-I$(realpath ./iconv/include)")
+LINK_FLAGS+=("-L$(realpath ./iconv/lib)" "-liconv")
 
 CXX_FLAGS="${CXX_FLAGS[*]}"
-B2_FLAGS+=("cxxflags=${CXX_FLAGS}")
+[ -n "$CXX_FLAGS" ] && B2_FLAGS+=("cxxflags=${CXX_FLAGS}")
 LINK_FLAGS="${LINK_FLAGS[*]}"
-B2_FLAGS+=("linkflags=${LINK_FLAGS}")
+[ -n "$LINK_FLAGS" ] && B2_FLAGS+=("linkflags=${LINK_FLAGS}")
 
-# ./b2 -d+2 ${B2_FLAGS} --with-atomic --with-chrono --with-date_time --with-filesystem --with-regex --with-serialization --with-system --with-thread --with-timer --with-program_options --with-locale
-CXX=$B2_CXX ./b2 -d+2 "${B2_FLAGS[@]}" --with-atomic --with-chrono --with-date_time --with-filesystem --with-regex --with-serialization --with-system --with-thread --with-timer --with-program_options
+CXX=$B2_CXX ./b2 -d+2 "${B2_FLAGS[@]}" --with-atomic --with-chrono --with-date_time --with-filesystem --with-regex --with-serialization --with-system --with-thread --with-timer --with-program_options --with-locale

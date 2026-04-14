@@ -20,7 +20,7 @@ ANDROID_TOOLCHAIN_ROOT="${ANDROID_NDK_ROOT}/toolchains/${ANDROID_TOOLCHAIN}/preb
 ANDROID_TARGET=${ANDROID_TARGET:-$(ls "${ANDROID_NDK_ROOT}/toolchains/${ANDROID_TOOLCHAIN}/prebuilt/${ANDROID_PREBUILT_TOOLCHAIN_NAME}/bin/aarch64-linux-android"* | sort -r | head -n 1 | sed -E "s/.*android([0-9]+)-.*/\1/")}
 
 echo "Preparing build folder: $BUILD_DIR"
-"${SCRIPT_ROOT}/../download-openssl.sh" "$BUILD_DIR"
+"${SCRIPT_ROOT}/../download-openssl.sh" "$BUILD_DIR" || exit 1
 cd $BUILD_DIR
 
 CONFIGURE_FLAGS=("no-shared")

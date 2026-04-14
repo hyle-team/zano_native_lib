@@ -1,8 +1,10 @@
-ROOT=$(dirname "$(realpath "${0}/..")")
-ZANO="${ROOT}/android"
+#!/bin/bash
 
-BOOST_VERSION=$(cat "${ROOT}/thirdparty/boost/android/VERSION")
-OPENSSL_VERSION=$(cat "${ROOT}/thirdparty/openssl/android/VERSION")
+PROJECT_ROOT=$(realpath "$(dirname $0)/..")
+ZANO="${PROJECT_ROOT}/android"
+
+BOOST_VERSION=$(cat "${PROJECT_ROOT}/thirdparty/boost/android/VERSION")
+OPENSSL_VERSION=$(cat "${PROJECT_ROOT}/thirdparty/openssl/android/VERSION")
 ANDROID_TARGET=${ANDROID_TARGET:-26}
 
 function get_default_max_parallel() {
@@ -31,32 +33,34 @@ rm -rf "${ZANO}/lib/"
 mkdir -p "${ZANO}/include/../lib/arm64-v8a/../armeabi-v7a/../x86/../x86_64"
 function BUILD() {
   local ARCH=$1
-  local BUILD_PATH="${ROOT}/android/build-${ARCH}"
+  local BUILD_PATH="${PROJECT_ROOT}/android/build-${ARCH}"
   echo "Building: $ARCH in '${BUILD_PATH}'"
 
   local CMAKE_C_FLAGS=""
   local CMAKE_CXX_FLAGS=""
 
-  CMAKE_CXX_FLAGS+=" -Wno-deprecated-declarations"
-  CMAKE_CXX_FLAGS+=" -Wno-deprecated-copy"
-  CMAKE_CXX_FLAGS+=" -Wno-deprecated-copy-with-user-provided-copy"
-  CMAKE_CXX_FLAGS+=" -Wno-pessimizing-move"
-  CMAKE_CXX_FLAGS+=" -Wno-logical-not-parentheses"
-  CMAKE_CXX_FLAGS+=" -Wno-pessimizing-move"
-  CMAKE_CXX_FLAGS+=" -Wno-inconsistent-missing-override"
-  CMAKE_CXX_FLAGS+=" -Wno-delete-non-abstract-non-virtual-dtor"
-  CMAKE_CXX_FLAGS+=" -Wno-logical-not-parentheses"
-  CMAKE_CXX_FLAGS+=" -Wno-constant-conversion"
-  CMAKE_CXX_FLAGS+=" -Wno-sign-compare"
+  CMAKE_CXX_FLAGS+=("-Wno-deprecated-declarations")
+  CMAKE_CXX_FLAGS+=("-Wno-deprecated-copy")
+  CMAKE_CXX_FLAGS+=("-Wno-deprecated-copy-with-user-provided-copy")
+  CMAKE_CXX_FLAGS+=("-Wno-pessimizing-move")
+  CMAKE_CXX_FLAGS+=("-Wno-logical-not-parentheses")
+  CMAKE_CXX_FLAGS+=("-Wno-pessimizing-move")
+  CMAKE_CXX_FLAGS+=("-Wno-inconsistent-missing-override")
+  CMAKE_CXX_FLAGS+=("-Wno-delete-non-abstract-non-virtual-dtor")
+  CMAKE_CXX_FLAGS+=("-Wno-logical-not-parentheses")
+  CMAKE_CXX_FLAGS+=("-Wno-constant-conversion")
+  CMAKE_CXX_FLAGS+=("-Wno-sign-compare")
 
   if [[ "$ARCH" == "armeabi-v7a" ]]; then
-    CMAKE_C_FLAGS+=" -mno-unaligned-access"
-    CMAKE_CXX_FLAGS+=" -mno-unaligned-access"
-    echo "Applying -mno-unaligned-access for $ARCH"
+    CMAKE_C_FLAGS+=("-mno-unaligned-access")
+    CMAKE_CXX_FLAGS+=("-mno-unaligned-access")
   fi
 
   rm -rf "${BUILD_PATH}"
-  cmake -S"${ROOT}/Zano" -B"${BUILD_PATH}" \
+  CMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS[*]}"
+  CMAKE_C_FLAGS="${CMAKE_C_FLAGS[*]}"
+  cmake -S"${PROJECT_ROOT}/Zano" -B"${BUILD_PATH}" \
+    -Wno-dev \
     -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
     -DCMAKE_SYSTEM_NAME=Android \
     -DCMAKE_SYSTEM_VERSION=$ANDROID_TARGET \
@@ -65,11 +69,11 @@ function BUILD() {
     -DCMAKE_ANDROID_STL_TYPE=c++_static \
     -DDISABLE_TOR=TRUE \
     -DBoost_VERSION="Boost ${BOOST_VERSION}" \
-    -DBoost_LIBRARY_DIRS="${ROOT}/thirdparty/boost/android/lib/" \
-    -DBoost_INCLUDE_DIRS="${ROOT}/thirdparty/boost/android/include/" \
-    -DOPENSSL_INCLUDE_DIR="${ROOT}/thirdparty/openssl/android/include/" \
-    -DOPENSSL_CRYPTO_LIBRARY="${ROOT}/thirdparty/openssl/android/lib/${ARCH}/libcrypto.a" \
-    -DOPENSSL_SSL_LIBRARY="${ROOT}/thirdparty/openssl/android/lib/${ARCH}/libssl.a" \
+    -DBoost_LIBRARY_DIRS="${PROJECT_ROOT}/thirdparty/boost/android/lib/${ARCH}" \
+    -DBoost_INCLUDE_DIRS="${PROJECT_ROOT}/thirdparty/boost/android/include/" \
+    -DOPENSSL_INCLUDE_DIR="${PROJECT_ROOT}/thirdparty/openssl/android/include/" \
+    -DOPENSSL_CRYPTO_LIBRARY="${PROJECT_ROOT}/thirdparty/openssl/android/lib/${ARCH}/libcrypto.a" \
+    -DOPENSSL_SSL_LIBRARY="${PROJECT_ROOT}/thirdparty/openssl/android/lib/${ARCH}/libssl.a" \
     -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS}" \
     -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS}"
   if [ $? -ne 0 ]; then
@@ -94,5 +98,5 @@ BUILD arm64-v8a
 BUILD armeabi-v7a
 BUILD x86
 BUILD x86_64
-cp "${ROOT}"/Zano/src/wallet/*.h "${ZANO}/include/"
-"${ROOT}/scripts/zano-version.sh" "${ZANO}/build-arm64-v8a" > "${ZANO}/VERSION"
+cp "${PROJECT_ROOT}"/Zano/src/wallet/*.h "${ZANO}/include/"
+"${PROJECT_ROOT}/scripts/zano-version.sh" "${ZANO}/build-arm64-v8a" > "${ZANO}/VERSION"

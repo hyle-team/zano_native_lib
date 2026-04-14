@@ -1,0 +1,32 @@
+name: "26 - libiconv MacOSX prebuilds"
+
+on:
+  workflow_dispatch:
+  workflow_call:
+concurrency:
+  group: push-artifacts-group
+
+jobs:
+  build-libiconv-macosx:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 1
+          submodules: false
+      - name: Cache iconv sources
+        uses: actions/cache@v4
+        with:
+          path: ./thirdparty/iconv/libiconv*.tar.gz
+          key: iconv-1.18
+      - name: Load env
+        uses: ./.github/actions/env
+      - name: Build
+        run: ./thirdparty/iconv/macosx/build.sh
+      - name: Configure git and stage artifacts for push
+        uses: ./.github/actions/artifacts
+        with:
+          folder: thirdparty/iconv/macosx
+          name: libiconv macosx

@@ -1,0 +1,41 @@
+name: "30 - Pull Zano"
+
+on:
+  workflow_dispatch:
+    inputs:
+      reference:
+        description: 'Branch name or Commit ID to update Zano to'
+        required: true
+        default: 'master'
+
+jobs:
+  update-zano-submodule:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+      - name: Update Zano Submodule
+        run: |
+          cd Zano
+          git fetch origin
+          echo "Updating Zano to: ${{ github.event.inputs.reference }}"
+          git checkout ${{ github.event.inputs.reference }}
+          if git show-ref --verify --quiet refs/remotes/origin/${{ github.event.inputs.reference }}; then
+            git pull origin ${{ github.event.inputs.reference }}
+          fi
+      - name: Commit and Push Update
+        run: |
+          git config user.name "github-actions[bot]${GITHUB_ACTOR}"
+          git config user.email "github-actions[bot]${GITHUB_ACTOR}@users.noreply.github.com"
+          if git diff --quiet Zano; then
+            echo "No changes detected. Submodule is already at this reference."
+          else
+            git add Zano
+            git commit -m "chore: update Zano submodule to ${{ github.event.inputs.reference }}"
+            git push
+          fi
