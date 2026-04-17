@@ -1,0 +1,37 @@
+name: "20 - libzano Windows prebuilds"
+
+on:
+  workflow_dispatch:
+  workflow_call:
+concurrency:
+  group: push-artifacts-group
+
+jobs:
+  build-libzano-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 2
+          submodules: recursive
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+      - name: Load env
+        uses: ./.github/actions/env
+      - name: Build
+        run: |
+          git config --global user.name "%GITHUB_ACTOR%"
+          git config --global user.email "%GITHUB_ACTOR%@zano.org"
+          pushd Zano
+          git tag -a v1.0 -m build HEAD^1
+          popd
+          .\windows\build.bat
+          git config --global http.postBuffer 1048576000
+      - name: Configure git and stage artifacts for push
+        uses: ./.github/actions/artifacts
+        with:
+          folder: windows
+          name: libzano windows

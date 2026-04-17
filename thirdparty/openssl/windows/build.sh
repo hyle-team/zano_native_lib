@@ -1,13 +1,46 @@
 #!/bin/bash
 
-SCRIPT_ROOT=$(realpath $(dirname $0))
-ROOT=$(realpath "${SCRIPT_ROOT}/../../..")
-OPENSSL=$(realpath "${ROOT}/thirdparty/openssl/windows")
-cd "$OPENSSL"
+PROJECT_ROOT=$(realpath $(dirname $0)/../../..)
+OPENSSL_DIR=$(realpath "${PROJECT_ROOT}/thirdparty/openssl/windows")
 
-OPENSSL_VERSION=${OPENSSL_VERSION:-3.6.2}
-OPENSSL_TAR_HASH=${OPENSSL_TAR_HASH:-c395482a1af33b2cdd4b801b227c864ed049e0f6aff79413d31b4fa916a67b1a}
-OPENSSL_TAR_URL=${OPENSSL_TAR_URL:-https://slproweb.com/download/Win64OpenSSL-${OPENSSL_VERSION//./_}.exe}
-# OPENSSL_TAR_URL=${OPENSSL_TAR_URL:-https://slproweb.com/download/Win64ARMOpenSSL-${OPENSSL_VERSION//./_}.exe}
+function BUILD() {
+  local ARCH=$1; shift
+  if ! [[ $ARCH == "arm64" || $ARCH == "x86_64" ]]; then
+    echo "ERROR: Unsupported architecture: '${ARCH}'" >&2
+    exit 1
+  fi
+  local BUILD_ROOT=${OPENSSL_DIR}/build-windows-${ARCH}
 
-${ROOT}/scripts/download-tar.sh OpenSSL "${OPENSSL_TAR_URL}" ${OPENSSL_TAR_HASH} "${SCRIPT_ROOT}" "${OPENSSL}/prebuilds" || exit 1
+  echo "Preparing build folder: $BUILD_ROOT"
+  "${PROJECT_ROOT}/thirdparty/openssl/download-openssl.sh" "$BUILD_ROOT" || exit 1
+  cd "$BUILD_ROOT"
+
+
+  local CONFIGURE_FLAGS=(${CONFIGURE_FLAGS})
+
+  CONFIGURE_FLAGS+=("no-shared")
+  CONFIGURE_FLAGS+=("no-tests")
+  if [[ $ARCH == 'arm64' ]]; then
+    CONFIGURE_FLAGS+=("VC-WIN64-ARM")
+  elif [[ $ARCH == 'x86_64' ]]; then
+    CONFIGURE_FLAGS+=("VC-WIN64A")
+  fi
+
+  # local CFLAGS=(${CFLAGS})
+  # CFLAGS+=("-Wno-macro-redefined")
+  # CFLAGS="${CFLAGS[*]}"
+  # CONFIGURE_FLAGS+=("CFLAGS=${CFLAGS}")
+
+  perl Configure ${CONFIGURE_FLAGS[*]} || exit 1
+  nmake || exit 1
+
+  rm -rf "${OPENSSL_DIR}"/{include,lib/${ARCH}}
+  mkdir -p "${OPENSSL_DIR}"/include/../lib/${ARCH}
+  cp "${BUILD_ROOT}"/*.lib "${OPENSSL_DIR}"/lib/${ARCH}/
+  cp -r "${BUILD_ROOT}/include" "${OPENSSL_DIR}"/
+}
+BUILD x86_64
+# BUILD arm64
+
+source build-macosx-arm64/VERSION.dat
+echo "${MAJOR}.${MINOR}.${PATCH}" > "${OPENSSL_DIR}/VERSION"

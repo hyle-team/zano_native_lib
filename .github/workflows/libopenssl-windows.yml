@@ -1,0 +1,35 @@
+name: "25 - libopenssl Windows prebuilds"
+
+on:
+  workflow_dispatch:
+  workflow_call:
+concurrency:
+  group: push-artifacts-group
+
+jobs:
+  build-libopenssl-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 1
+          submodules: false
+      - name: Cache OpenSSL sources
+        uses: actions/cache@v4
+        with:
+          path: ./thirdparty/openssl/openssl*.tar.gz
+          key: openssl-3.1.8
+      - name: Load env
+        uses: ./.github/actions/env
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+      - name: Build
+        run: .\thirdparty\openssl\windows\build.bat
+      - name: Configure git and stage artifacts for push
+        uses: ./.github/actions/artifacts
+        with:
+          folder: thirdparty/openssl/windows
+          name: libopenssl windows

@@ -29,6 +29,8 @@ mkdir -p $TARGET_DIR
 tar -xzf "${STORE_DIR}/${LIB_TAR_NAME}" -C $TARGET_DIR
 content=($(ls $TARGET_DIR))
 if [[ ${#content[@]} -eq 1 ]]; then
+  shopt -s dotglob
   mv ${TARGET_DIR}/${content[0]}/* ${TARGET_DIR}/
+  shopt -U dotglob
   rm -rf ${TARGET_DIR}/${content[0]}
 fi

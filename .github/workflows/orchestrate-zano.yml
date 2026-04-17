@@ -19,3 +19,7 @@ jobs:
     needs: [libzano-macosx]
     uses: ./.github/workflows/libzano-linux.yml
     secrets: inherit
+  libzano-windows:
+    needs: [libzano-linux]
+    uses: ./.github/workflows/libzano-windows.yml
+    secrets: inherit

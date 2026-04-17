@@ -1,0 +1,35 @@
+name: "25 - libboost Windows prebuilds"
+
+on:
+  workflow_dispatch:
+  workflow_call:
+concurrency:
+  group: push-artifacts-group
+
+jobs:
+  build-libboost-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 1
+          submodules: false
+      - name: Cache Boost sources
+        uses: actions/cache@v4
+        with:
+          path: ./thirdparty/boost/boost*.tar.gz
+          key: boost-1.84.0
+      - name: Load env
+        uses: ./.github/actions/env
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+      - name: Build
+        run: .\thirdparty\boost\windows\build.bat
+      - name: Configure git and stage artifacts for push
+        uses: ./.github/actions/artifacts
+        with:
+          folder: thirdparty/boost/windows
+          name: libboost windows

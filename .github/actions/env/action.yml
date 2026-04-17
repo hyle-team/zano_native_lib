@@ -5,4 +5,5 @@ runs:
   using: composite
   steps:
     - shell: bash
-      run: cat .env | grep -v '^#' | grep -v '^[[:space:]]*$' >> $GITHUB_ENV
+      run: |
+        cat .env | grep -v '^#' | grep -v '^[[:space:]]*$' >> $GITHUB_ENV

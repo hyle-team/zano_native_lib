@@ -19,3 +19,7 @@ jobs:
     needs: [libopenssl-macosx]
     uses: ./.github/workflows/libopenssl-linux.yml
     secrets: inherit
+  libopenssl-windows:
+    needs: [libopenssl-linux]
+    uses: ./.github/workflows/libopenssl-windows.yml
+    secrets: inherit

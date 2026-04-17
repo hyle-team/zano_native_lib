@@ -23,7 +23,7 @@ if [ -z "$BUILD_TYPE" ]; then
 fi
 
 function BUILD() {
-  local ARCH=$2
+  local ARCH=$1
   local BUILD_PATH="${PROJECT_ROOT}/macosx/build-macosx-${ARCH}"
   echo "Building: macosx $ARCH in '${BUILD_PATH}'"
 
@@ -106,8 +106,8 @@ function BUILD() {
     exit 1
   fi
 }
-BUILD macosx arm64
-BUILD macosx x86_64
+BUILD arm64
+BUILD x86_64
 
 rm -rf "${ZANO}/build-macosx"
 mkdir -p "${ZANO}/build-macosx"

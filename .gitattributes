@@ -2,7 +2,9 @@ thirdparty/*/android/lib/*/*.a filter=lfs diff=lfs merge=lfs -text
 thirdparty/*/ios/*.xcframework/*/*.a filter=lfs diff=lfs merge=lfs -text
 thirdparty/*/linux/lib/*/*.a filter=lfs diff=lfs merge=lfs -text
 thirdparty/*/macosx/*.xcframework/*/*.a filter=lfs diff=lfs merge=lfs -text
+thirdparty/*/windows/lib/*/*.lib filter=lfs diff=lfs merge=lfs -text
 android/lib/*/*.a filter=lfs diff=lfs merge=lfs -text
 ios/*.xcframework/*/*.a filter=lfs diff=lfs merge=lfs -text
 linux/lib/*/*.a filter=lfs diff=lfs merge=lfs -text
 macosx/*.xcframework/*/*.a filter=lfs diff=lfs merge=lfs -text
+windows/lib/*/*.lib filter=lfs diff=lfs merge=lfs -text

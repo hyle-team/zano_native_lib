@@ -19,3 +19,7 @@ jobs:
     needs: [libboost-macosx]
     uses: ./.github/workflows/libboost-linux.yml
     secrets: inherit
+  libboost-windows:
+    needs: [libboost-linux]
+    uses: ./.github/workflows/libboost-windows.yml
+    secrets: inherit
