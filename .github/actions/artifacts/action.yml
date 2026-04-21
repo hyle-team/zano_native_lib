@@ -3,7 +3,7 @@ description: "Configures git and commits and pushes artifacts to the repository"
 
 inputs:
   folder:
-    description: "Folder to stage and commit"
+    description: "Folder or folders (separated by ;) to stage and commit"
     required: true
   name:
     description: "Build name used in the commit message"
@@ -16,16 +16,32 @@ runs:
       run: |
         git config --global user.name "github-actions[bot]${GITHUB_ACTOR}"
         git config --global user.email "github-actions[bot]${GITHUB_ACTOR}@zano.org"
-
-        echo "[INFO] Pulling latest changes from remote..."
-        git add "${{ inputs.folder }}"
-        git stash push
-        git pull --rebase origin "${GITHUB_REF_NAME}"
+        git config --global http.postBuffer 1048576000
 
         echo "[INFO] Committing changes..."
-        git stash pop
-        git add "${{ inputs.folder }}"
+        folders="${{ inputs.folder }}"
+        IFS=';' read -ra folders <<< "$folders"
+        for folder in "${folders[@]}"; do
+          echo "[INFO] adding folder: '${folder}'"
+          git add "$folder"
+        done
         git commit --allow-empty -m "[AUTO] build ${{ inputs.name }} from ${GITHUB_SHA}"
 
-        echo "[INFO] Pushing changes..."
-        git push
+        ATTEMPT=0
+        MAX_ATTEMPTS=5
+        function push_changes() {
+          ATTEMPT=$((ATTEMPT+1))
+          if [[ $ATTEMPT -eq $MAX_ATTEMPTS ]]; then
+            echo "[ERROR] Pushing failed" >&2
+            exit 1
+          fi
+          echo "[INFO] Pulling latest changes from remote..."
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          echo "[INFO] Pushing changes..."
+          if ! git push; then
+            echo "[WARN] Push conflict detected. Retrying in 10 seconds..."
+            sleep 10
+            push_changes || exit 1
+          fi
+        }
+        push_changes || exit 1

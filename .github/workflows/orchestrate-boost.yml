@@ -8,18 +8,14 @@ jobs:
     uses: ./.github/workflows/libboost-android.yml
     secrets: inherit
   libboost-ios:
-    needs: [libboost-android]
     uses: ./.github/workflows/libboost-ios.yml
     secrets: inherit
   libboost-macosx:
-    needs: [libboost-ios]
     uses: ./.github/workflows/libboost-macosx.yml
     secrets: inherit
   libboost-linux:
-    needs: [libboost-macosx]
     uses: ./.github/workflows/libboost-linux.yml
     secrets: inherit
   libboost-windows:
-    needs: [libboost-linux]
     uses: ./.github/workflows/libboost-windows.yml
     secrets: inherit

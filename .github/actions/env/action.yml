@@ -6,4 +6,18 @@ runs:
   steps:
     - shell: bash
       run: |
-        cat .env | grep -v '^#' | grep -v '^[[:space:]]*$' >> $GITHUB_ENV
+        OS="unknown"
+        case "$(uname -s)" in
+          Linux*)     OS=linux;;
+          Darwin*)    OS=macosx;;
+          CYGWIN*)    OS=windows;;
+          MINGW*)     OS=windows;;
+          MSYS*)      OS=windows;;
+        esac
+        echo "CI_PLATFORM=$OS" >> $GITHUB_ENV
+        if [ -f .env ]; then
+          cat .env | grep -v '^#' | grep -v '^[[:space:]]*$' >> $GITHUB_ENV
+        fi
+        if [ -f .env.${OS} ]; then
+          cat .env.${OS} | grep -v '^#' | grep -v '^[[:space:]]*$' >> $GITHUB_ENV
+        fi

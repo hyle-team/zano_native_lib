@@ -3,8 +3,6 @@ name: "20 - libzano Linux prebuilds"
 on:
   workflow_dispatch:
   workflow_call:
-concurrency:
-  group: push-artifacts-group
 
 jobs:
   build-libzano-linux:

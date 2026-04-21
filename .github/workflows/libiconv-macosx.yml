@@ -3,8 +3,6 @@ name: "26 - libiconv MacOSX prebuilds"
 on:
   workflow_dispatch:
   workflow_call:
-concurrency:
-  group: push-artifacts-group
 
 jobs:
   build-libiconv-macosx:

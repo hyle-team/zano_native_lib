@@ -3,8 +3,6 @@ name: "20 - libzano iOS prebuilds"
 on:
   workflow_dispatch:
   workflow_call:
-concurrency:
-  group: push-artifacts-group
 
 jobs:
   build-libzano-ios:

@@ -3,35 +3,38 @@ name: "20 - libzano Windows prebuilds"
 on:
   workflow_dispatch:
   workflow_call:
-concurrency:
-  group: push-artifacts-group
 
 jobs:
   build-libzano-windows:
-    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: windows-latest
+            arch: x86_64
+            msvc_arch: x64
+          - runner: windows-11-arm
+            arch: arm64
+            msvc_arch: x64_arm64
+    runs-on: ${{ matrix.runner }}
     steps:
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.msvc_arch }}
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           lfs: true
           fetch-depth: 2
           submodules: recursive
-      - uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: x64
       - name: Load env
         uses: ./.github/actions/env
+      - name: Prepare Zano
+        uses: ./.github/actions/zano
       - name: Build
-        run: |
-          git config --global user.name "%GITHUB_ACTOR%"
-          git config --global user.email "%GITHUB_ACTOR%@zano.org"
-          pushd Zano
-          git tag -a v1.0 -m build HEAD^1
-          popd
-          .\windows\build.bat
-          git config --global http.postBuffer 1048576000
+        run: bash ./build/windows/build.sh ${{ matrix.arch }}
       - name: Configure git and stage artifacts for push
         uses: ./.github/actions/artifacts
         with:
-          folder: windows
-          name: libzano windows
+          folder: build/windows/${{ matrix.arch }}
+          name: libzano windows ${{ matrix.arch }}

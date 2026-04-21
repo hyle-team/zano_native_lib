@@ -31,6 +31,6 @@ content=($(ls $TARGET_DIR))
 if [[ ${#content[@]} -eq 1 ]]; then
   shopt -s dotglob
   mv ${TARGET_DIR}/${content[0]}/* ${TARGET_DIR}/
-  shopt -U dotglob
+  shopt -u dotglob
   rm -rf ${TARGET_DIR}/${content[0]}
 fi

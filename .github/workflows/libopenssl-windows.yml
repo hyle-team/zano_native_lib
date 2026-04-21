@@ -3,33 +3,41 @@ name: "25 - libopenssl Windows prebuilds"
 on:
   workflow_dispatch:
   workflow_call:
-concurrency:
-  group: push-artifacts-group
 
 jobs:
   build-libopenssl-windows:
-    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: windows-latest
+            arch: x86_64
+            msvc_arch: x64
+          - runner: windows-11-arm
+            arch: arm64
+            msvc_arch: x64_arm64
+    runs-on: ${{ matrix.runner }}
     steps:
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.msvc_arch }}
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           lfs: true
           fetch-depth: 1
           submodules: false
+      - name: Load env
+        uses: ./.github/actions/env
       - name: Cache OpenSSL sources
         uses: actions/cache@v4
         with:
           path: ./thirdparty/openssl/openssl*.tar.gz
-          key: openssl-3.1.8
-      - name: Load env
-        uses: ./.github/actions/env
-      - uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: x64
+          key: openssl-${{ env.OPENSSL_VERSION }}
       - name: Build
-        run: .\thirdparty\openssl\windows\build.bat
+        run: bash ./thirdparty/openssl/windows/build.sh ${{ matrix.arch }}
       - name: Configure git and stage artifacts for push
         uses: ./.github/actions/artifacts
         with:
-          folder: thirdparty/openssl/windows
-          name: libopenssl windows
+          folder: thirdparty/openssl/windows/${{ matrix.arch }}
+          name: libopenssl windows ${{ matrix.arch }}

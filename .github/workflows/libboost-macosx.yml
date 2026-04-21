@@ -3,8 +3,6 @@ name: "25 - libboost MacOSX prebuilds"
 on:
   workflow_dispatch:
   workflow_call:
-concurrency:
-  group: push-artifacts-group
 
 jobs:
   build-libboost-macosx:

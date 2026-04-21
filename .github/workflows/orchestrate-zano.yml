@@ -8,18 +8,14 @@ jobs:
     uses: ./.github/workflows/libzano-android.yml
     secrets: inherit
   libzano-ios:
-    needs: [libzano-android]
     uses: ./.github/workflows/libzano-ios.yml
     secrets: inherit
   libzano-macosx:
-    needs: [libzano-ios]
     uses: ./.github/workflows/libzano-macosx.yml
     secrets: inherit
   libzano-linux:
-    needs: [libzano-macosx]
     uses: ./.github/workflows/libzano-linux.yml
     secrets: inherit
   libzano-windows:
-    needs: [libzano-linux]
     uses: ./.github/workflows/libzano-windows.yml
     secrets: inherit
