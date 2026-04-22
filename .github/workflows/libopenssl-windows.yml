@@ -33,7 +33,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ./thirdparty/openssl/openssl*.tar.gz
-          key: openssl-${{ env.OPENSSL_VERSION }}
+          key: openssl-${{ env.OPENSSL_VERSION }}-${{ env.OPENSSL_TAR_HASH }}
       - name: Build
         run: bash ./thirdparty/openssl/windows/build.sh ${{ matrix.arch }}
       - name: Configure git and stage artifacts for push

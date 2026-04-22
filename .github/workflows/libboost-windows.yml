@@ -33,7 +33,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ./thirdparty/boost/boost*.tar.gz
-          key: boost-${{ env.BOOST_VERSION }}
+          key: boost-${{ env.BOOST_VERSION }}-${{ env.BOOST_TAR_HASH }}
       - name: Build
         run: bash ./thirdparty/boost/windows/build.sh ${{ matrix.arch }}
       - name: Configure git and stage artifacts for push

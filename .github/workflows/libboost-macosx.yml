@@ -14,17 +14,21 @@ jobs:
           lfs: true
           fetch-depth: 1
           submodules: false
+      - name: Load env
+        uses: ./.github/actions/env
       - name: Cache Boost sources
         uses: actions/cache@v4
         with:
           path: ./thirdparty/boost/boost*.tar.gz
-          key: boost-1.76.0
-      - name: Load env
-        uses: ./.github/actions/env
-      - name: Build
-        run: ./thirdparty/boost/macosx/build.sh
+          key: boost-${{ env.BOOST_VERSION }}-${{ env.BOOST_TAR_HASH }}
+      - name: Build x86_64
+        run: ./thirdparty/boost/macosx/build.sh x86_64
+      - name: Build arm64
+        run: ./thirdparty/boost/macosx/build.sh arm64
+      - name: Build framework
+        run: ./thirdparty/boost/macosx/framework.sh
       - name: Configure git and stage artifacts for push
         uses: ./.github/actions/artifacts
         with:
-          folder: thirdparty/boost/macosx
+          folder: thirdparty/boost/macosx/libboost.xcframework
           name: libboost macosx

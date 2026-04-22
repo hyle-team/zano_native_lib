@@ -1,8 +1,8 @@
 #!/bin/bash
 
-PROJECT_ROOT=$(realpath "$(dirname $0)/../..")
+PROJECT_ROOT="$(realpath "$(dirname "$0")/../..")"
 PLATFORM_ROOT="${PROJECT_ROOT}/build/windows"
-. $PROJECT_ROOT/scripts/windows-bash.sh
+. "$PROJECT_ROOT/scripts/windows-bash.sh"
 
 ARCH=$1; shift
 BOOST_ROOT="${PROJECT_ROOT}/thirdparty/boost/windows/${ARCH}"

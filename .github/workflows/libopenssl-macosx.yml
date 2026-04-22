@@ -14,17 +14,21 @@ jobs:
           lfs: true
           fetch-depth: 1
           submodules: false
+      - name: Load env
+        uses: ./.github/actions/env
       - name: Cache OpenSSL sources
         uses: actions/cache@v4
         with:
           path: ./thirdparty/openssl/openssl*.tar.gz
-          key: openssl-3.1.8
-      - name: Load env
-        uses: ./.github/actions/env
-      - name: Build
-        run: ./thirdparty/openssl/macosx/build.sh
+          key: openssl-${{ env.OPENSSL_VERSION }}-${{ env.OPENSSL_TAR_HASH }}
+      - name: Build x86_64
+        run: ./thirdparty/openssl/macosx/build.sh x86_64
+      - name: Build arm64
+        run: ./thirdparty/openssl/macosx/build.sh arm64
+      - name: Build framework
+        run: ./thirdparty/openssl/macosx/framework.sh
       - name: Configure git and stage artifacts for push
         uses: ./.github/actions/artifacts
         with:
-          folder: thirdparty/openssl/macosx
+          folder: thirdparty/openssl/macosx/libopenssl.xcframework
           name: libopenssl macosx

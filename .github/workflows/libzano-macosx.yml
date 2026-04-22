@@ -16,14 +16,16 @@ jobs:
           submodules: recursive
       - name: Load env
         uses: ./.github/actions/env
-      - name: Build
-        run: |
-          git config --global user.name "${GITHUB_ACTOR}"
-          git config --global user.email "${GITHUB_ACTOR}@zano.org"
-          (cd Zano && git tag -a v1.0 -m build HEAD^1)
-          ./macosx/build.sh
+      - name: Prepare Zano
+        uses: ./.github/actions/zano
+      - name: Build x86_64
+        run: ./build/macosx/build.sh x86_64
+      - name: Build arm64
+        run: ./build/macosx/build.sh arm64
+      - name: Build framework
+        run: ./build/macosx/framework.sh
       - name: Configure git and stage artifacts for push
         uses: ./.github/actions/artifacts
         with:
-          folder: macosx
+          folder: build/macosx/libzano.xcframework;build/macosx/libzano-plain-wallet.xcframework
           name: libzano macosx

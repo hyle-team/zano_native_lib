@@ -1,8 +1,8 @@
 #!/bin/bash
 
-PROJECT_ROOT=$(realpath $(dirname $0)/../../..)
-PLATFORM_ROOT=$(realpath "${PROJECT_ROOT}/thirdparty/boost/windows")
-. $PROJECT_ROOT/scripts/windows-bash.sh
+PROJECT_ROOT="$(realpath "$(dirname "$0")/../../..")"
+PLATFORM_ROOT="$(realpath "${PROJECT_ROOT}/thirdparty/boost/windows")"
+. "$PROJECT_ROOT/scripts/windows-bash.sh"
 
 ARCH=$1; shift
 if ! [[ $ARCH == "arm64" || $ARCH == "x86_64" ]]; then

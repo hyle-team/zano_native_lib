@@ -14,17 +14,21 @@ jobs:
           lfs: true
           fetch-depth: 1
           submodules: false
+      - name: Load env
+        uses: ./.github/actions/env
       - name: Cache iconv sources
         uses: actions/cache@v4
         with:
           path: ./thirdparty/iconv/libiconv*.tar.gz
-          key: iconv-1.18
-      - name: Load env
-        uses: ./.github/actions/env
-      - name: Build
-        run: ./thirdparty/iconv/macosx/build.sh
+          key: iconv-${{ env.ICONV_VERSION }}-${{ env.ICONV_TAR_HASH }}
+      - name: Build x86_64
+        run: ./thirdparty/iconv/macosx/build.sh x86_64
+      - name: Build arm64
+        run: ./thirdparty/iconv/macosx/build.sh arm64
+      - name: Build framework
+        run: ./thirdparty/iconv/macosx/framework.sh
       - name: Configure git and stage artifacts for push
         uses: ./.github/actions/artifacts
         with:
-          folder: thirdparty/iconv/macosx
+          folder: thirdparty/iconv/macosx/libiconv.xcframework
           name: libiconv macosx

@@ -1,33 +1,49 @@
 #!/bin/bash
 
-ROOT=$(realpath $(dirname $0)/../../..)
-OPENSSL=$(realpath ${ROOT}/thirdparty/openssl/macosx)
+PROJECT_ROOT="$(realpath "$(dirname "$0")/../../..")"
+PLATFORM_ROOT=$(realpath ${PROJECT_ROOT}/thirdparty/openssl/macosx)
+MIN_VERSION=${MIN_MACOSX_VERSION:-$(xcrun --sdk macosx --show-sdk-version)}
+SDK_PATH=$(xcrun --sdk macosx --show-sdk-path)
 
-cd "${OPENSSL}"
+ARCH=$1; shift
+BUILD_ROOT="${PLATFORM_ROOT}/build-${ARCH}"
 
-./builder.sh arm64 || exit 1
-if [ ! -f build-macosx-arm64/libssl.a ]; then
-  echo openssl failed to build macosx-arm64 >&2
+if ! [[ $ARCH == "arm64" || $ARCH == "x86_64" ]]; then
+  echo "ERROR: Unsupported architecture: '${ARCH}'" >&2
   exit 1
 fi
-libtool -static -o build-macosx-arm64/libopenssl.a -arch_only arm64 build-macosx-arm64/libssl.a build-macosx-arm64/libcrypto.a
 
-./builder.sh x86_64 || exit 1
-if [ ! -f build-macosx-x86_64/libssl.a ]; then
-  echo openssl failed to build macosx-x86_64 >&2
+echo "Preparing build folder: $BUILD_ROOT"
+"${PLATFORM_ROOT}/../download-openssl.sh" "$BUILD_ROOT" || exit 1
+
+CONFIGURE_FLAGS=("${CONFIGURE_FLAGS}")
+CONFIGURE_FLAGS+=("no-shared")
+
+if [[ $ARCH == 'arm64' ]]; then
+  CONFIGURE_FLAGS+=("darwin64-arm64")
+elif [[ $ARCH == 'x86_64' ]]; then
+  CONFIGURE_FLAGS+=("darwin64-x86_64")
+fi
+
+CFLAGS=("${CFLAGS=""}")
+CFLAGS+=("-Wno-macro-redefined")
+CFLAGS+=("-isysroot \"${SDK_PATH}\"")
+CFLAGS+=("-mmacosx-version-min=${MIN_VERSION}")
+
+cd "${BUILD_ROOT}"
+CFLAGS="${CFLAGS[*]}" ./Configure "${CONFIGURE_FLAGS[@]}" || exit 1
+make -j$(sysctl -n hw.ncpu) || exit 1
+
+if [ ! -f "${BUILD_ROOT}/libssl.a" ]; then
+  echo openssl failed to build >&2
   exit 1
 fi
-libtool -static -o build-macosx-x86_64/libopenssl.a -arch_only x86_64 build-macosx-x86_64/libssl.a build-macosx-x86_64/libcrypto.a
+libtool -static -o "${BUILD_ROOT}/libopenssl.a" -arch_only ${ARCH} "${BUILD_ROOT}"/lib{ssl,crypto}.a
 
-mkdir build-macosx
-lipo -create build-macosx-*/libopenssl.a -output build-macosx/libopenssl.a
+source "${BUILD_ROOT}/VERSION.dat"
+echo "${MAJOR}.${MINOR}.${PATCH}" > "${BUILD_ROOT}/VERSION"
 
-OPENSSL_FRAMEWORK="${OPENSSL}/libopenssl.xcframework"
-rm -rf "${OPENSSL_FRAMEWORK}"
-xcrun xcodebuild -create-xcframework \
-  -library build-macosx/libopenssl.a \
-  -headers build-macosx-arm64/include \
-  -output "${OPENSSL_FRAMEWORK}"
-
-source build-macosx-arm64/VERSION.dat
-echo "${MAJOR}.${MINOR}.${PATCH}" > "${OPENSSL_FRAMEWORK}/VERSION"
+echo "OpenSSL build is complete"
+echo "      lib: '${BUILD_ROOT}/libopenssl.a'"
+echo "  include: '${BUILD_ROOT}/include'"
+echo "  version: '${BUILD_ROOT}/VERSION'"
