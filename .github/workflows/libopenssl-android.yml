@@ -6,6 +6,10 @@ on:
 
 jobs:
   build-libopenssl-android:
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [arm64-v8a, armeabi-v7a, x86, x86_64]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -20,11 +24,11 @@ jobs:
       - name: Load env
         uses: ./.github/actions/env
       - name: Build
-        run: ./thirdparty/openssl/android/build.sh
+        run: ./thirdparty/openssl/android/build.sh ${{ matrix.arch }}
         env:
           ANDROID_NDK_ROOT: ${{ steps.android.outputs.ndk-path }}
       - name: Configure git and stage artifacts for push
         uses: ./.github/actions/artifacts
         with:
-          folder: thirdparty/openssl/android
-          name: libopenssl android
+          folder: thirdparty/openssl/android/${{ matrix.arch }}
+          name: libopenssl android ${{ matrix.arch }}

@@ -6,6 +6,10 @@ on:
 
 jobs:
   build-libzano-android:
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [arm64-v8a, armeabi-v7a, x86, x86_64]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -19,16 +23,14 @@ jobs:
         uses: ./.github/actions/android
       - name: Load env
         uses: ./.github/actions/env
+      - name: Prepare Zano
+        uses: ./.github/actions/zano
       - name: Build
-        run: |
-          git config --global user.name "${GITHUB_ACTOR}"
-          git config --global user.email "${GITHUB_ACTOR}@zano.org"
-          (cd Zano && git tag -a v1.0 -m build HEAD^1)
-          ./android/build.sh
+        run: ./build/android/build.sh ${{ matrix.arch }}
         env:
           ANDROID_NDK_ROOT: ${{ steps.android.outputs.ndk-path }}
       - name: Configure git and stage artifacts for push
         uses: ./.github/actions/artifacts
         with:
-          folder: android
-          name: libzano android
+          folder: build/android/${{ matrix.arch }}
+          name: libzano android ${{ matrix.arch }}

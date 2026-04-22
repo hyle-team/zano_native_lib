@@ -29,7 +29,7 @@ elif [[ $HOST_ARCH == "arm" || $HOST_ARCH == "arm64" || $HOST_ARCH == "aarch64" 
   HOST_ARCH=arm64
 fi
 
-CXX_FLAGS=(${CXX_FLAGS})
+CXX_FLAGS=("${CXX_FLAGS}")
 CXXFLAGS+=("-fPIC")
 CXX_FLAGS+=("-Wno-enum-constexpr-conversion")
 CXX_FLAGS+=("-Wno-deprecated-declarations")
