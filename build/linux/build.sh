@@ -100,7 +100,7 @@ if [ ! -f "${BUILD_ROOT}/src/libwallet.a" ]; then
 fi
 
 rm -rf "${PLATFORM_ROOT}/${ARCH}"
-mkdir -p "${PLATFORM_ROOT}/${ARCH}/lib/../include/"
+mkdir -p "${PLATFORM_ROOT}/${ARCH}/lib/../include/../include-plain-wallet/"
 cp "${BUILD_ROOT}/src/"lib{common,crypto,currency_core,wallet,rpc,stratum}.a "${PLATFORM_ROOT}/${ARCH}/lib/"
 cp "${BUILD_ROOT}/contrib/zlib/libz.a" "${PLATFORM_ROOT}/${ARCH}/lib/"
 cp "${BUILD_ROOT}/contrib/db/liblmdb/liblmdb.a" "${PLATFORM_ROOT}/${ARCH}/lib/"
@@ -108,4 +108,5 @@ cp "${BUILD_ROOT}/contrib/db/libmdbx/libmdbx.a" "${PLATFORM_ROOT}/${ARCH}/lib/"
 cp "${BUILD_ROOT}/contrib/ethereum/libethash/libethash.a" "${PLATFORM_ROOT}/${ARCH}/lib/"
 cp "${BUILD_ROOT}/contrib/miniupnp/miniupnpc/libminiupnpc.a" "${PLATFORM_ROOT}/${ARCH}/lib/"
 cp "${PROJECT_ROOT}"/Zano/src/wallet/*.h "${PLATFORM_ROOT}/${ARCH}/include/"
+cp "${PROJECT_ROOT}"/Zano/src/wallet/plain_wallet_api.h "${PLATFORM_ROOT}/${ARCH}/include-plain-wallet/"
 "${PLATFORM_ROOT}/../zano-version.sh" "${BUILD_ROOT}" > "${PLATFORM_ROOT}/${ARCH}/VERSION"

@@ -32,7 +32,7 @@ CFLAGS+=("-mmacosx-version-min=${MIN_VERSION}")
 
 cd "${BUILD_ROOT}"
 CFLAGS="${CFLAGS[*]}" ./Configure "${CONFIGURE_FLAGS[@]}" || exit 1
-make -j$(sysctl -n hw.ncpu) || exit 1
+make -j$(sysctl -n hw.logicalcpu) || exit 1
 
 if [ ! -f "${BUILD_ROOT}/libssl.a" ]; then
   echo openssl failed to build >&2

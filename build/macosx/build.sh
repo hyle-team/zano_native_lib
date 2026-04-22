@@ -94,6 +94,8 @@ libtool -static -o "${BUILD_ROOT}/stage/libzano.a" -arch_only ${ARCH} \
   "${BUILD_ROOT}/contrib/db/libmdbx/Release/libmdbx.a" \
   "${BUILD_ROOT}/contrib/ethereum/libethash/Release/libethash.a" \
   "${BUILD_ROOT}/contrib/miniupnp/miniupnpc/Release/libminiupnpc.a" || exit 1
+libtool -static -o "${BUILD_ROOT}/stage/libzano-plain-wallet.a" -arch_only ${ARCH} \
+  "${BUILD_ROOT}/stage/libzano.a" "${BUILD_ROOT}/dependencies.a" || exit 1
 
 mkdir -p "${BUILD_ROOT}/stage/include"
 cp "${PROJECT_ROOT}"/Zano/src/wallet/*.h "${BUILD_ROOT}/stage/include/"

@@ -20,10 +20,16 @@ jobs:
           git submodule update --init --depth 1 ios-cmake
       - name: Load env
         uses: ./.github/actions/env
-      - name: Build
-        run: ./thirdparty/openssl/ios/build.sh
+      - name: Build iphoneos arm64
+        run: ./thirdparty/openssl/ios/build.sh iphoneos arm64
+      - name: Build iphonesimulator arm64
+        run: ./thirdparty/openssl/ios/build.sh iphonesimulator arm64
+      - name: Build iphonesimulator x86_64
+        run: ./thirdparty/openssl/ios/build.sh iphonesimulator x86_64
+      - name: Build framework
+        run: ./thirdparty/openssl/ios/framework.sh
       - name: Configure git and stage artifacts for push
         uses: ./.github/actions/artifacts
         with:
-          folder: thirdparty/openssl/ios
+          folder: thirdparty/openssl/ios/libopenssl.xcframework
           name: libopenssl ios
