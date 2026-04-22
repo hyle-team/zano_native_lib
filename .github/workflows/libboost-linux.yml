@@ -6,7 +6,15 @@ on:
 
 jobs:
   build-libboost-linux:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            arch: x86_64
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -14,21 +22,17 @@ jobs:
           lfs: true
           fetch-depth: 1
           submodules: false
+      - name: Load env
+        uses: ./.github/actions/env
       - name: Cache Boost sources
         uses: actions/cache@v4
         with:
           path: ./thirdparty/boost/boost*.tar.gz
-          key: boost-1.76.0
-      - uses: awalsh128/cache-apt-pkgs-action@latest
-        with:
-          packages: g++-aarch64-linux-gnu gcc-aarch64-linux-gnu
-          version: 1.0
-      - name: Load env
-        uses: ./.github/actions/env
+          key: boost-${{ env.BOOST_VERSION }}-${{ env.BOOST_TAR_HASH }}
       - name: Build
-        run: ./thirdparty/boost/linux/build.sh
+        run: ./thirdparty/boost/linux/build.sh ${{ matrix.arch }}
       - name: Configure git and stage artifacts for push
         uses: ./.github/actions/artifacts
         with:
-          folder: thirdparty/boost/linux
-          name: libboost linux
+          folder: thirdparty/boost/linux/${{ matrix.arch }}/
+          name: libboost linux  ${{ matrix.arch }}

@@ -6,7 +6,15 @@ on:
 
 jobs:
   build-libzano-linux:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            arch: x86_64
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -14,20 +22,14 @@ jobs:
           lfs: true
           fetch-depth: 2
           submodules: recursive
-      - uses: awalsh128/cache-apt-pkgs-action@latest
-        with:
-          packages: g++-aarch64-linux-gnu gcc-aarch64-linux-gnu
-          version: 1.0
       - name: Load env
         uses: ./.github/actions/env
+      - name: Prepare Zano
+        uses: ./.github/actions/zano
       - name: Build
-        run: |
-          git config --global user.name "${GITHUB_ACTOR}"
-          git config --global user.email "${GITHUB_ACTOR}@zano.org"
-          (cd Zano && git tag -a v1.0 -m build HEAD^1)
-          ./linux/build.sh
+        run: ./build/linux/build.sh ${{ matrix.arch }}
       - name: Configure git and stage artifacts for push
         uses: ./.github/actions/artifacts
         with:
-          folder: linux
-          name: libzano linux
+          folder: build/linux/${{ matrix.arch }}
+          name: libzano linux ${{ matrix.arch }}

@@ -6,7 +6,15 @@ on:
 
 jobs:
   build-libopenssl-linux:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            arch: x86_64
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -14,21 +22,17 @@ jobs:
           lfs: true
           fetch-depth: 1
           submodules: false
-      - uses: awalsh128/cache-apt-pkgs-action@latest
-        with:
-          packages: g++-aarch64-linux-gnu gcc-aarch64-linux-gnu
-          version: 1.0
+      - name: Load env
+        uses: ./.github/actions/env
       - name: Cache OpenSSL sources
         uses: actions/cache@v4
         with:
           path: ./thirdparty/openssl/openssl*.tar.gz
-          key: openssl-3.1.8
-      - name: Load env
-        uses: ./.github/actions/env
+          key: openssl-${{ env.OPENSSL_VERSION }}-${{ env.OPENSSL_TAR_HASH }}
       - name: Build
-        run: ./thirdparty/openssl/linux/build.sh
+        run: ./thirdparty/openssl/linux/build.sh ${{ matrix.arch }}
       - name: Configure git and stage artifacts for push
         uses: ./.github/actions/artifacts
         with:
-          folder: thirdparty/openssl/linux
-          name: libopenssl linux
+          folder: thirdparty/openssl/linux/${{ matrix.arch }}
+          name: libopenssl linux ${{ matrix.arch }}
