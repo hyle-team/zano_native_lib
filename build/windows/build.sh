@@ -17,32 +17,34 @@ echo "OpenSSL Version: $OPENSSL_VERSION"
 echo "==============================================================================="
 echo "Building: '${BUILD_ROOT}'"
 
-ARCH_ARGS=$([[ $ARCH == x86_64 ]] && echo '-Ax64 -Thost=x64' || exit 1)
-cmake.exe -S"${PROJECT_ROOT}/Zano" -B"${BUILD_ROOT}" \
-  -Wno-dev \
-  -DCMAKE_TOOLCHAIN_FILE="${PLATFORM_ROOT}/windows-toolchain.cmake" \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DOPENSSL_INCLUDE_DIR="${OPENSSL_ROOT}/include" \
-  -DOPENSSL_CRYPTO_LIBRARY="${OPENSSL_ROOT}/lib/libcrypto.lib" \
-  -DOPENSSL_SSL_LIBRARY="${OPENSSL_ROOT}/lib/libssl.lib" \
-  -DBoost_VERSION="Boost ${BOOST_VERSION}" \
-  -DBoost_NO_SYSTEM_PATHS=ON \
-  -DBoost_USE_STATIC_LIBS=ON \
-  -DBoost_USE_STATIC_RUNTIME=OFF \
-  -DBOOST_ROOT="${BOOST_ROOT}" \
-  -DBoost_FATLIB="$(echo "${BOOST_ROOT}"/lib/libboost_*.lib | tr ' ' ';')" \
-  -DBOOST_LIBRARYDIR="${BOOST_ROOT}/lib" \
-  -DBoost_LIBRARY_DIR="${BOOST_ROOT}/lib" \
-  -DBoost_LIBRARY_DIRS="${BOOST_ROOT}/lib" \
-  -DBOOST_INCLUDEDIR="${BOOST_ROOT}/include" \
-  -DBoost_INCLUDE_DIR="${BOOST_ROOT}/include" \
-  -DBoost_INCLUDE_DIRS="${BOOST_ROOT}/include" \
-  -DTESTNET=OFF \
-  -DUSE_PCH=ON \
-  -DBUILD_TESTS=OFF \
-  -DDISABLE_TOR=ON \
-  ${ARCH_ARGS} \
-  -G"Visual Studio 17 2022" || exit 1
+CONFIGURE_FLAGS=("${CONFIGURE_FLAGS}")
+CONFIGURE_FLAGS+=("-S${PROJECT_ROOT}/Zano" "-B${BUILD_ROOT}")
+CONFIGURE_FLAGS+=("-Wno-dev")
+CONFIGURE_FLAGS+=("-DCMAKE_TOOLCHAIN_FILE=${PLATFORM_ROOT}/windows-toolchain.cmake")
+CONFIGURE_FLAGS+=("-DCMAKE_BUILD_TYPE=Release")
+CONFIGURE_FLAGS+=("-DOPENSSL_INCLUDE_DIR=${OPENSSL_ROOT}/include")
+CONFIGURE_FLAGS+=("-DOPENSSL_CRYPTO_LIBRARY=${OPENSSL_ROOT}/lib/libcrypto.lib")
+CONFIGURE_FLAGS+=("-DOPENSSL_SSL_LIBRARY=${OPENSSL_ROOT}/lib/libssl.lib")
+CONFIGURE_FLAGS+=("-DBoost_VERSION=Boost ${BOOST_VERSION}")
+CONFIGURE_FLAGS+=("-DBoost_NO_SYSTEM_PATHS=ON")
+CONFIGURE_FLAGS+=("-DBoost_USE_STATIC_LIBS=ON")
+CONFIGURE_FLAGS+=("-DBoost_USE_STATIC_RUNTIME=OFF")
+CONFIGURE_FLAGS+=("-DBOOST_ROOT=${BOOST_ROOT}")
+CONFIGURE_FLAGS+=("-DBoost_FATLIB=$(echo "${BOOST_ROOT}"/lib/libboost_*.lib | tr ' ' ';')")
+CONFIGURE_FLAGS+=("-DBOOST_LIBRARYDIR=${BOOST_ROOT}/lib")
+CONFIGURE_FLAGS+=("-DBoost_LIBRARY_DIR=${BOOST_ROOT}/lib")
+CONFIGURE_FLAGS+=("-DBoost_LIBRARY_DIRS=${BOOST_ROOT}/lib")
+CONFIGURE_FLAGS+=("-DBOOST_INCLUDEDIR=${BOOST_ROOT}/include")
+CONFIGURE_FLAGS+=("-DBoost_INCLUDE_DIR=${BOOST_ROOT}/include")
+CONFIGURE_FLAGS+=("-DBoost_INCLUDE_DIRS=${BOOST_ROOT}/include")
+CONFIGURE_FLAGS+=("-DTESTNET=OFF")
+CONFIGURE_FLAGS+=("-DUSE_PCH=ON")
+CONFIGURE_FLAGS+=("-DBUILD_TESTS=OFF")
+CONFIGURE_FLAGS+=("-DDISABLE_TOR=ON")
+[[ $ARCH == x86_64 ]] && CONFIGURE_FLAGS+=("Ax64" "-Thost=x64")
+CONFIGURE_FLAGS+=("-GVisual Studio 17 2022")
+
+cmake.exe "${CONFIGURE_FLAGS[@]}"
 cmake --build "${BUILD_ROOT}" --config Release
 for lib in currency_core common crypto rpc stratum wallet pch; do
   if [ ! -f "${BUILD_ROOT}/src/Release/${lib}.lib" ]; then
@@ -62,4 +64,4 @@ cp "${BUILD_ROOT}"/contrib/miniupnp/miniupnpc/Release/miniupnpc.lib "${TARGET_RO
 cp "${PROJECT_ROOT}"/Zano/src/wallet/*.h "${TARGET_ROOT}/include/"
 cp "${PROJECT_ROOT}"/Zano/src/wallet/plain_wallet_api.h "${TARGET_ROOT}/include-plain-wallet/"
 
-"${PROJECT_ROOT}/scripts/zano-version.sh" "${BUILD_ROOT}" > "${TARGET_ROOT}/VERSION"
+"${PLATFORM_ROOT}/../zano-version.sh" "${BUILD_ROOT}" > "${TARGET_ROOT}/VERSION"

@@ -14,3 +14,4 @@ echo '}' >> "${BUILD_PATH}/version/version.c"
 gcc "${BUILD_PATH}/version/version.c" -I"${BUILD_PATH}/version" -o "${BUILD_PATH}/version/version"
 
 "${BUILD_PATH}/version/version"
+rm -f "${BUILD_PATH}/version/version.c" "${BUILD_PATH}/version/version"
