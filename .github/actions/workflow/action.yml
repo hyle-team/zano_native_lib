@@ -18,7 +18,7 @@ runs:
     - shell: bash
       run: |
         export GH_TOKEN=${{ inputs.token }}
-        gh workflow run ${{ inputs.workflows }} --ref ${{ inputs.ref_name }}
+        gh workflow run ${{ inputs.workflow }} --ref ${{ inputs.ref_name }}
         sleep 5
-        RUN_ID=$(gh run list --workflow=${{ inputs.workflows }} --limit 1 --json databaseId --jq '.[0].databaseId')
+        RUN_ID=$(gh run list --workflow=${{ inputs.workflow }} --limit 1 --json databaseId --jq '.[0].databaseId')
         gh run watch $RUN_ID --interval 30 --exit-status
