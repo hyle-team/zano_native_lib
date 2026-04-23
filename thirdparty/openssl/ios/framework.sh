@@ -24,3 +24,7 @@ if [ ! -d "${FRAMEWORK_ROOT}" ]; then
   exit 1
 fi
 cp "${PLATFORM_ROOT}/build-iphoneos-arm64/VERSION" "${FRAMEWORK_ROOT}/VERSION"
+
+# Backport to old folders
+rm -rf "${PROJECT_ROOT}/_install_ios/thirdparty/libopenssl.xcframework"
+cp -r "${FRAMEWORK_ROOT}" "${PROJECT_ROOT}/_install_ios/thirdparty/"

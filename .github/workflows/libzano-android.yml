@@ -32,5 +32,5 @@ jobs:
       - name: Configure git and stage artifacts for push
         uses: ./.github/actions/artifacts
         with:
-          folder: build/android/${{ matrix.arch }}
+          folder: build/android/${{ matrix.arch }};_install_android/${{ matrix.arch }}/lib;_install_android/include
           name: libzano android ${{ matrix.arch }}

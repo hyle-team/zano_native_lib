@@ -22,15 +22,19 @@ if [ ! -f build/boost/${BOOST_VERSION}/ios/release/build/iphoneos/arm64/libboost
 fi
 lipo -create build/boost/${BOOST_VERSION}/ios/release/build/iphonesimulator/*/libboost.a -output build/boost/${BOOST_VERSION}/ios/release/build/iphonesimulator/libboost.a
 
-BOOST_FRAMEWORK=${PLATFORM_ROOT}/libboost.xcframework
-rm -rf "${BOOST_FRAMEWORK}"
+FRAMEWORK_ROOT=${PLATFORM_ROOT}/libboost.xcframework
+rm -rf "${FRAMEWORK_ROOT}"
 xcodebuild -create-xcframework \
   -library build/boost/${BOOST_VERSION}/ios/release/build/iphoneos/arm64/libboost.a \
   -headers build/boost/${BOOST_VERSION}/ios/release/prefix/include \
   -library build/boost/${BOOST_VERSION}/ios/release/build/iphonesimulator/libboost.a \
   -headers build/boost/${BOOST_VERSION}/ios/release/prefix/include \
-  -output ${BOOST_FRAMEWORK}
-echo "${BOOST_VERSION}" > "${BOOST_FRAMEWORK}/VERSION"
+  -output ${FRAMEWORK_ROOT}
+echo "${BOOST_VERSION}" > "${FRAMEWORK_ROOT}/VERSION"
 
 cd Apple-Boost-BuildScript
 git restore boost.sh
+
+# Backport to old folders
+rm -rf "${PROJECT_ROOT}/_install_ios/thirdparty/libboost.xcframework"
+cp -r "${FRAMEWORK_ROOT}" "${PROJECT_ROOT}/_install_ios/thirdparty/"

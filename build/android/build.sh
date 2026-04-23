@@ -75,3 +75,9 @@ cp "${BUILD_ROOT}/contrib/zlib/libz.a" "${PLATFORM_ROOT}/${ARCH}/lib/"
 cp "${PROJECT_ROOT}"/Zano/src/wallet/*.h "${PLATFORM_ROOT}/${ARCH}/include/"
 cp "${PROJECT_ROOT}"/Zano/src/wallet/plain_wallet_api.h "${PLATFORM_ROOT}/${ARCH}/include-plain-wallet/"
 "${PLATFORM_ROOT}/../zano-version.sh" "${BUILD_ROOT}" > "${PLATFORM_ROOT}/${ARCH}/VERSION"
+
+# Backport to old folders
+rm -rf "${PROJECT_ROOT}"/_install_android/${ARCH}/lib
+cp -r "${PLATFORM_ROOT}/${ARCH}/lib" "${PROJECT_ROOT}/_install_android/${ARCH}/"
+rm -rf "${PROJECT_ROOT}"/_install_android/include
+cp -r "${PLATFORM_ROOT}/${ARCH}/include" "${PROJECT_ROOT}/_install_android/"

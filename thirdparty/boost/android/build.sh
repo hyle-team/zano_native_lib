@@ -26,4 +26,12 @@ for ARCH in arm64-v8a armeabi-v7a x86 x86_64; do
   cp -r build/out/${ARCH}/include/boost ${PLATFORM_ROOT}/${ARCH}/include/
   cp -r build/out/${ARCH}/lib/* ${PLATFORM_ROOT}/${ARCH}/lib/
   echo "${BOOST_VERSION}" > "${PLATFORM_ROOT}/${ARCH}/VERSION"
+
+  # Backport to old folders
+  rm -rf "${PROJECT_ROOT}"/_libs_android/boost/${ARCH}/lib
+  cp -r "${PLATFORM_ROOT}/${ARCH}/lib" "${PROJECT_ROOT}/_libs_android/boost/${ARCH}/"
 done
+
+# Backport to old folders
+rm -rf "${PROJECT_ROOT}"/_libs_android/boost/include
+cp -r "${PLATFORM_ROOT}/arm64-v8a/include" "${PROJECT_ROOT}/_libs_android/boost/"

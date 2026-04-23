@@ -25,5 +25,5 @@ jobs:
       - name: Configure git and stage artifacts for push
         uses: ./.github/actions/artifacts
         with:
-          folder: thirdparty/boost/ios/libboost.xcframework
+          folder: thirdparty/boost/ios/libboost.xcframework;_install_ios/thirdparty/libboost.xcframework
           name: libboost ios

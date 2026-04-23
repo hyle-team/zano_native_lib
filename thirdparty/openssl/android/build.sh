@@ -56,3 +56,9 @@ cp "${BUILD_ROOT}"/lib{ssl,crypto}.a "${PLATFORM_ROOT}/${ARCH}/lib/"
 cp -r "${BUILD_ROOT}"/include/* "${PLATFORM_ROOT}/${ARCH}/include/"
 source "${BUILD_ROOT}/VERSION.dat"
 echo "${MAJOR}.${MINOR}.${PATCH}" > "${PLATFORM_ROOT}/${ARCH}/VERSION"
+
+# Backport to old folders
+rm -rf "${PROJECT_ROOT}"/_libs_android/openssl/${ARCH}/lib
+cp -r "${PLATFORM_ROOT}/${ARCH}/lib" "${PROJECT_ROOT}/_libs_android/openssl/${ARCH}/"
+rm -rf "${PROJECT_ROOT}"/_libs_android/openssl/include
+cp -r "${PLATFORM_ROOT}/${ARCH}/include" "${PROJECT_ROOT}/_libs_android/openssl/"
