@@ -1,4 +1,4 @@
-name: "30 - Pull Zano"
+name: "05 - Pull Zano"
 
 on:
   workflow_dispatch:
