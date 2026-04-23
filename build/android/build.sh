@@ -75,8 +75,3 @@ cp "${BUILD_ROOT}/contrib/zlib/libz.a" "${PLATFORM_ROOT}/${ARCH}/lib/"
 cp "${PROJECT_ROOT}"/Zano/src/wallet/*.h "${PLATFORM_ROOT}/${ARCH}/include/"
 cp "${PROJECT_ROOT}"/Zano/src/wallet/plain_wallet_api.h "${PLATFORM_ROOT}/${ARCH}/include-plain-wallet/"
 "${PLATFORM_ROOT}/../zano-version.sh" "${BUILD_ROOT}" > "${PLATFORM_ROOT}/${ARCH}/VERSION"
-
-# BUILD arm64-v8a
-# BUILD armeabi-v7a
-# BUILD x86
-# BUILD x86_64

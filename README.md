@@ -1,42 +1,160 @@
+1. [Description](<#Zano-Wallet-Library-(native)>)
+2. [Build your project with Zano](#Build-your-project-with-Zano)
 
-# Zano Wallet Library (native) for mobile platforms (ios/android)
+- [iOS or MacOSX](#iOS-or-MacOSX)
+- [Android or Linux](#Android-or-Linux)
+- [Windows](#Windows)
 
-To build ios run build_ios_libs.sh script, and as a result will be xcframworks libraries assembled in _install_ios/lib folder, include it all in xcode project Build Phases -> Link Binary With Libraries
+3. [Wallet Library API Documentation](#Wallet-Library-API-Documentation)
 
-To build Android libraries run build_android_libs.sh script, a result will be built to _install_android 
+- [Typedef](#Typedef)
+- [Initialization Functions](#Initialization-Functions)
+- [Utility Functions](#Utility-Functions)
+- [Configuration Functions](#Configuration-Functions)
+- [Wallet Management Functions](#Wallet-Management-Functions)
+- [Wallet Operations](#Wallet-Operations)
+- [Asynchronous API Functions](#Asynchronous-API-Functions)
+- [Cake Wallet API Extension](#Cake-Wallet-API-Extension)
 
+4. [Miscellaneous](#Miscellaneous)
+
+- [Artifacts folders structure](#Artifacts-folders-structure)
+- [Build Zano](#Build-Zano)
+- [Boost dependency](#Boost-dependency)
+- [OpenSSL dependency](#OpenSSL-dependency)
+- [GNU libiconv dependency](#GNU-libiconv-dependency)
+
+# Zano Wallet Library (native)
+
+Currently available for:
+
+- ios (arm64, x86_64),
+- android (arm64-v8a, armeabi-v7a, x86, x86_64),
+- linux (arm64, x86_64),
+- windows (arm64, x86_64),
+- macosx (arm64, x86_64)
+
+# Build your project with Zano
+
+## iOS or MacOSX
+
+To build your iOS or MacOSX project with Zano use `./build/${PLATFORM}/libzano-plain-wallet.xcframework` (include Zano and it's dependencies and provides only plain wallet api).
+
+If you are using Boost or OpenSSL directly or not using plain_wallet_api you need to use `./build/${PLATFORM}/libzano.xcframework`
+with Boost and OpenSSL provided separately. This repo also provides them as frameworks:
+
+- `./thirdparty/boost/${PLATFORM}/libboost.xcframework`
+- `./thirdparty/openssl/${PLATFORM}/libopenssl.xcframework`
+
+## Android or Linux
+
+To build your Android or Linux project with Zano here is what you need to do:
+
+- include this folder: `./build/${PLATFORM}/${ARCH}/include`
+- or, if you need only plain_wallet_api: `./build/${PLATFORM}/${ARCH}/include-plain-wallet`
+- add this libraries (order matters):
+  - `./build/${PLATFORM}/${ARCH}/lib/libcurrency_core.a`
+  - `./build/${PLATFORM}/${ARCH}/lib/libcommon.a`
+  - `./build/${PLATFORM}/${ARCH}/lib/libcrypto.a`
+  - `./build/${PLATFORM}/${ARCH}/lib/libwallet.a`
+  - `./build/${PLATFORM}/${ARCH}/lib/libz.a`
+  - `./thirdparty/boost/${PLATFORM}/${ARCH}/lib/libboost_atomic.a`
+  - `./thirdparty/boost/${PLATFORM}/${ARCH}/lib/libboost_chrono.a`
+  - `./thirdparty/boost/${PLATFORM}/${ARCH}/lib/libboost_date_time.a`
+  - `./thirdparty/boost/${PLATFORM}/${ARCH}/lib/libboost_filesystem.a`
+  - `./thirdparty/boost/${PLATFORM}/${ARCH}/lib/libboost_regex.a`
+  - `./thirdparty/boost/${PLATFORM}/${ARCH}/lib/libboost_serialization.a`
+  - `./thirdparty/boost/${PLATFORM}/${ARCH}/lib/libboost_system.a`
+  - `./thirdparty/boost/${PLATFORM}/${ARCH}/lib/libboost_thread.a`
+  - `./thirdparty/boost/${PLATFORM}/${ARCH}/lib/libboost_timer.a`
+  - `./thirdparty/boost/${PLATFORM}/${ARCH}/lib/libboost_program_options.a`
+  - `./thirdparty/boost/${PLATFORM}/${ARCH}/lib/libboost_wserialization.a`
+  - `./thirdparty/openssl/${PLATFORM}/${ARCH}/lib/libssl.a`
+  - `./thirdparty/openssl/${PLATFORM}/${ARCH}/lib/libcrypto.a`
+
+Example for Android
+
+```
+target_link_libraries(
+  ${PACKAGE_NAME}
+  ${ZANO_NATIVE_LIB_PATH}/build/android/${ANDROID_ABI}/lib/libcurrency_core.a
+  ${ZANO_NATIVE_LIB_PATH}/build/android/${ANDROID_ABI}/lib/libcommon.a
+  ${ZANO_NATIVE_LIB_PATH}/build/android/${ANDROID_ABI}/lib/libcrypto.a
+  ${ZANO_NATIVE_LIB_PATH}/build/android/${ANDROID_ABI}/lib/libwallet.a
+  ${ZANO_NATIVE_LIB_PATH}/build/android/${ANDROID_ABI}/lib/libz.a
+  ${ZANO_NATIVE_LIB_PATH}/thirdparty/boost/android/${ANDROID_ABI}/lib/libboost_atomic.a
+  ${ZANO_NATIVE_LIB_PATH}/thirdparty/boost/android/${ANDROID_ABI}/lib/libboost_chrono.a
+  ${ZANO_NATIVE_LIB_PATH}/thirdparty/boost/android/${ANDROID_ABI}/lib/libboost_date_time.a
+  ${ZANO_NATIVE_LIB_PATH}/thirdparty/boost/android/${ANDROID_ABI}/lib/libboost_filesystem.a
+  ${ZANO_NATIVE_LIB_PATH}/thirdparty/boost/android/${ANDROID_ABI}/lib/libboost_regex.a
+  ${ZANO_NATIVE_LIB_PATH}/thirdparty/boost/android/${ANDROID_ABI}/lib/libboost_serialization.a
+  ${ZANO_NATIVE_LIB_PATH}/thirdparty/boost/android/${ANDROID_ABI}/lib/libboost_system.a
+  ${ZANO_NATIVE_LIB_PATH}/thirdparty/boost/android/${ANDROID_ABI}/lib/libboost_thread.a
+  ${ZANO_NATIVE_LIB_PATH}/thirdparty/boost/android/${ANDROID_ABI}/lib/libboost_timer.a
+  ${ZANO_NATIVE_LIB_PATH}/thirdparty/boost/android/${ANDROID_ABI}/lib/libboost_program_options.a
+  ${ZANO_NATIVE_LIB_PATH}/thirdparty/boost/android/${ANDROID_ABI}/lib/libboost_wserialization.a
+  ${ZANO_NATIVE_LIB_PATH}/thirdparty/openssl/android/${ANDROID_ABI}/lib/libssl.a
+  ${ZANO_NATIVE_LIB_PATH}/thirdparty/openssl/android/${ANDROID_ABI}/lib/libcrypto.a
+)
+```
+
+## Windows
+
+To build your Windows project with Zano here is what you need to do:
+
+- include this folder: `./build/windows/${ARCH}/include`
+- or, if you need only plain_wallet_api: `./build/windows/${ARCH}/include-plain-wallet`
+- add this libraries:
+  - `./build/windows/${ARCH}/lib/*.lib`
+  - `./thirdparty/boost/windows/${ARCH}/lib/*.lib`
+  - `./thirdparty/openssl/windows/${ARCH}/lib/*.lib`
+
+```
+file(GLOB LIBZANO_LIBS
+  "${ZANO_NATIVE_LIB_PATH}/build/windows/${ARCH}/lib/*.lib"
+  "${ZANO_NATIVE_LIB_PATH}/thirdparty/boost/windows/${ARCH}/lib/*.lib"
+  "${ZANO_NATIVE_LIB_PATH}/thirdparty/openssl/windows/${ARCH}/lib/*.lib"
+)
+target_link_libraries(${PROJECT_NAME} PRIVATE ntdll crypt32 ${LIBZANO_LIBS})
+```
 
 # Wallet Library API Documentation
 
 ## Namespace: `plain_wallet`
 
 ### Typedef
+
 - `hwallet`<br>A type representing a wallet handle, defined as `int64_t`.
 
 ### Initialization Functions
+
 - `std::string init(const std::string& address, const std::string& working_dir, int log_level)`<br>Initializes the wallet using the specified address(http://127.0.0.1:2222), working directory, and log level.<br><br>
 - `std::string init(const std::string& ip, const std::string& port, const std::string& working_dir, int log_level)`<br>Initializes the wallet using the specified IP address, port, working directory, and log level.<br><br>
 
-Note: The path that passed to **init** as **working_dir** should be available for writing, here is a possible code for iOS/Android: 
+Note: The path that passed to **init** as **working_dir** should be available for writing, here is a possible code for iOS/Android:
 Code for android it use this code (java):
+
 ```
 String myString = getReactApplicationContext().getFilesDir().getAbsolutePath();
 ```
+
 Code for ios it use this code (objectiveC)
+
 ```
 NSFileManager *fileManager = [NSFileManager defaultManager];
 NSURL *docsDir = [fileManager URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
 NSString *strX = [docsDir path];
 ```
 
-
 ### Utility Functions
+
 - `std::string reset()`<br>Quicly close all opened wallets(withut saving files).<br><br>
 - `std::string set_log_level(int log_level)`<br>Sets the log level for the wallet.(default is 0, -1 disabled)<br><br>
 - `std::string get_version()`<br>Retrieves the version string of the wallet library. <br>Returns: `2.0.0.317[2f535f0]`<br><br>
 - `std::string get_wallet_files()`<br>Retrieves list of wallet files contained in app working folder, returned as JSON strings array.<br>Response:
+
 ```json
- {
+{
   "items": [
     "11.newtmp_1723818128",
     "3wetw",
@@ -51,9 +169,12 @@ NSString *strX = [docsDir path];
   ]
 }
 ```
+
 <br><br>
+
 - `std::string get_export_private_info(const std::string& target_dir)`<br>Retrieves private information and exports it to the specified directory.<br><br>
 - `std::string delete_wallet(const std::string& file_name)`<br>Deletes the wallet with the specified file name.<br>Response:
+
 ```json
 {
   "id": 0,
@@ -63,10 +184,13 @@ NSString *strX = [docsDir path];
   }
 }
 ```
+
 <br><br>
-- `std::string get_address_info(const std::string& addr)`<br>Retrieves information about a specific address, validate it.<br>**Example:** 
-`get_address_info("ZxDQxh9WKrzKPAzJLubti7BiidsnrvDNHbwDjAAXPnrtSVX4Mfc51ZiUafLMdMDBL54mp9J25mZxkGjLQxizxzbX1JzGyRbW5")`
-<br>**Response:** 
+
+- `std::string get_address_info(const std::string& addr)`<br>Retrieves information about a specific address, validate it.<br>**Example:**
+  `get_address_info("ZxDQxh9WKrzKPAzJLubti7BiidsnrvDNHbwDjAAXPnrtSVX4Mfc51ZiUafLMdMDBL54mp9J25mZxkGjLQxizxzbX1JzGyRbW5")`
+  <br>**Response:**
+
 ```json
 {
   "valid": true,
@@ -75,7 +199,9 @@ NSString *strX = [docsDir path];
   "wrap": false
 }
 ```
+
 <br><br>
+
 ### Configuration Functions
 
 - `std::string set_appconfig(const std::string& conf_str, const std::string& encryption_key)` <br>Sets the application configuration an a free text form (common way to store it in JSON) using the specified configuration string and encryption key. This text is encrypted and stored in application system folder. Might be used to storing list of opened wallet files and it's passwords. <br><br>
@@ -85,6 +211,7 @@ NSString *strX = [docsDir path];
 - `std::string get_logs_buffer()`<br>Retrieves the logs buffer, userful for debugging.<br><br>
 - `std::string truncate_log()`<br>Truncates the log file.<br><br>
 - `std::string get_connectivity_status()`<br>Retrieves the connectivity status.<br>Response:
+
 ```json
 {
   "is_online": true,
@@ -93,13 +220,16 @@ NSString *strX = [docsDir path];
   "last_proxy_communicate_timestamp": 1726314483
 }
 ```
+
 <br>
 <br>
 
 ### Wallet Management Functions
-- `std::string open(const std::string& path, const std::string& password)`<br>Opens a wallet from the specified path using the provided password, the path is relative to the app wallet home dir. This is synchronous function, recommend to use async form of this call by calling 
-`async_api_call('open', 0, {path: "file_name", pass: "password"});`
-Response: 
+
+- `std::string open(const std::string& path, const std::string& password)`<br>Opens a wallet from the specified path using the provided password, the path is relative to the app wallet home dir. This is synchronous function, recommend to use async form of this call by calling
+  `async_api_call('open', 0, {path: "file_name", pass: "password"});`
+  Response:
+
 ```json
 {
     "id": 0,
@@ -129,8 +259,11 @@ Response:
     }
 }
 ```
+
 <br><br>
-- `std::string restore(const std::string& seed, const std::string& path, const std::string& password, const std::string& seed_password)`<br>Restores a wallet using the provided seed (and seed's password if it's secured seed). Restored wallet saved to **path**, and encrypted with **password**.<br>Response: 
+
+- `std::string restore(const std::string& seed, const std::string& path, const std::string& password, const std::string& seed_password)`<br>Restores a wallet using the provided seed (and seed's password if it's secured seed). Restored wallet saved to **path**, and encrypted with **password**.<br>Response:
+
 ```json
 {
   "id": 0,
@@ -178,9 +311,12 @@ Response:
   }
 }
 ```
+
 <br><br>
+
 - `std::string generate(const std::string& path, const std::string& password)`<br>Generates a new wallet at the specified **path** with the provided **password**.
-Response: 
+  Response:
+
 ```json
 {
   "id": 0,
@@ -228,8 +364,11 @@ Response:
   }
 }
 ```
+
 <br><br>
-- `std::string get_opened_wallets()`<br>Retrieves list of currently opened wallets with it's handles(**wallet_id**). Response: 
+
+- `std::string get_opened_wallets()`<br>Retrieves list of currently opened wallets with it's handles(**wallet_id**). Response:
+
 ```json
 {
   "id": 0,
@@ -279,10 +418,13 @@ Response:
   ]
 }
 ```
+
 <br><br>
 
 ### Wallet Operations
-- `std::string get_wallet_status(hwallet h)`<br>Retrieves the status of the wallet with the specified handle. Response: 
+
+- `std::string get_wallet_status(hwallet h)`<br>Retrieves the status of the wallet with the specified handle. Response:
+
 ```json
 {
   "current_daemon_height": 2809788,
@@ -295,30 +437,36 @@ Response:
 ```
 
 <br><br>
-- `std::string close_wallet(hwallet h)`<br>Closes the wallet with the specified handle. This is synchronous function, recommend to use async form of this call by calling 
-`async_api_call('close', wallet_id, '');`
-Response: 
+
+- `std::string close_wallet(hwallet h)`<br>Closes the wallet with the specified handle. This is synchronous function, recommend to use async form of this call by calling
+  `async_api_call('close', wallet_id, '');`
+  Response:
+
 ```json
 {
-	"return_code": "OK"
+  "return_code": "OK"
 }
 ```
+
 <br><br>
-- `std::string invoke(hwallet h, const std::string& params)`<br>Basically invokes an call to the wallet native library by using JSON RPC format, documented in the official wallet RPC documentation. This call normally don't do any network communications, it's just JSON-based gateway to wallet native library. It's recommended yo use this via **async_api_call** method to avoid lags with heavy calls. Example: 
-`await async_api_call( 'invoke', 0, "{ \"method\": \"store\", }");`
-This example calls **"invoke"** api of this library, for the wallet with handle 0, and pass string `"{ \"method\": \"store\", }"` to this "invoke" as argument, which address wallet RPC method "store". Method "store"  might be heavy and time consuming, for that reason it's called by using **async_api_call**
-<br><br>
+
+- `std::string invoke(hwallet h, const std::string& params)`<br>Basically invokes an call to the wallet native library by using JSON RPC format, documented in the official wallet RPC documentation. This call normally don't do any network communications, it's just JSON-based gateway to wallet native library. It's recommended yo use this via **async_api_call** method to avoid lags with heavy calls. Example:
+  `await async_api_call( 'invoke', 0, "{ \"method\": \"store\", }");`
+  This example calls **"invoke"** api of this library, for the wallet with handle 0, and pass string `"{ \"method\": \"store\", }"` to this "invoke" as argument, which address wallet RPC method "store". Method "store" might be heavy and time consuming, for that reason it's called by using **async_api_call**
+  <br><br>
 
 ### Asynchronous API Functions
-- `std::string async_call(const std::string& method_name, uint64_t wallet_id, const std::string& params)`<br>Initiates an asynchronous call of on of the following functions: 
-	- "**close**"
-	- "**open**",
-	- "**restore**"
-	- "**get_seed_phrase_info**",
-	- "**invoke**" (this is proxy to wallet JSON RPC API, documented in the official documentation)
-	- "**get_wallet_status**"
+
+- `std::string async_call(const std::string& method_name, uint64_t wallet_id, const std::string& params)`<br>Initiates an asynchronous call of on of the following functions:
+  - "**close**"
+  - "**open**",
+  - "**restore**"
+  - "**get_seed_phrase_info**",
+  - "**invoke**" (this is proxy to wallet JSON RPC API, documented in the official documentation)
+  - "**get_wallet_status**"
 
 Return job_id, and result should be fetched with **try_pull_result()** by passing given job_id, normally **try_pull_result()** is done in the background with some reasonable sleep interval around 100 ms.
+
 ```json
 {
   "job_id": 4093
@@ -326,11 +474,77 @@ Return job_id, and result should be fetched with **try_pull_result()** by passin
 ```
 
 <br><br>
+
 - `std::string try_pull_result(uint64_t job_id)`<br>Tries to pull the result of a previous asynchronous call.<br><br>
 - `std::string sync_call(const std::string& method_name, uint64_t instance_id, const std::string& params)`<br>This is internal function and normally not used by front end.<br><br>
 
 ### Cake Wallet API Extension
+
 - `bool is_wallet_exist(const std::string& path)`<br>Checks if a wallet exists at the specified path.<br><br>
 - `std::string get_wallet_info(hwallet h)`<br>Retrieves extended information about the wallet with the specified handle(including secret keys and seed).<br><br>
 - `std::string reset_wallet_password(hwallet h, const std::string& password)`<br>Resets the password of the wallet with the specified handle.<br><br>
 - `uint64_t get_current_tx_fee(uint64_t priority)`<br>Retrieves the current transaction fee based on priority.<br><br>
+
+# Miscellaneous
+
+## Artifacts folders structure
+
+This repository provides Zano artifacts:
+
+- ios:
+  - `./build/ios/libzano.xcframework`
+  - `./build/ios/libzano-plain-wallet.xcframework` - contains all the neccesary dependencies inside (Boost and OpenSSL)
+- macosx:
+  - `./build/macosx/libzano.xcframework`
+  - `./build/macosx/libzano-plain-wallet.xcframework` - contains all the neccesary dependencies inside (Boost and OpenSSL)
+- android (ARCH: arm64-v8a, armeabi-v7a, x86, x86_64):
+  - `./build/android/${ARCH}/lib` - build libraries
+  - `./build/android/${ARCH}/include` - include files from Zano/src/wallet/
+  - `./build/android/${ARCH}/include-plain-wallet` - include files plain wallet include files
+- linux (ARCH: arm64, x86_64):
+  - `./build/android/${ARCH}/lib` - build libraries
+  - `./build/android/${ARCH}/include` - include files from Zano/src/wallet/
+  - `./build/android/${ARCH}/include-plain-wallet` - include files plain wallet include files
+- windows (ARCH: arm64, x86_64):
+  - `./build/android/${ARCH}/lib` - build libraries
+  - `./build/android/${ARCH}/include` - include files from Zano/src/wallet/
+  - `./build/android/${ARCH}/include-plain-wallet` - include files plain wallet include files
+
+Zano requires OpenSSL and Boost as depencencies, so we ship them as well:
+
+- OpenSSL: `./thirdparty/openssl`
+- Boost: `./thirdparty/boost`
+- [GNU libiconv](https://www.gnu.org/software/libiconv/): `./thirdparty/iconv` (Boost is build agains GNU libiconv on linux and macosx.)
+
+Every depency has same structure as `./build` folder.
+
+## Build Zano
+
+To build Zano library run this scripts:
+
+- iOS: `./build/ios/framework.sh`
+- MacOSX: `./build/macosx/framework.sh`
+- Android: `./build/android/build-all.sh`
+- Linux: `./build/linux/build-all.sh`
+- Windows: `./build/windows/build-all.sh`
+
+## Boost dependency
+
+- iOS: `./thirdparty/boost/ios/build.sh`
+- MacOSX: `./thirdparty/boost/macosx/framework.sh`
+- Android: `./thirdparty/boost/android/build.sh`
+- Linux: `./thirdparty/boost/linux/build-all.sh`
+- Windows: `./thirdparty/boost/windows/build-all.sh`
+
+## OpenSSL dependency
+
+- iOS: `./build/ios/framework.sh`
+- MacOSX: `./build/macosx/framework.sh`
+- Android: `./build/android/build-all.sh`
+- Linux: `./build/linux/build-all.sh`
+- Windows: `./build/windows/build-all.sh`
+
+## GNU libiconv dependency
+
+- MacOSX: `./build/macosx/framework.sh`
+- Linux: `./build/linux/build-all.sh`
