@@ -1,8 +1,11 @@
 1. [Description](<#Zano-Wallet-Library-(native)>)
 2. [Build your project with Zano](#Build-your-project-with-Zano)
 
-- [iOS or MacOSX](#iOS-or-MacOSX)
-- [Android or Linux](#Android-or-Linux)
+- [Artifacts folders structure](#Artifacts-folders-structure)
+- [iOS](#iOS)
+- [Android](#Android)
+- [MacOSX](#MacOSX)
+- [Linux](#Linux)
 - [Windows](#Windows)
 
 3. [Wallet Library API Documentation](#Wallet-Library-API-Documentation)
@@ -16,15 +19,16 @@
 - [Asynchronous API Functions](#Asynchronous-API-Functions)
 - [Cake Wallet API Extension](#Cake-Wallet-API-Extension)
 
-4. [Miscellaneous](#Miscellaneous)
-
-- [Artifacts folders structure](#Artifacts-folders-structure)
-- [Build Zano](#Build-Zano)
-- [Boost dependency](#Boost-dependency)
-- [OpenSSL dependency](#OpenSSL-dependency)
-- [GNU libiconv dependency](#GNU-libiconv-dependency)
+4. [Build Zano](#Build-Zano)
 
 # Zano Wallet Library (native)
+
+Zano is an open-source layer-1 blockchain where every transaction is private by default.
+Amounts, addresses, and even asset types are hidden. This is enforced at the protocol level, not opt-in.
+
+This repository provides prebuilt binaries of the Zano core, specifically optimized for
+developers who need a streamlined integration. It focuses primarily on the Plain Wallet API,
+a simplified interface that abstracts the complexities of the protocol into easy-to-use functions.
 
 Currently available for:
 
@@ -36,65 +40,176 @@ Currently available for:
 
 # Build your project with Zano
 
-## iOS or MacOSX
+## Artifacts folders structure
 
-To build your iOS or MacOSX project with Zano use `./build/${PLATFORM}/libzano-plain-wallet.xcframework` (include Zano and it's dependencies and provides only plain wallet api).
+This repository provides Zano artifacts:
 
-If you are using Boost or OpenSSL directly or not using plain_wallet_api you need to use `./build/${PLATFORM}/libzano.xcframework`
+- ios:
+  - `./_install_ios/lib/libzano-plain-wallet.xcframework` - contains all the neccesary dependencies inside (Boost and OpenSSL)
+  - `./_install_ios/lib/libzano.xcframework`
+  - `./_install_ios/lib/thirdparty/libboost.xcframework`
+  - `./_install_ios/lib/thirdparty/libopenssl.xcframework`
+- android (ARCH: arm64-v8a, armeabi-v7a, x86, x86_64):
+  - `./_install_android/${ARCH}/lib` - zano libraries
+  - `./_install_android/include-plain-wallet` - zano plain wallet includes
+  - `./_install_android/include` - zano includes
+  - `./_libs_android/boost/${ARCH}/lib` - boost libraries
+  - `./_libs_android/boost/include` - boost includes
+  - `./_libs_android/openssl/${ARCH}/lib` - openssl libraries
+  - `./_libs_android/openssl/include` - openssl includes
+- macosx:
+  - `./_install_macosx/libzano-plain-wallet.xcframework` - contains all the neccesary dependencies inside (Boost and OpenSSL)
+  - `./_install_macosx/libzano.xcframework`
+  - `./_install_macosx/libboost.xcframework`
+  - `./_install_macosx/libopenssl.xcframework`
+  - `./_install_macosx/libiconv.xcframework`
+- linux (ARCH: arm64, x86_64):
+  - `./_install_linux/zano/${ARCH}/lib` - zano libraries
+  - `./_install_linux/zano/${ARCH}/include-plain-wallet` - zano plain wallet includes
+  - `./_install_linux/zano/${ARCH}/include` - zano includes
+  - `./_install_linux/boost/${ARCH}/lib` - boost libraries
+  - `./_install_linux/boost/${ARCH}/include-plain-wallet` - boost plain wallet includes
+  - `./_install_linux/boost/${ARCH}/include` - boost includes
+  - `./_install_linux/openssl/${ARCH}/lib` - openssl libraries
+  - `./_install_linux/openssl/${ARCH}/include-plain-wallet` - openssl plain wallet includes
+  - `./_install_linux/openssl/${ARCH}/include` - openssl includes
+  - `./_install_linux/iconv/${ARCH}/lib` - iconv libraries
+  - `./_install_linux/iconv/${ARCH}/include-plain-wallet` - iconv plain wallet includes
+  - `./_install_linux/iconv/${ARCH}/include` - iconv includes
+- windows (ARCH: arm64, x86_64):
+  - `./_install_windows/zano/${ARCH}/lib` - zano libraries
+  - `./_install_windows/zano/${ARCH}/include-plain-wallet` - zano plain wallet includes
+  - `./_install_windows/zano/${ARCH}/include` - zano includes
+  - `./_install_windows/boost/${ARCH}/lib` - boost libraries
+  - `./_install_windows/boost/${ARCH}/include-plain-wallet` - boost plain wallet includes
+  - `./_install_windows/boost/${ARCH}/include` - boost includes
+  - `./_install_windows/openssl/${ARCH}/lib` - openssl libraries
+  - `./_install_windows/openssl/${ARCH}/include-plain-wallet` - openssl plain wallet includes
+  - `./_install_windows/openssl/${ARCH}/include` - openssl includes
+
+## iOS
+
+To build your iOS project with Zano use `./_install_ios/lib/libzano-plain-wallet.xcframework` (include Zano and it's dependencies and provides only plain wallet api).
+
+If you are using Boost or OpenSSL directly or not using plain_wallet_api you need to use `./_install_ios/lib/libzano.xcframework`
 with Boost and OpenSSL provided separately. This repo also provides them as frameworks:
 
-- `./thirdparty/boost/${PLATFORM}/libboost.xcframework`
-- `./thirdparty/openssl/${PLATFORM}/libopenssl.xcframework`
+- `./_install_ios/lib/thirdparty/libboost.xcframework`
+- `./_install_ios/lib/thirdparty/libopenssl.xcframework`
 
-## Android or Linux
+## Android
 
-To build your Android or Linux project with Zano here is what you need to do:
+To build your Android project with Zano here is what you need to do:
 
-- include this folder: `./build/${PLATFORM}/${ARCH}/include`
-- or, if you need only plain_wallet_api: `./build/${PLATFORM}/${ARCH}/include-plain-wallet`
+- include this folder: `./_install_android/include-plain-wallet`
+- or, if you need more then plain_wallet_api: `./_install_android/include`
 - add this libraries (order matters):
-  - `./build/${PLATFORM}/${ARCH}/lib/libcurrency_core.a`
-  - `./build/${PLATFORM}/${ARCH}/lib/libcommon.a`
-  - `./build/${PLATFORM}/${ARCH}/lib/libcrypto.a`
-  - `./build/${PLATFORM}/${ARCH}/lib/libwallet.a`
-  - `./build/${PLATFORM}/${ARCH}/lib/libz.a`
-  - `./thirdparty/boost/${PLATFORM}/${ARCH}/lib/libboost_atomic.a`
-  - `./thirdparty/boost/${PLATFORM}/${ARCH}/lib/libboost_chrono.a`
-  - `./thirdparty/boost/${PLATFORM}/${ARCH}/lib/libboost_date_time.a`
-  - `./thirdparty/boost/${PLATFORM}/${ARCH}/lib/libboost_filesystem.a`
-  - `./thirdparty/boost/${PLATFORM}/${ARCH}/lib/libboost_regex.a`
-  - `./thirdparty/boost/${PLATFORM}/${ARCH}/lib/libboost_serialization.a`
-  - `./thirdparty/boost/${PLATFORM}/${ARCH}/lib/libboost_system.a`
-  - `./thirdparty/boost/${PLATFORM}/${ARCH}/lib/libboost_thread.a`
-  - `./thirdparty/boost/${PLATFORM}/${ARCH}/lib/libboost_timer.a`
-  - `./thirdparty/boost/${PLATFORM}/${ARCH}/lib/libboost_program_options.a`
-  - `./thirdparty/boost/${PLATFORM}/${ARCH}/lib/libboost_wserialization.a`
-  - `./thirdparty/openssl/${PLATFORM}/${ARCH}/lib/libssl.a`
-  - `./thirdparty/openssl/${PLATFORM}/${ARCH}/lib/libcrypto.a`
+  - `./_install_android/${ARCH}/lib/libcurrency_core.a`
+  - `./_install_android/${ARCH}/lib/libcommon.a`
+  - `./_install_android/${ARCH}/lib/libcrypto.a`
+  - `./_install_android/${ARCH}/lib/libwallet.a`
+  - `./_install_android/${ARCH}/lib/libz.a`
+  - `./_libs_android/boost/${ARCH}/lib/libboost_atomic.a`
+  - `./_libs_android/boost/${ARCH}/lib/libboost_chrono.a`
+  - `./_libs_android/boost/${ARCH}/lib/libboost_date_time.a`
+  - `./_libs_android/boost/${ARCH}/lib/libboost_filesystem.a`
+  - `./_libs_android/boost/${ARCH}/lib/libboost_regex.a`
+  - `./_libs_android/boost/${ARCH}/lib/libboost_serialization.a`
+  - `./_libs_android/boost/${ARCH}/lib/libboost_system.a`
+  - `./_libs_android/boost/${ARCH}/lib/libboost_thread.a`
+  - `./_libs_android/boost/${ARCH}/lib/libboost_timer.a`
+  - `./_libs_android/boost/${ARCH}/lib/libboost_program_options.a`
+  - `./_libs_android/boost/${ARCH}/lib/libboost_wserialization.a`
+  - `./_libs_android/openssl/${ARCH}/lib/libssl.a`
+  - `./_libs_android/openssl/${ARCH}/lib/libcrypto.a`
 
-Example for Android
+Example cmake
 
 ```
+include_directories(${ZANO_NATIVE_LIB_PATH}/_install_android/${ANDROID_ABI}/include-plain-wallet)
 target_link_libraries(
-  ${PACKAGE_NAME}
-  ${ZANO_NATIVE_LIB_PATH}/build/android/${ANDROID_ABI}/lib/libcurrency_core.a
-  ${ZANO_NATIVE_LIB_PATH}/build/android/${ANDROID_ABI}/lib/libcommon.a
-  ${ZANO_NATIVE_LIB_PATH}/build/android/${ANDROID_ABI}/lib/libcrypto.a
-  ${ZANO_NATIVE_LIB_PATH}/build/android/${ANDROID_ABI}/lib/libwallet.a
-  ${ZANO_NATIVE_LIB_PATH}/build/android/${ANDROID_ABI}/lib/libz.a
-  ${ZANO_NATIVE_LIB_PATH}/thirdparty/boost/android/${ANDROID_ABI}/lib/libboost_atomic.a
-  ${ZANO_NATIVE_LIB_PATH}/thirdparty/boost/android/${ANDROID_ABI}/lib/libboost_chrono.a
-  ${ZANO_NATIVE_LIB_PATH}/thirdparty/boost/android/${ANDROID_ABI}/lib/libboost_date_time.a
-  ${ZANO_NATIVE_LIB_PATH}/thirdparty/boost/android/${ANDROID_ABI}/lib/libboost_filesystem.a
-  ${ZANO_NATIVE_LIB_PATH}/thirdparty/boost/android/${ANDROID_ABI}/lib/libboost_regex.a
-  ${ZANO_NATIVE_LIB_PATH}/thirdparty/boost/android/${ANDROID_ABI}/lib/libboost_serialization.a
-  ${ZANO_NATIVE_LIB_PATH}/thirdparty/boost/android/${ANDROID_ABI}/lib/libboost_system.a
-  ${ZANO_NATIVE_LIB_PATH}/thirdparty/boost/android/${ANDROID_ABI}/lib/libboost_thread.a
-  ${ZANO_NATIVE_LIB_PATH}/thirdparty/boost/android/${ANDROID_ABI}/lib/libboost_timer.a
-  ${ZANO_NATIVE_LIB_PATH}/thirdparty/boost/android/${ANDROID_ABI}/lib/libboost_program_options.a
-  ${ZANO_NATIVE_LIB_PATH}/thirdparty/boost/android/${ANDROID_ABI}/lib/libboost_wserialization.a
-  ${ZANO_NATIVE_LIB_PATH}/thirdparty/openssl/android/${ANDROID_ABI}/lib/libssl.a
-  ${ZANO_NATIVE_LIB_PATH}/thirdparty/openssl/android/${ANDROID_ABI}/lib/libcrypto.a
+  // YOUR TARGET NAME HERE
+  ${ZANO_NATIVE_LIB_PATH}/_install_android/${ANDROID_ABI}/lib/libcurrency_core.a
+  ${ZANO_NATIVE_LIB_PATH}/_install_android/${ANDROID_ABI}/lib/libcommon.a
+  ${ZANO_NATIVE_LIB_PATH}/_install_android/${ANDROID_ABI}/lib/libcrypto.a
+  ${ZANO_NATIVE_LIB_PATH}/_install_android/${ANDROID_ABI}/lib/libwallet.a
+  ${ZANO_NATIVE_LIB_PATH}/_install_android/${ANDROID_ABI}/lib/libz.a
+  ${ZANO_NATIVE_LIB_PATH}/_libs_android/boost/${ANDROID_ABI}/lib/libboost_atomic.a
+  ${ZANO_NATIVE_LIB_PATH}/_libs_android/boost/${ANDROID_ABI}/lib/libboost_chrono.a
+  ${ZANO_NATIVE_LIB_PATH}/_libs_android/boost/${ANDROID_ABI}/lib/libboost_date_time.a
+  ${ZANO_NATIVE_LIB_PATH}/_libs_android/boost/${ANDROID_ABI}/lib/libboost_filesystem.a
+  ${ZANO_NATIVE_LIB_PATH}/_libs_android/boost/${ANDROID_ABI}/lib/libboost_regex.a
+  ${ZANO_NATIVE_LIB_PATH}/_libs_android/boost/${ANDROID_ABI}/lib/libboost_serialization.a
+  ${ZANO_NATIVE_LIB_PATH}/_libs_android/boost/${ANDROID_ABI}/lib/libboost_system.a
+  ${ZANO_NATIVE_LIB_PATH}/_libs_android/boost/${ANDROID_ABI}/lib/libboost_thread.a
+  ${ZANO_NATIVE_LIB_PATH}/_libs_android/boost/${ANDROID_ABI}/lib/libboost_timer.a
+  ${ZANO_NATIVE_LIB_PATH}/_libs_android/boost/${ANDROID_ABI}/lib/libboost_program_options.a
+  ${ZANO_NATIVE_LIB_PATH}/_libs_android/boost/${ANDROID_ABI}/lib/libboost_wserialization.a
+  ${ZANO_NATIVE_LIB_PATH}/_libs_android/openssl/${ANDROID_ABI}/lib/libssl.a
+  ${ZANO_NATIVE_LIB_PATH}/_libs_android/openssl/${ANDROID_ABI}/lib/libcrypto.a
+)
+```
+
+## MacOSX
+
+To build your MacOSX project with Zano use `./_install_macosx/libzano-plain-wallet.xcframework` (include Zano and it's dependencies and provides only plain wallet api).
+
+If you are using Boost or OpenSSL directly or not using plain_wallet_api you need to use `./_install_macosx/libzano.xcframework`
+with Boost and OpenSSL provided separately. This repo also provides them as frameworks:
+
+- `./_install_macosx/libboost.xcframework`
+- `./_install_macosx/libopenssl.xcframework`
+
+## Linux
+
+To build your Linux project with Zano here is what you need to do:
+
+- include this folder: `./_install_linux/zano/include-plain-wallet`
+- or, if you need more then plain_wallet_api: `./_install_linux/zano/include`
+- add this libraries (order matters):
+  - `./_install_linux/zano/${ARCH}/lib/libcurrency_core.a`
+  - `./_install_linux/zano/${ARCH}/lib/libcommon.a`
+  - `./_install_linux/zano/${ARCH}/lib/libcrypto.a`
+  - `./_install_linux/zano/${ARCH}/lib/libwallet.a`
+  - `./_install_linux/zano/${ARCH}/lib/libz.a`
+  - `./_install_linux/boost/${ARCH}/lib/libboost_atomic.a`
+  - `./_install_linux/boost/${ARCH}/lib/libboost_chrono.a`
+  - `./_install_linux/boost/${ARCH}/lib/libboost_date_time.a`
+  - `./_install_linux/boost/${ARCH}/lib/libboost_filesystem.a`
+  - `./_install_linux/boost/${ARCH}/lib/libboost_regex.a`
+  - `./_install_linux/boost/${ARCH}/lib/libboost_serialization.a`
+  - `./_install_linux/boost/${ARCH}/lib/libboost_system.a`
+  - `./_install_linux/boost/${ARCH}/lib/libboost_thread.a`
+  - `./_install_linux/boost/${ARCH}/lib/libboost_timer.a`
+  - `./_install_linux/boost/${ARCH}/lib/libboost_program_options.a`
+  - `./_install_linux/boost/${ARCH}/lib/libboost_wserialization.a`
+  - `./_install_linux/openssl/${ARCH}/lib/libssl.a`
+  - `./_install_linux/openssl/${ARCH}/lib/libcrypto.a`
+
+Example cmake
+
+```
+include_directories(${ZANO_NATIVE_LIB_PATH}/_install_linux/zano/${ANDROID_ABI}/include-plain-wallet)
+target_link_libraries(
+  // YOUR TARGET NAME HERE
+  ${ZANO_NATIVE_LIB_PATH}/_install_linux/zano/${ANDROID_ABI}/lib/libcurrency_core.a
+  ${ZANO_NATIVE_LIB_PATH}/_install_linux/zano/${ANDROID_ABI}/lib/libcommon.a
+  ${ZANO_NATIVE_LIB_PATH}/_install_linux/zano/${ANDROID_ABI}/lib/libcrypto.a
+  ${ZANO_NATIVE_LIB_PATH}/_install_linux/zano/${ANDROID_ABI}/lib/libwallet.a
+  ${ZANO_NATIVE_LIB_PATH}/_install_linux/zano/${ANDROID_ABI}/lib/libz.a
+  ${ZANO_NATIVE_LIB_PATH}/_install_linux/boost/${ANDROID_ABI}/lib/libboost_atomic.a
+  ${ZANO_NATIVE_LIB_PATH}/_install_linux/boost/${ANDROID_ABI}/lib/libboost_chrono.a
+  ${ZANO_NATIVE_LIB_PATH}/_install_linux/boost/${ANDROID_ABI}/lib/libboost_date_time.a
+  ${ZANO_NATIVE_LIB_PATH}/_install_linux/boost/${ANDROID_ABI}/lib/libboost_filesystem.a
+  ${ZANO_NATIVE_LIB_PATH}/_install_linux/boost/${ANDROID_ABI}/lib/libboost_regex.a
+  ${ZANO_NATIVE_LIB_PATH}/_install_linux/boost/${ANDROID_ABI}/lib/libboost_serialization.a
+  ${ZANO_NATIVE_LIB_PATH}/_install_linux/boost/${ANDROID_ABI}/lib/libboost_system.a
+  ${ZANO_NATIVE_LIB_PATH}/_install_linux/boost/${ANDROID_ABI}/lib/libboost_thread.a
+  ${ZANO_NATIVE_LIB_PATH}/_install_linux/boost/${ANDROID_ABI}/lib/libboost_timer.a
+  ${ZANO_NATIVE_LIB_PATH}/_install_linux/boost/${ANDROID_ABI}/lib/libboost_program_options.a
+  ${ZANO_NATIVE_LIB_PATH}/_install_linux/boost/${ANDROID_ABI}/lib/libboost_wserialization.a
+  ${ZANO_NATIVE_LIB_PATH}/_install_linux/openssl/${ANDROID_ABI}/lib/libssl.a
+  ${ZANO_NATIVE_LIB_PATH}/_install_linux/openssl/${ANDROID_ABI}/lib/libcrypto.a
 )
 ```
 
@@ -102,18 +217,21 @@ target_link_libraries(
 
 To build your Windows project with Zano here is what you need to do:
 
-- include this folder: `./build/windows/${ARCH}/include`
-- or, if you need only plain_wallet_api: `./build/windows/${ARCH}/include-plain-wallet`
+- include this folder: `./_install_windows/zano/include-plain-wallet`
+- or, if you need more then plain_wallet_api: `./_install_windows/zano/include`
 - add this libraries:
-  - `./build/windows/${ARCH}/lib/*.lib`
-  - `./thirdparty/boost/windows/${ARCH}/lib/*.lib`
-  - `./thirdparty/openssl/windows/${ARCH}/lib/*.lib`
+  - `./_install_windows/zano/${ARCH}/lib/*.lib`
+  - `./_install_windows/boost/${ARCH}/lib/*.lib`
+  - `./_install_windows/openssl/${ARCH}/lib/*.lib`
+
+Example cmake
 
 ```
+include_directories(${ZANO_NATIVE_LIB_PATH}/_install_windows/zano/${ANDROID_ABI}/include-plain-wallet)
 file(GLOB LIBZANO_LIBS
-  "${ZANO_NATIVE_LIB_PATH}/build/windows/${ARCH}/lib/*.lib"
-  "${ZANO_NATIVE_LIB_PATH}/thirdparty/boost/windows/${ARCH}/lib/*.lib"
-  "${ZANO_NATIVE_LIB_PATH}/thirdparty/openssl/windows/${ARCH}/lib/*.lib"
+  "${ZANO_NATIVE_LIB_PATH}/_install_windows/zano/${ARCH}/lib/*.lib"
+  "${ZANO_NATIVE_LIB_PATH}/_install_windows/boost/${ARCH}/lib/*.lib"
+  "${ZANO_NATIVE_LIB_PATH}/_install_windows/openssl/${ARCH}/lib/*.lib"
 )
 target_link_libraries(${PROJECT_NAME} PRIVATE ntdll crypt32 ${LIBZANO_LIBS})
 ```
@@ -485,40 +603,7 @@ Return job_id, and result should be fetched with **try_pull_result()** by passin
 - `std::string reset_wallet_password(hwallet h, const std::string& password)`<br>Resets the password of the wallet with the specified handle.<br><br>
 - `uint64_t get_current_tx_fee(uint64_t priority)`<br>Retrieves the current transaction fee based on priority.<br><br>
 
-# Miscellaneous
-
-## Artifacts folders structure
-
-This repository provides Zano artifacts:
-
-- ios:
-  - `./build/ios/libzano.xcframework`
-  - `./build/ios/libzano-plain-wallet.xcframework` - contains all the neccesary dependencies inside (Boost and OpenSSL)
-- macosx:
-  - `./build/macosx/libzano.xcframework`
-  - `./build/macosx/libzano-plain-wallet.xcframework` - contains all the neccesary dependencies inside (Boost and OpenSSL)
-- android (ARCH: arm64-v8a, armeabi-v7a, x86, x86_64):
-  - `./build/android/${ARCH}/lib` - build libraries
-  - `./build/android/${ARCH}/include` - include files from Zano/src/wallet/
-  - `./build/android/${ARCH}/include-plain-wallet` - include files plain wallet include files
-- linux (ARCH: arm64, x86_64):
-  - `./build/android/${ARCH}/lib` - build libraries
-  - `./build/android/${ARCH}/include` - include files from Zano/src/wallet/
-  - `./build/android/${ARCH}/include-plain-wallet` - include files plain wallet include files
-- windows (ARCH: arm64, x86_64):
-  - `./build/android/${ARCH}/lib` - build libraries
-  - `./build/android/${ARCH}/include` - include files from Zano/src/wallet/
-  - `./build/android/${ARCH}/include-plain-wallet` - include files plain wallet include files
-
-Zano requires OpenSSL and Boost as depencencies, so we ship them as well:
-
-- OpenSSL: `./thirdparty/openssl`
-- Boost: `./thirdparty/boost`
-- [GNU libiconv](https://www.gnu.org/software/libiconv/): `./thirdparty/iconv` (Boost is build agains GNU libiconv on linux and macosx.)
-
-Every depency has same structure as `./build` folder.
-
-## Build Zano
+# Build Zano
 
 To build Zano library run this scripts:
 

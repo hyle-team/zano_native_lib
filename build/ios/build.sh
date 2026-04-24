@@ -3,9 +3,9 @@
 PROJECT_ROOT="$(realpath "$(dirname "$0")/../..")"
 PLATFORM_ROOT="${PROJECT_ROOT}/build/ios"
 
-BOOST_FRAMEWORK="${PROJECT_ROOT}/thirdparty/boost/ios/libboost.xcframework"
+BOOST_FRAMEWORK="${PROJECT_ROOT}/_install_ios/lib/thirdparty/libboost.xcframework"
 BOOST_VERSION=$(cat "${BOOST_FRAMEWORK}/VERSION")
-OPENSSL_FRAMEWORK="${PROJECT_ROOT}/thirdparty/openssl/ios/libopenssl.xcframework"
+OPENSSL_FRAMEWORK="${PROJECT_ROOT}/_install_ios/lib/thirdparty/libopenssl.xcframework"
 OPENSSL_VERSION=$(cat "${OPENSSL_FRAMEWORK}/VERSION")
 
 PLATFORM=$1; shift

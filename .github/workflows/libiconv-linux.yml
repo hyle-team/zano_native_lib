@@ -34,5 +34,5 @@ jobs:
       - name: Configure git and stage artifacts for push
         uses: ./.github/actions/artifacts
         with:
-          folder: thirdparty/iconv/linux/${{ matrix.arch }}/
+          folder: _install_linux/iconv/${{ matrix.arch }}/
           name: libiconv linux ${{ matrix.arch }}

@@ -2,15 +2,16 @@
 
 PROJECT_ROOT="$(realpath "$(dirname "$0")/../..")"
 PLATFORM_ROOT="${PROJECT_ROOT}/build/linux"
+TARGET_ROOT="${PROJECT_ROOT}/_install_linux/zano/"
 
 ARCH=$1; shift
 BUILD_ROOT="${PLATFORM_ROOT}/build-${ARCH}"
 
-ICONV_ROOT="${PROJECT_ROOT}/thirdparty/iconv/linux/${ARCH}"
+ICONV_ROOT="${PROJECT_ROOT}/_install_linux/iconv/${ARCH}"
 ICONV_VERSION=$(cat "${ICONV_ROOT}/VERSION")
-BOOST_ROOT="${PROJECT_ROOT}/thirdparty/boost/linux/${ARCH}"
+BOOST_ROOT="${PROJECT_ROOT}/_install_linux/boost/${ARCH}"
 BOOST_VERSION=$(cat "${BOOST_ROOT}/VERSION")
-OPENSSL_ROOT="${PROJECT_ROOT}/thirdparty/openssl/linux/${ARCH}"
+OPENSSL_ROOT="${PROJECT_ROOT}/_install_linux/openssl/${ARCH}"
 OPENSSL_VERSION=$(cat "${OPENSSL_ROOT}/VERSION")
 
 echo "iconv Version:   $ICONV_VERSION"
@@ -99,14 +100,14 @@ if [ ! -f "${BUILD_ROOT}/src/libwallet.a" ]; then
   exit 1
 fi
 
-rm -rf "${PLATFORM_ROOT}/${ARCH}"
-mkdir -p "${PLATFORM_ROOT}/${ARCH}/lib/../include/../include-plain-wallet/"
-cp "${BUILD_ROOT}/src/"lib{common,crypto,currency_core,wallet,rpc,stratum}.a "${PLATFORM_ROOT}/${ARCH}/lib/"
-cp "${BUILD_ROOT}/contrib/zlib/libz.a" "${PLATFORM_ROOT}/${ARCH}/lib/"
-cp "${BUILD_ROOT}/contrib/db/liblmdb/liblmdb.a" "${PLATFORM_ROOT}/${ARCH}/lib/"
-cp "${BUILD_ROOT}/contrib/db/libmdbx/libmdbx.a" "${PLATFORM_ROOT}/${ARCH}/lib/"
-cp "${BUILD_ROOT}/contrib/ethereum/libethash/libethash.a" "${PLATFORM_ROOT}/${ARCH}/lib/"
-cp "${BUILD_ROOT}/contrib/miniupnp/miniupnpc/libminiupnpc.a" "${PLATFORM_ROOT}/${ARCH}/lib/"
-cp "${PROJECT_ROOT}"/Zano/src/wallet/*.h "${PLATFORM_ROOT}/${ARCH}/include/"
-cp "${PROJECT_ROOT}"/Zano/src/wallet/plain_wallet_api.h "${PLATFORM_ROOT}/${ARCH}/include-plain-wallet/"
-"${PLATFORM_ROOT}/../zano-version.sh" "${BUILD_ROOT}" > "${PLATFORM_ROOT}/${ARCH}/VERSION"
+rm -rf "${TARGET_ROOT}/${ARCH}"
+mkdir -p "${TARGET_ROOT}/${ARCH}/lib/../include/../include-plain-wallet/"
+cp "${BUILD_ROOT}/src/"lib{common,crypto,currency_core,wallet,rpc,stratum}.a "${TARGET_ROOT}/${ARCH}/lib/"
+cp "${BUILD_ROOT}/contrib/zlib/libz.a" "${TARGET_ROOT}/${ARCH}/lib/"
+cp "${BUILD_ROOT}/contrib/db/liblmdb/liblmdb.a" "${TARGET_ROOT}/${ARCH}/lib/"
+cp "${BUILD_ROOT}/contrib/db/libmdbx/libmdbx.a" "${TARGET_ROOT}/${ARCH}/lib/"
+cp "${BUILD_ROOT}/contrib/ethereum/libethash/libethash.a" "${TARGET_ROOT}/${ARCH}/lib/"
+cp "${BUILD_ROOT}/contrib/miniupnp/miniupnpc/libminiupnpc.a" "${TARGET_ROOT}/${ARCH}/lib/"
+cp "${PROJECT_ROOT}"/Zano/src/wallet/*.h "${TARGET_ROOT}/${ARCH}/include/"
+cp "${PROJECT_ROOT}"/Zano/src/wallet/plain_wallet_api.h "${TARGET_ROOT}/${ARCH}/include-plain-wallet/"
+"${PLATFORM_ROOT}/../zano-version.sh" "${BUILD_ROOT}" > "${TARGET_ROOT}/${ARCH}/VERSION"

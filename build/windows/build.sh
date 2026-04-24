@@ -5,12 +5,12 @@ PLATFORM_ROOT="${PROJECT_ROOT}/build/windows"
 . "$PROJECT_ROOT/scripts/windows-bash.sh"
 
 ARCH=$1; shift
-BOOST_ROOT="${PROJECT_ROOT}/thirdparty/boost/windows/${ARCH}"
+BOOST_ROOT="${PROJECT_ROOT}/_install_windows/boost/${ARCH}"
 BOOST_VERSION=$(cat "${BOOST_ROOT}/VERSION")
-OPENSSL_ROOT="${PROJECT_ROOT}/thirdparty/openssl/windows/${ARCH}"
+OPENSSL_ROOT="${PROJECT_ROOT}/_install_windows/openssl/${ARCH}"
 OPENSSL_VERSION=$(cat "${OPENSSL_ROOT}/VERSION")
 BUILD_ROOT="${PLATFORM_ROOT}/build-${ARCH}"
-TARGET_ROOT="${PLATFORM_ROOT}"/${ARCH}
+TARGET_ROOT="${PROJECT_ROOT}/_install_windows/zano/${ARCH}"
 
 echo "Boost Version:   $BOOST_VERSION"
 echo "OpenSSL Version: $OPENSSL_VERSION"

@@ -48,7 +48,7 @@ else
   B2_FLAGS+=("architecture=x86")
 fi
 
-ICONV_FRAMEWORK="$(realpath "${PROJECT_ROOT}/thirdparty/iconv/macosx/libiconv.xcframework")"
+ICONV_FRAMEWORK="${PROJECT_ROOT}/_install_macosx/libiconv.xcframework"
 mkdir -p "${BUILD_ROOT}/iconv/lib/../include/"
 cp "${ICONV_FRAMEWORK}"/macos-arm64_x86_64/* "${BUILD_ROOT}/iconv/lib/"
 cp -r "${ICONV_FRAMEWORK}"/macos-arm64_x86_64/Headers/* "${BUILD_ROOT}/iconv/include/"

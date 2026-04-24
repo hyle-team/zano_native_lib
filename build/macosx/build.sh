@@ -5,11 +5,11 @@ PLATFORM_ROOT="${PROJECT_ROOT}/build/macosx"
 MIN_VERSION=${MIN_MACOSX_VERSION:-$(xcrun --sdk macosx --show-sdk-version)}
 SDK_PATH=$(xcrun --sdk macosx --show-sdk-path)
 
-ICONV_FRAMEWORK="${PROJECT_ROOT}/thirdparty/iconv/macosx/libiconv.xcframework"
+ICONV_FRAMEWORK="${PROJECT_ROOT}/_install_macosx/libiconv.xcframework"
 ICONV_VERSION=$(cat "${ICONV_FRAMEWORK}/VERSION")
-BOOST_FRAMEWORK="${PROJECT_ROOT}/thirdparty/boost/macosx/libboost.xcframework"
+BOOST_FRAMEWORK="${PROJECT_ROOT}/_install_macosx/libboost.xcframework"
 BOOST_VERSION=$(cat "${BOOST_FRAMEWORK}/VERSION")
-OPENSSL_FRAMEWORK="${PROJECT_ROOT}/thirdparty/openssl/macosx/libopenssl.xcframework"
+OPENSSL_FRAMEWORK="${PROJECT_ROOT}/_install_macosx/libopenssl.xcframework"
 OPENSSL_VERSION=$(cat "${OPENSSL_FRAMEWORK}/VERSION")
 
 ARCH=$1; shift

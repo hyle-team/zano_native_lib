@@ -36,5 +36,5 @@ jobs:
       - name: Configure git and stage artifacts for push
         uses: ./.github/actions/artifacts
         with:
-          folder: build/windows/${{ matrix.arch }}
+          folder: _install_windows/zano/${{ matrix.arch }}
           name: libzano windows ${{ matrix.arch }}

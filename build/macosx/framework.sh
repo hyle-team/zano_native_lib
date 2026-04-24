@@ -2,8 +2,9 @@
 
 PROJECT_ROOT="$(realpath "$(dirname "$0")/../..")"
 PLATFORM_ROOT="$(realpath "${PROJECT_ROOT}/build/macosx")"
-FRAMEWORK_ROOT="${PLATFORM_ROOT}/libzano.xcframework"
-FRAMEWORK_PW_ROOT="${PLATFORM_ROOT}/libzano-plain-wallet.xcframework"
+TARGET_ROOT="${PROJECT_ROOT}/_install_macosx/"
+FRAMEWORK_ROOT="${TARGET_ROOT}/libzano.xcframework"
+FRAMEWORK_PW_ROOT="${TARGET_ROOT}/libzano-plain-wallet.xcframework"
 
 [[ ! -d "${PLATFORM_ROOT}/build-x86_64" ]] && "${PLATFORM_ROOT}/build.sh" x86_64
 [[ ! -d "${PLATFORM_ROOT}/build-arm64" ]] && "${PLATFORM_ROOT}/build.sh" arm64

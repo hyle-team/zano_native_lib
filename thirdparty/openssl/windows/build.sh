@@ -10,7 +10,7 @@ if ! [[ $ARCH == "arm64" || $ARCH == "x86_64" ]]; then
   exit 1
 fi
 BUILD_ROOT=${PLATFORM_ROOT}/build-${ARCH}
-TARGET_ROOT="${PLATFORM_ROOT}"/${ARCH}
+TARGET_ROOT="${PROJECT_ROOT}/_install_windows/openssl/${ARCH}"
 
 echo "Preparing build folder: $BUILD_ROOT"
 "${PROJECT_ROOT}/thirdparty/openssl/download-openssl.sh" "$BUILD_ROOT" || exit 1

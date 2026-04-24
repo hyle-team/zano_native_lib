@@ -2,8 +2,9 @@
 
 PROJECT_ROOT="$(realpath "$(dirname "$0")/../..")"
 PLATFORM_ROOT="$(realpath "${PROJECT_ROOT}/build/ios")"
-FRAMEWORK_ROOT="${PLATFORM_ROOT}/libzano.xcframework"
-FRAMEWORK_PW_ROOT="${PLATFORM_ROOT}/libzano-plain-wallet.xcframework"
+TARGET_ROOT="${PROJECT_ROOT}/_install_ios/lib"
+FRAMEWORK_ROOT="${TARGET_ROOT}/libzano.xcframework"
+FRAMEWORK_PW_ROOT="${TARGET_ROOT}/libzano-plain-wallet.xcframework"
 
 [[ ! -d "${PLATFORM_ROOT}/build-iphoneos-arm64" ]] && "${PLATFORM_ROOT}/build.sh" iphoneos arm64
 [[ ! -d "${PLATFORM_ROOT}/build-iphonesimulator-arm64" ]] && "${PLATFORM_ROOT}/build.sh" iphonesimulator arm64
@@ -38,9 +39,3 @@ if [ ! -d "${FRAMEWORK_PW_ROOT}" ]; then
   exit 1
 fi
 cp "${PLATFORM_ROOT}/build-iphoneos-arm64/stage/VERSION" "${FRAMEWORK_PW_ROOT}/VERSION"
-
-# Backport to old folders
-rm -rf "${PROJECT_ROOT}/_install_ios/libzano.xcframework"
-cp -r "${FRAMEWORK_ROOT}" "${PROJECT_ROOT}/_install_ios/"
-rm -rf "${PROJECT_ROOT}/_install_ios/libzano-plain-wallet.xcframework"
-cp -r "${FRAMEWORK_PW_ROOT}" "${PROJECT_ROOT}/_install_ios/"

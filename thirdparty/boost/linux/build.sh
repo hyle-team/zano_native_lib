@@ -2,6 +2,7 @@
 
 PROJECT_ROOT="$(realpath "$(dirname "$0")/../../..")"
 PLATFORM_ROOT="$(realpath "${PROJECT_ROOT}/thirdparty/boost/linux")"
+TARGET_ROOT="${PROJECT_ROOT}/_install_linux/boost/"
 
 ARCH=$1; shift
 BUILD_ROOT="${PLATFORM_ROOT}/build-${ARCH}"
@@ -62,14 +63,11 @@ fi
 B2_FLAGS+=("--user-config=../users-config.jam")
 B2_FLAGS+=("toolset=gcc-cxx")
 
-ICONV_ROOT="${PROJECT_ROOT}/thirdparty/iconv/linux/${ARCH}"
-mkdir -p "${BUILD_ROOT}/iconv/lib/../include/"
-cp ${ICONV_ROOT}/lib/libiconv.a "${BUILD_ROOT}/iconv/lib/"
-cp ${ICONV_ROOT}/include/* "${BUILD_ROOT}/iconv/include/"
-B2_FLAGS+=("-sICONV_PATH=${BUILD_ROOT}/iconv")
+ICONV_ROOT="${PROJECT_ROOT}/_install_linux/iconv/${ARCH}"
+B2_FLAGS+=("-sICONV_PATH=${ICONV_ROOT}")
 B2_FLAGS+=("boost.locale.icu=off" "boost.locale.iconv=on")
-CXX_FLAGS+=("-I${BUILD_ROOT}/iconv/include")
-LINK_FLAGS+=("-L${BUILD_ROOT}/iconv/lib" "-liconv")
+CXX_FLAGS+=("-I${ICONV_ROOT}/include")
+LINK_FLAGS+=("-L${ICONV_ROOT}/lib" "-liconv")
 
 CXX_FLAGS="${CXX_FLAGS[*]}"
 [ -n "$CXX_FLAGS" ] && B2_FLAGS+=("cxxflags=${CXX_FLAGS}")
@@ -96,8 +94,8 @@ if [ ! -f ${BUILD_ROOT}/stage/lib/libboost_atomic.a ]; then
   exit 1
 fi
 
-rm -rf "${PLATFORM_ROOT}/${ARCH}"
-mkdir -p "${PLATFORM_ROOT}/${ARCH}/lib/../include/"
-cp -r "${BUILD_ROOT}"/stage/lib/* "${PLATFORM_ROOT}/${ARCH}/lib/"
-cp -r "${BUILD_ROOT}/boost" "${PLATFORM_ROOT}/${ARCH}/include/"
-"${PLATFORM_ROOT}/../get-boost-version.sh" "${BUILD_ROOT}" > "${PLATFORM_ROOT}/${ARCH}/VERSION"
+rm -rf "${TARGET_ROOT}/${ARCH}"
+mkdir -p "${TARGET_ROOT}/${ARCH}/lib/../include/"
+cp -r "${BUILD_ROOT}"/stage/lib/* "${TARGET_ROOT}/${ARCH}/lib/"
+cp -r "${BUILD_ROOT}/boost" "${TARGET_ROOT}/${ARCH}/include/"
+"${PLATFORM_ROOT}/../get-boost-version.sh" "${BUILD_ROOT}" > "${TARGET_ROOT}/${ARCH}/VERSION"

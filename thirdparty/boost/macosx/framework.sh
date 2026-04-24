@@ -2,7 +2,8 @@
 
 PROJECT_ROOT="$(realpath "$(dirname "$0")/../../..")"
 PLATFORM_ROOT="$(realpath "${PROJECT_ROOT}/thirdparty/boost/macosx")"
-FRAMEWORK_ROOT="${PLATFORM_ROOT}/libboost.xcframework"
+TARGET_ROOT="${PROJECT_ROOT}/_install_macosx/"
+FRAMEWORK_ROOT="${TARGET_ROOT}/libboost.xcframework"
 
 [[ ! -d "${PLATFORM_ROOT}/build-x86_64" ]] && "${PLATFORM_ROOT}/build.sh" x86_64
 [[ ! -d "${PLATFORM_ROOT}/build-arm64" ]] && "${PLATFORM_ROOT}/build.sh" arm64

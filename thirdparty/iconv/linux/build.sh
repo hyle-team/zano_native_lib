@@ -2,6 +2,7 @@
 
 PROJECT_ROOT="$(realpath "$(dirname "$0")/../../..")"
 PLATFORM_ROOT="$(realpath "${PROJECT_ROOT}/thirdparty/iconv/linux")"
+TARGET_ROOT="${PROJECT_ROOT}/_install_linux/iconv/"
 
 ARCH=$1; shift
 BUILD_ROOT="${PLATFORM_ROOT}/build-${ARCH}"
@@ -53,8 +54,8 @@ if [ ! -f "${BUILD_ROOT}/stage/lib/libiconv.a" ]; then
   exit 1
 fi
 
-rm -rf "${PLATFORM_ROOT}/${ARCH}"
-mkdir -p "${PLATFORM_ROOT}/${ARCH}/lib/../include/"
-cp "${BUILD_ROOT}"/stage/lib/libiconv.a "${PLATFORM_ROOT}/${ARCH}/lib/"
-cp -r "${BUILD_ROOT}"/include/*.h "${PLATFORM_ROOT}/${ARCH}/include/"
-"${PLATFORM_ROOT}/../get-iconv-version.sh" "${BUILD_ROOT}" > "${PLATFORM_ROOT}/${ARCH}/VERSION"
+rm -rf "${TARGET_ROOT}/${ARCH}"
+mkdir -p "${TARGET_ROOT}/${ARCH}/lib/../include/"
+cp "${BUILD_ROOT}"/stage/lib/libiconv.a "${TARGET_ROOT}/${ARCH}/lib/"
+cp -r "${BUILD_ROOT}"/include/*.h "${TARGET_ROOT}/${ARCH}/include/"
+"${PLATFORM_ROOT}/../get-iconv-version.sh" "${BUILD_ROOT}" > "${TARGET_ROOT}/${ARCH}/VERSION"

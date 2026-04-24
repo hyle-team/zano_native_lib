@@ -29,5 +29,5 @@ jobs:
       - name: Configure git and stage artifacts for push
         uses: ./.github/actions/artifacts
         with:
-          folder: build/ios/libzano.xcframework;build/ios/libzano-plain-wallet.xcframework;_install_ios/libzano.xcframework;_install_ios/libzano-plain-wallet.xcframework
+          folder: _install_ios/lib/libzano.xcframework;_install_ios/lib/libzano-plain-wallet.xcframework
           name: libzano ios

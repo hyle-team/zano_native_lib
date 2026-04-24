@@ -34,5 +34,5 @@ jobs:
       - name: Configure git and stage artifacts for push
         uses: ./.github/actions/artifacts
         with:
-          folder: thirdparty/openssl/linux/${{ matrix.arch }}
+          folder: _install_linux/openssl/${{ matrix.arch }}
           name: libopenssl linux ${{ matrix.arch }}

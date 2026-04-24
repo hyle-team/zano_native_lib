@@ -2,6 +2,7 @@
 
 PROJECT_ROOT="$(realpath "$(dirname "$0")/../../..")"
 PLATFORM_ROOT="$(realpath "${PROJECT_ROOT}/thirdparty/openssl/android")"
+TARGET_ROOT="${PROJECT_ROOT}/_libs_android/openssl"
 
 ARCH=$1; shift
 ANDROID_NDK_ROOT=${1:-${ANDROID_NDK_ROOT}}; shift
@@ -50,15 +51,9 @@ if [ ! -f ${BUILD_ROOT}/libssl.a ]; then
   exit 1
 fi
 
-rm -rf "${PLATFORM_ROOT}/${ARCH}"
-mkdir -p "${PLATFORM_ROOT}/${ARCH}/lib/../include/"
-cp "${BUILD_ROOT}"/lib{ssl,crypto}.a "${PLATFORM_ROOT}/${ARCH}/lib/"
-cp -r "${BUILD_ROOT}"/include/* "${PLATFORM_ROOT}/${ARCH}/include/"
+rm -rf "${TARGET_ROOT}/${ARCH}/"
+mkdir -p "${TARGET_ROOT}/${ARCH}/lib/../include/"
+cp -r "${BUILD_ROOT}"/include/* "${TARGET_ROOT}/${ARCH}/include/"
+cp "${BUILD_ROOT}"/lib{ssl,crypto}.a "${TARGET_ROOT}/${ARCH}/lib/"
 source "${BUILD_ROOT}/VERSION.dat"
-echo "${MAJOR}.${MINOR}.${PATCH}" > "${PLATFORM_ROOT}/${ARCH}/VERSION"
-
-# Backport to old folders
-rm -rf "${PROJECT_ROOT}"/_libs_android/openssl/${ARCH}/lib
-cp -r "${PLATFORM_ROOT}/${ARCH}/lib" "${PROJECT_ROOT}/_libs_android/openssl/${ARCH}/"
-rm -rf "${PROJECT_ROOT}"/_libs_android/openssl/include
-cp -r "${PLATFORM_ROOT}/${ARCH}/include" "${PROJECT_ROOT}/_libs_android/openssl/"
+echo "${MAJOR}.${MINOR}.${PATCH}" > "${TARGET_ROOT}/${ARCH}/VERSION"

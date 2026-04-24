@@ -2,6 +2,7 @@
 
 PROJECT_ROOT="$(realpath "$(dirname "$0")/../../..")"
 PLATFORM_ROOT="$(realpath "${PROJECT_ROOT}/thirdparty/openssl/linux")"
+TARGET_ROOT="${PROJECT_ROOT}/_install_linux/openssl/"
 
 ARCH=$1; shift
 BUILD_ROOT="${PLATFORM_ROOT}/build-${ARCH}"
@@ -41,10 +42,10 @@ if [ ! -f "${BUILD_ROOT}/libssl.a" ]; then
   exit 1
 fi
 
-rm -rf "${PLATFORM_ROOT}/${ARCH}/"
-mkdir -p "${PLATFORM_ROOT}/${ARCH}/lib/../include/"
-cp "${BUILD_ROOT}"/lib{ssl,crypto}.a "${PLATFORM_ROOT}/${ARCH}/lib/"
-cp -r "${BUILD_ROOT}"/include/* "${PLATFORM_ROOT}/${ARCH}/include/"
+rm -rf "${TARGET_ROOT}/${ARCH}/"
+mkdir -p "${TARGET_ROOT}/${ARCH}/lib/../include/"
+cp "${BUILD_ROOT}"/lib{ssl,crypto}.a "${TARGET_ROOT}/${ARCH}/lib/"
+cp -r "${BUILD_ROOT}"/include/* "${TARGET_ROOT}/${ARCH}/include/"
 
 source "${BUILD_ROOT}/VERSION.dat"
-echo "${MAJOR}.${MINOR}.${PATCH}" > "${PLATFORM_ROOT}/${ARCH}/VERSION"
+echo "${MAJOR}.${MINOR}.${PATCH}" > "${TARGET_ROOT}/${ARCH}/VERSION"

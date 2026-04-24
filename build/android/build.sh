@@ -2,15 +2,16 @@
 
 PROJECT_ROOT="$(realpath "$(dirname "$0")/../..")"
 PLATFORM_ROOT="${PROJECT_ROOT}/build/android"
+TARGET_ROOT="${PROJECT_ROOT}/_install_android"
 ANDROID_TARGET=${ANDROID_TARGET:-26}
 
 ARCH=$1; shift
 BUILD_ROOT="${PLATFORM_ROOT}/build-${ARCH}"
 
-BOOST_ROOT="${PROJECT_ROOT}/thirdparty/boost/android/${ARCH}"
-BOOST_VERSION=$(cat "${BOOST_ROOT}/VERSION")
-OPENSSL_ROOT="${PROJECT_ROOT}/thirdparty/openssl/android/${ARCH}"
-OPENSSL_VERSION=$(cat "${OPENSSL_ROOT}/VERSION")
+BOOST_ROOT="${PROJECT_ROOT}/_libs_android/boost/"
+BOOST_VERSION=$(cat "${BOOST_ROOT}/${ARCH}/VERSION")
+OPENSSL_ROOT="${PROJECT_ROOT}/_libs_android/openssl"
+OPENSSL_VERSION=$(cat "${OPENSSL_ROOT}/${ARCH}/VERSION")
 
 echo "Boost Version:   $BOOST_VERSION"
 echo "OpenSSL Version: $OPENSSL_VERSION"
@@ -49,11 +50,11 @@ CONFIGURE_FLAGS+=("-DCMAKE_ANDROID_NDK=${ANDROID_NDK_ROOT}")
 CONFIGURE_FLAGS+=("-DCMAKE_ANDROID_STL_TYPE=c++_static")
 CONFIGURE_FLAGS+=("-DDISABLE_TOR=TRUE")
 CONFIGURE_FLAGS+=("-DBoost_VERSION=Boost ${BOOST_VERSION}")
-CONFIGURE_FLAGS+=("-DBoost_LIBRARY_DIRS=${BOOST_ROOT}/lib")
+CONFIGURE_FLAGS+=("-DBoost_LIBRARY_DIRS=${BOOST_ROOT}/${ARCH}/lib")
 CONFIGURE_FLAGS+=("-DBoost_INCLUDE_DIRS=${BOOST_ROOT}/include/")
-CONFIGURE_FLAGS+=("-DOPENSSL_INCLUDE_DIR=${OPENSSL_ROOT}/include/")
-CONFIGURE_FLAGS+=("-DOPENSSL_CRYPTO_LIBRARY=${OPENSSL_ROOT}/lib/libcrypto.a")
-CONFIGURE_FLAGS+=("-DOPENSSL_SSL_LIBRARY=${OPENSSL_ROOT}/lib/libssl.a")
+CONFIGURE_FLAGS+=("-DOPENSSL_INCLUDE_DIR=${OPENSSL_ROOT}/${ARCH}/include/")
+CONFIGURE_FLAGS+=("-DOPENSSL_CRYPTO_LIBRARY=${OPENSSL_ROOT}/${ARCH}/lib/libcrypto.a")
+CONFIGURE_FLAGS+=("-DOPENSSL_SSL_LIBRARY=${OPENSSL_ROOT}/${ARCH}/lib/libssl.a")
 CONFIGURE_FLAGS+=("-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS[*]}")
 CONFIGURE_FLAGS+=("-DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS[*]}")
 
@@ -65,19 +66,18 @@ if [ ! -f "${BUILD_ROOT}/src/libwallet.a" ]; then
   exit 1
 fi
 
-rm -rf "${PLATFORM_ROOT}/${ARCH}"
-mkdir -p "${PLATFORM_ROOT}/${ARCH}/lib/../include/../include-plain-wallet/"
-cp "${BUILD_ROOT}/src/libcommon.a" "${PLATFORM_ROOT}/${ARCH}/lib/"
-cp "${BUILD_ROOT}/src/libcrypto.a" "${PLATFORM_ROOT}/${ARCH}/lib/"
-cp "${BUILD_ROOT}/src/libcurrency_core.a" "${PLATFORM_ROOT}/${ARCH}/lib/"
-cp "${BUILD_ROOT}/src/libwallet.a" "${PLATFORM_ROOT}/${ARCH}/lib/"
-cp "${BUILD_ROOT}/contrib/zlib/libz.a" "${PLATFORM_ROOT}/${ARCH}/lib/"
+rm -rf "${TARGET_ROOT}/include"
+mkdir -p "${TARGET_ROOT}/include/"
 cp "${PROJECT_ROOT}"/Zano/src/wallet/*.h "${PLATFORM_ROOT}/${ARCH}/include/"
+rm -rf "${TARGET_ROOT}/include-plain-wallet"
+mkdir -p "${TARGET_ROOT}/include-plain-wallet/"
 cp "${PROJECT_ROOT}"/Zano/src/wallet/plain_wallet_api.h "${PLATFORM_ROOT}/${ARCH}/include-plain-wallet/"
-"${PLATFORM_ROOT}/../zano-version.sh" "${BUILD_ROOT}" > "${PLATFORM_ROOT}/${ARCH}/VERSION"
 
-# Backport to old folders
-rm -rf "${PROJECT_ROOT}"/_install_android/${ARCH}/lib
-cp -r "${PLATFORM_ROOT}/${ARCH}/lib" "${PROJECT_ROOT}/_install_android/${ARCH}/"
-rm -rf "${PROJECT_ROOT}"/_install_android/include
-cp -r "${PLATFORM_ROOT}/${ARCH}/include" "${PROJECT_ROOT}/_install_android/"
+rm -rf "${TARGET_ROOT}/${ARCH}"
+mkdir -p "${TARGET_ROOT}/${ARCH}/lib/"
+cp "${BUILD_ROOT}/src/libcommon.a" "${TARGET_ROOT}/${ARCH}/lib/"
+cp "${BUILD_ROOT}/src/libcrypto.a" "${TARGET_ROOT}/${ARCH}/lib/"
+cp "${BUILD_ROOT}/src/libcurrency_core.a" "${TARGET_ROOT}/${ARCH}/lib/"
+cp "${BUILD_ROOT}/src/libwallet.a" "${TARGET_ROOT}/${ARCH}/lib/"
+cp "${BUILD_ROOT}/contrib/zlib/libz.a" "${TARGET_ROOT}/${ARCH}/lib/"
+"${PLATFORM_ROOT}/../zano-version.sh" "${BUILD_ROOT}" > "${TARGET_ROOT}/${ARCH}/VERSION"

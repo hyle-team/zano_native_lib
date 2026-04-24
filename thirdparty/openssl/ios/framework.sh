@@ -2,7 +2,8 @@
 
 PROJECT_ROOT="$(realpath "$(dirname "$0")/../../..")"
 PLATFORM_ROOT="$(realpath "${PROJECT_ROOT}/thirdparty/openssl/ios")"
-FRAMEWORK_ROOT="${PLATFORM_ROOT}/libopenssl.xcframework"
+TARGET_ROOT="${PROJECT_ROOT}/_install_ios/lib/thirdparty"
+FRAMEWORK_ROOT="${TARGET_ROOT}/libopenssl.xcframework"
 
 [[ ! -d "${PLATFORM_ROOT}/build-iphoneos-arm64" ]] && "${PLATFORM_ROOT}/build.sh" iphoneos arm64
 [[ ! -d "${PLATFORM_ROOT}/build-iphonesimulator-arm64" ]] && "${PLATFORM_ROOT}/build.sh" iphonesimulator arm64
@@ -24,7 +25,3 @@ if [ ! -d "${FRAMEWORK_ROOT}" ]; then
   exit 1
 fi
 cp "${PLATFORM_ROOT}/build-iphoneos-arm64/VERSION" "${FRAMEWORK_ROOT}/VERSION"
-
-# Backport to old folders
-rm -rf "${PROJECT_ROOT}/_install_ios/thirdparty/libopenssl.xcframework"
-cp -r "${FRAMEWORK_ROOT}" "${PROJECT_ROOT}/_install_ios/thirdparty/"
