@@ -33,7 +33,7 @@ jobs:
           git config --global user.email "${GITHUB_ACTOR}@zano.org"
       - name: Build
         run: |
-          ./thirdparty/build-boost-android.sh
+          ./thirdparty/boost/android/build.sh
         env:
           ANDROID_NDK_ROOT: ${{ steps.setup-ndk.outputs.ndk-path }}
       - name: Commit and push artifacts
@@ -44,7 +44,7 @@ jobs:
 
           # Commit if there are changes (even without changes)
           echo "[INFO] Commiting changes"
-          git add .
+          git add thirdparty/boost/android
           git commit --allow-empty -m "[AUTO] build libboost android from ${{ github.sha }}"
 
           # Check if branch has upstream tracking

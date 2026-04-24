@@ -1,13 +1,15 @@
 #!/bin/bash
 
-ROOT=$(realpath $(dirname $0)/..)
-cd $(dirname $0)/boost-ios
+ROOT=$(realpath $(dirname $0)/../../..)
+BOOST=$(realpath "${ROOT}/thirdparty/boost/ios")
+BOOST_FRAMEWORK=${BOOST}/libboost.xcframework
 
-rm -rf ${ROOT}/_install_ios/lib/thirdparty/libboost.xcframework
+rm -rf "${BOOST_FRAMEWORK}"
+
+cd $(dirname $0)/Apple-Boost-BuildScript
 rm -rf dist/boost.xcframework
-
-if ! (cat boost.sh | grep 'archives.boost.io'); then patch -p1 < ../boost-ios.patch; fi
-BOOST_VERSION=1.76.0
+if ! (cat boost.sh | grep 'archives.boost.io'); then patch -p1 < ../fixes.patch; fi
+BOOST_VERSION=${BOOST_VERSION:-1.76.0}
 ./boost.sh \
   -ios \
   --boost-version ${BOOST_VERSION} \
@@ -21,7 +23,6 @@ if [ ! -f build/boost/${BOOST_VERSION}/ios/release/build/iphoneos/arm64/libboost
 fi
 lipo -create build/boost/${BOOST_VERSION}/ios/release/build/iphonesimulator/*/libboost.a -output build/boost/${BOOST_VERSION}/ios/release/build/iphonesimulator/libboost.a
 
-BOOST_FRAMEWORK=${ROOT}/_install_ios/lib/thirdparty/libboost.xcframework
 xcodebuild -create-xcframework \
   -library build/boost/${BOOST_VERSION}/ios/release/build/iphoneos/arm64/libboost.a \
   -headers build/boost/${BOOST_VERSION}/ios/release/prefix/include \
