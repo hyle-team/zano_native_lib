@@ -68,10 +68,10 @@ fi
 
 rm -rf "${TARGET_ROOT}/include"
 mkdir -p "${TARGET_ROOT}/include/"
-cp "${PROJECT_ROOT}"/Zano/src/wallet/*.h "${PLATFORM_ROOT}/${ARCH}/include/"
+cp "${PROJECT_ROOT}"/Zano/src/wallet/*.h "${TARGET_ROOT}/include/"
 rm -rf "${TARGET_ROOT}/include-plain-wallet"
 mkdir -p "${TARGET_ROOT}/include-plain-wallet/"
-cp "${PROJECT_ROOT}"/Zano/src/wallet/plain_wallet_api.h "${PLATFORM_ROOT}/${ARCH}/include-plain-wallet/"
+cp "${PROJECT_ROOT}"/Zano/src/wallet/plain_wallet_api.h "${TARGET_ROOT}/include-plain-wallet/"
 
 rm -rf "${TARGET_ROOT}/${ARCH}"
 mkdir -p "${TARGET_ROOT}/${ARCH}/lib/"
