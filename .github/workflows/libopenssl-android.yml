@@ -23,6 +23,8 @@ jobs:
         uses: ./.github/actions/android
       - name: Load env
         uses: ./.github/actions/env
+        with:
+          platform: android
       - name: Build
         run: ./thirdparty/openssl/android/build.sh ${{ matrix.arch }}
         env:

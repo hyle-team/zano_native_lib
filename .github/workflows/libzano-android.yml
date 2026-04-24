@@ -23,6 +23,8 @@ jobs:
         uses: ./.github/actions/android
       - name: Load env
         uses: ./.github/actions/env
+        with:
+          platform: android
       - name: Prepare Zano
         uses: ./.github/actions/zano
       - name: Build

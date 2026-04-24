@@ -20,6 +20,8 @@ jobs:
           git submodule update --init --depth 1 ios-cmake
       - name: Load env
         uses: ./.github/actions/env
+        with:
+          platform: ios
       - name: Build iphoneos arm64
         run: ./thirdparty/openssl/ios/build.sh iphoneos arm64
       - name: Build iphonesimulator arm64

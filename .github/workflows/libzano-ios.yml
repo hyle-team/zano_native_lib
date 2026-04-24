@@ -16,6 +16,8 @@ jobs:
           submodules: recursive
       - name: Load env
         uses: ./.github/actions/env
+        with:
+          platform: ios
       - name: Prepare Zano
         uses: ./.github/actions/zano
       - name: Build iphoneos arm64

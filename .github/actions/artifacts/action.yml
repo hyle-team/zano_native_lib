@@ -32,7 +32,18 @@ runs:
         function push_changes() {
           ATTEMPT=$((ATTEMPT+1))
           echo "[INFO] Pulling latest changes from remote..."
-          git pull --rebase origin "${GITHUB_REF_NAME}"
+          if ! git pull --rebase origin "${GITHUB_REF_NAME}"; then
+            if [[ $ATTEMPT -eq $MAX_ATTEMPTS ]]; then
+              echo "[ERROR] Pulling failed" >&2
+              exit 1
+            fi
+            echo "[WARN] Pull failed. Let's see git status"
+            git status
+            echo "[WARN] Retrying in 10 seconds..."
+            sleep 10
+            push_changes || exit 1
+            exit $?
+          fi
           echo "[INFO] Pushing changes..."
           if ! git push; then
             if [[ $ATTEMPT -eq $MAX_ATTEMPTS ]]; then
