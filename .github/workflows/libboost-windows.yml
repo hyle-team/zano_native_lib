@@ -1,0 +1,43 @@
+name: "25 - libboost Windows prebuilds"
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  build-libboost-windows:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: windows-latest
+            arch: x86_64
+            msvc_arch: x64
+          - runner: windows-11-arm
+            arch: arm64
+            msvc_arch: x64_arm64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.msvc_arch }}
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          lfs: true
+          fetch-depth: 1
+          submodules: false
+      - name: Load env
+        uses: ./.github/actions/env
+      - name: Cache Boost sources
+        uses: actions/cache@v5
+        with:
+          path: ./thirdparty/boost/boost*.tar.gz
+          key: boost-${{ env.BOOST_VERSION }}-${{ env.BOOST_TAR_HASH }}
+      - name: Build
+        run: bash ./thirdparty/boost/windows/build.sh ${{ matrix.arch }}
+      - name: Configure git and stage artifacts for push
+        uses: ./.github/actions/artifacts
+        with:
+          folder: _install_windows/boost/${{ matrix.arch }}
+          name: libboost windows ${{ matrix.arch }}

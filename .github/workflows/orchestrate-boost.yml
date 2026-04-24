@@ -1,0 +1,21 @@
+name: "15 - Build Boost"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  libboost-android:
+    uses: ./.github/workflows/libboost-android.yml
+    secrets: inherit
+  libboost-ios:
+    uses: ./.github/workflows/libboost-ios.yml
+    secrets: inherit
+  libboost-macosx:
+    uses: ./.github/workflows/libboost-macosx.yml
+    secrets: inherit
+  libboost-linux:
+    uses: ./.github/workflows/libboost-linux.yml
+    secrets: inherit
+  libboost-windows:
+    uses: ./.github/workflows/libboost-windows.yml
+    secrets: inherit

@@ -1,40 +1,31 @@
-name: "Build libboost iOS prebuilds"
+name: "25 - libboost iOS prebuilds"
 
 on:
   workflow_dispatch:
   workflow_call:
-concurrency:
-  group: push-artifacts-group
 
 jobs:
-  build-ios:
+  build-libboost-ios:
     runs-on: macos-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           lfs: true
           fetch-depth: 1
-          submodules: recursive
-      - name: Configure git
+          submodules: false
+      - name: Checkout submodules
         run: |
-          # Set git credentials
-          git config --global user.name "${GITHUB_ACTOR}"
-          git config --global user.email "${GITHUB_ACTOR}@zano.org"
+          git config --global url."https://x-access-token:${{ github.token }}@github.com/".insteadOf "git@github.com:"
+          git submodule update --init --depth 1 ios-cmake thirdparty/boost/ios/Apple-Boost-BuildScript
+      - name: Load env
+        uses: ./.github/actions/env
+        with:
+          platform: ios
       - name: Build
-        run: |
-          ./thirdparty/build-boost-ios.sh
-      - name: Commit and push artifacts
-        run: |
-          # Fetch latest changes from remote
-          echo "[INFO] Pulling latest changes from remote..."
-          git pull
-
-          # Commit if there are changes (even without changes)
-          echo "[INFO] Commiting changes"
-          git add .
-          git commit --allow-empty -m "[AUTO] build libboost ios from ${{ github.sha }}"
-
-          # Check if branch has upstream tracking
-          echo "[INFO] Pushing changes"
-          git push
+        run: ./thirdparty/boost/ios/build.sh
+      - name: Configure git and stage artifacts for push
+        uses: ./.github/actions/artifacts
+        with:
+          folder: _install_ios/lib/thirdparty/libboost.xcframework
+          name: libboost ios

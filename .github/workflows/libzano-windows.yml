@@ -1,0 +1,40 @@
+name: "20 - libzano Windows prebuilds"
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  build-libzano-windows:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: windows-latest
+            arch: x86_64
+            msvc_arch: x64
+          - runner: windows-11-arm
+            arch: arm64
+            msvc_arch: x64_arm64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.msvc_arch }}
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          lfs: true
+          fetch-depth: 2
+          submodules: recursive
+      - name: Load env
+        uses: ./.github/actions/env
+      - name: Prepare Zano
+        uses: ./.github/actions/zano
+      - name: Build
+        run: bash ./build/windows/build.sh ${{ matrix.arch }}
+      - name: Configure git and stage artifacts for push
+        uses: ./.github/actions/artifacts
+        with:
+          folder: _install_windows/zano/${{ matrix.arch }}
+          name: libzano windows ${{ matrix.arch }}

@@ -1,0 +1,24 @@
+name: "Run another workflow"
+description: "Starts workflow and wait until it's finished"
+
+inputs:
+  workflow:
+    description: "Workflow to run"
+    required: true
+  ref_name:
+    description: "Reference name"
+    required: true
+  token:
+    description: "github token"
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        export GH_TOKEN=${{ inputs.token }}
+        gh workflow run ${{ inputs.workflow }} --ref ${{ inputs.ref_name }}
+        sleep 5
+        RUN_ID=$(gh run list --workflow=${{ inputs.workflow }} --limit 1 --json databaseId --jq '.[0].databaseId')
+        gh run watch $RUN_ID --interval 30 --exit-status

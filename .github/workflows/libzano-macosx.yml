@@ -1,0 +1,31 @@
+name: "20 - libzano MacOSX prebuilds"
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  build-libzano-macosx:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          lfs: true
+          fetch-depth: 2
+          submodules: recursive
+      - name: Load env
+        uses: ./.github/actions/env
+      - name: Prepare Zano
+        uses: ./.github/actions/zano
+      - name: Build x86_64
+        run: ./build/macosx/build.sh x86_64
+      - name: Build arm64
+        run: ./build/macosx/build.sh arm64
+      - name: Build framework
+        run: ./build/macosx/framework.sh
+      - name: Configure git and stage artifacts for push
+        uses: ./.github/actions/artifacts
+        with:
+          folder: _install_macosx/libzano.xcframework;_install_macosx/libzano-plain-wallet.xcframework
+          name: libzano macosx

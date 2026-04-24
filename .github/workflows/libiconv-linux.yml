@@ -1,0 +1,38 @@
+name: "26 - libiconv Linux prebuilds"
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  build-libiconv-linux:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            arch: x86_64
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          lfs: true
+          fetch-depth: 1
+          submodules: false
+      - name: Load env
+        uses: ./.github/actions/env
+      - name: Cache iconv sources
+        uses: actions/cache@v5
+        with:
+          path: ./thirdparty/iconv/libiconv*.tar.gz
+          key: iconv-${{ env.ICONV_VERSION }}-${{ env.ICONV_TAR_HASH }}
+      - name: Build
+        run: ./thirdparty/iconv/linux/build.sh ${{ matrix.arch }}
+      - name: Configure git and stage artifacts for push
+        uses: ./.github/actions/artifacts
+        with:
+          folder: _install_linux/iconv/${{ matrix.arch }}/
+          name: libiconv linux ${{ matrix.arch }}

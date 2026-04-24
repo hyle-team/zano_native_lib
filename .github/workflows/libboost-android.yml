@@ -1,52 +1,36 @@
-name: "Build libboost Android prebuilds"
+name: "25 - libboost Android prebuilds"
 
 on:
   workflow_dispatch:
   workflow_call:
-concurrency:
-  group: push-artifacts-group
 
 jobs:
-  build-android:
+  build-libboost-android:
     runs-on: ubuntu-latest
     steps:
-      - name: Install Java
-        uses: actions/setup-java@v4
-        with:
-          java-version: 17
-          distribution: temurin
-      - name: Install Android NDK
-        id: setup-ndk
-        uses: nttld/setup-ndk@v1
-        with:
-          ndk-version: r26c
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           lfs: true
           fetch-depth: 1
-          submodules: recursive
-      - name: Configure git
+          submodules: false
+      - name: Checkout submodules
         run: |
-          # Set git credentials
-          git config --global user.name "${GITHUB_ACTOR}"
-          git config --global user.email "${GITHUB_ACTOR}@zano.org"
+          git config --global url."https://x-access-token:${{ github.token }}@github.com/".insteadOf "git@github.com:"
+          git submodule update --init --depth 1 thirdparty/boost/android/Boost-for-Android
+      - name: Setup Android build environment
+        id: android
+        uses: ./.github/actions/android
+      - name: Load env
+        uses: ./.github/actions/env
+        with:
+          platform: android
       - name: Build
-        run: |
-          ./thirdparty/build-boost-android.sh
+        run: ./thirdparty/boost/android/build.sh
         env:
-          ANDROID_NDK_ROOT: ${{ steps.setup-ndk.outputs.ndk-path }}
-      - name: Commit and push artifacts
-        run: |
-          # Fetch latest changes from remote
-          echo "[INFO] Pulling latest changes from remote..."
-          git pull
-
-          # Commit if there are changes (even without changes)
-          echo "[INFO] Commiting changes"
-          git add .
-          git commit --allow-empty -m "[AUTO] build libboost android from ${{ github.sha }}"
-
-          # Check if branch has upstream tracking
-          echo "[INFO] Pushing changes"
-          git push
+          ANDROID_NDK_ROOT: ${{ steps.android.outputs.ndk-path }}
+      - name: Configure git and stage artifacts for push
+        uses: ./.github/actions/artifacts
+        with:
+          folder: _libs_android/boost/arm64-v8a;_libs_android/boost/armeabi-v7a;_libs_android/boost/x86;_libs_android/boost/x86_64;_libs_android/boost/include
+          name: libboost android

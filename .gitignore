@@ -1,7 +1,0 @@
-_builds_ios/
-_builds_android/
-_install_ios/arm64/
-_install_ios/x86_64/
-_install_ios/arm64_simulator/
-_install_ios/arm64_x86_64_simulator_temp/
-.DS_Store
