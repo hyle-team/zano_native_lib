@@ -17,7 +17,7 @@ jobs:
     runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           lfs: true
           fetch-depth: 1
@@ -25,7 +25,7 @@ jobs:
       - name: Load env
         uses: ./.github/actions/env
       - name: Cache OpenSSL sources
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ./thirdparty/openssl/openssl*.tar.gz
           key: openssl-${{ env.OPENSSL_VERSION }}-${{ env.OPENSSL_TAR_HASH }}

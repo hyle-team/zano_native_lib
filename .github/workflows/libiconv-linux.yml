@@ -17,7 +17,7 @@ jobs:
     runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           lfs: true
           fetch-depth: 1
@@ -25,7 +25,7 @@ jobs:
       - name: Load env
         uses: ./.github/actions/env
       - name: Cache iconv sources
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ./thirdparty/iconv/libiconv*.tar.gz
           key: iconv-${{ env.ICONV_VERSION }}-${{ env.ICONV_TAR_HASH }}
