@@ -1,41 +1,35 @@
-name: "Build libzano iOS prebuilds"
+name: "20 - libzano iOS prebuilds"
 
 on:
   workflow_dispatch:
   workflow_call:
-concurrency:
-  group: push-artifacts-group
 
 jobs:
-  build-ios:
+  build-libzano-ios:
     runs-on: macos-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           lfs: true
           fetch-depth: 2
           submodules: recursive
-      - name: Configure git
-        run: |
-          # Set git credentials
-          git config --global user.name "${GITHUB_ACTOR}"
-          git config --global user.email "${GITHUB_ACTOR}@zano.org"
-      - name: Build
-        run: |
-          (cd Zano && git tag -a v1.0 -m build HEAD^1)
-          ./build_ios_libs.sh silent
-      - name: Commit and push artifacts
-        run: |
-          # Fetch latest changes from remote
-          echo "[INFO] Pulling latest changes from remote..."
-          git pull
-
-          # Commit if there are changes (even without changes)
-          echo "[INFO] Commiting changes"
-          git add .
-          git commit --allow-empty -m "[AUTO] build libzano ios from ${{ github.sha }}"
-
-          # Check if branch has upstream tracking
-          echo "[INFO] Pushing changes"
-          git push
+      - name: Load env
+        uses: ./.github/actions/env
+        with:
+          platform: ios
+      - name: Prepare Zano
+        uses: ./.github/actions/zano
+      - name: Build iphoneos arm64
+        run: ./build/ios/build.sh iphoneos arm64
+      - name: Build iphonesimulator arm64
+        run: ./build/ios/build.sh iphonesimulator arm64
+      - name: Build iphonesimulator x86_64
+        run: ./build/ios/build.sh iphonesimulator x86_64
+      - name: Build framework
+        run: ./build/ios/framework.sh
+      - name: Configure git and stage artifacts for push
+        uses: ./.github/actions/artifacts
+        with:
+          folder: _install_ios/lib/libzano.xcframework;_install_ios/lib/libzano-plain-wallet.xcframework
+          name: libzano ios

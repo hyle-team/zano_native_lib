@@ -1,0 +1,35 @@
+name: "20 - libzano Linux prebuilds"
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  build-libzano-linux:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            arch: x86_64
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          lfs: true
+          fetch-depth: 2
+          submodules: recursive
+      - name: Load env
+        uses: ./.github/actions/env
+      - name: Prepare Zano
+        uses: ./.github/actions/zano
+      - name: Build
+        run: ./build/linux/build.sh ${{ matrix.arch }}
+      - name: Configure git and stage artifacts for push
+        uses: ./.github/actions/artifacts
+        with:
+          folder: _install_linux/zano/${{ matrix.arch }}
+          name: libzano linux ${{ matrix.arch }}

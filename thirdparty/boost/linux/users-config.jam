@@ -1,0 +1,5 @@
+import os ;
+
+local CXX = [ os.environ CXX ] ;
+
+using gcc : cxx : $(CXX) ;

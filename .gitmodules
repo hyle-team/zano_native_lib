@@ -4,9 +4,9 @@
 [submodule "ios-cmake"]
 	path = ios-cmake
 	url = https://github.com/leetal/ios-cmake
-[submodule "thirdparty/boost-ios"]
-	path = thirdparty/boost-ios
+[submodule "thirdparty/boost/ios/Apple-Boost-BuildScript"]
+	path = thirdparty/boost/ios/Apple-Boost-BuildScript
 	url = git@github.com:faithfracture/Apple-Boost-BuildScript.git
-[submodule "thirdparty/boost-android"]
-	path = thirdparty/boost-android
+[submodule "thirdparty/boost/android/Boost-for-Android"]
+	path = thirdparty/boost/android/Boost-for-Android
 	url = git@github.com:moritz-wundke/Boost-for-Android.git

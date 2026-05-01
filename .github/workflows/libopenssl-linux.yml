@@ -1,0 +1,38 @@
+name: "25 - libopenssl Linux prebuilds"
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  build-libopenssl-linux:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            arch: x86_64
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          lfs: true
+          fetch-depth: 1
+          submodules: false
+      - name: Load env
+        uses: ./.github/actions/env
+      - name: Cache OpenSSL sources
+        uses: actions/cache@v5
+        with:
+          path: ./thirdparty/openssl/openssl*.tar.gz
+          key: openssl-${{ env.OPENSSL_VERSION }}-${{ env.OPENSSL_TAR_HASH }}
+      - name: Build
+        run: ./thirdparty/openssl/linux/build.sh ${{ matrix.arch }}
+      - name: Configure git and stage artifacts for push
+        uses: ./.github/actions/artifacts
+        with:
+          folder: _install_linux/openssl/${{ matrix.arch }}
+          name: libopenssl linux ${{ matrix.arch }}

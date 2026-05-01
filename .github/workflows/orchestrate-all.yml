@@ -1,0 +1,39 @@
+name: "00 - Build all"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  trigger-all:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          lfs: false
+          fetch-depth: 1
+          submodules: false
+      - name: Build iconv
+        uses: ./.github/actions/workflow
+        with:
+          workflow: orchestrate-iconv.yml
+          ref_name: ${{ github.ref_name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build Boost
+        uses: ./.github/actions/workflow
+        with:
+          workflow: orchestrate-boost.yml
+          ref_name: ${{ github.ref_name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build OpenSSL
+        uses: ./.github/actions/workflow
+        with:
+          workflow: orchestrate-openssl.yml
+          ref_name: ${{ github.ref_name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build Zano
+        uses: ./.github/actions/workflow
+        with:
+          workflow: orchestrate-zano.yml
+          ref_name: ${{ github.ref_name }}
+          token: ${{ secrets.GITHUB_TOKEN }}

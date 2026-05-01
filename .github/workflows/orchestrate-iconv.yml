@@ -1,0 +1,12 @@
+name: "16 - Build iconv"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  libiconv-macosx:
+    uses: ./.github/workflows/libiconv-macosx.yml
+    secrets: inherit
+  libiconv-linux:
+    uses: ./.github/workflows/libiconv-linux.yml
+    secrets: inherit

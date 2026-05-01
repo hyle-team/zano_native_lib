@@ -1,0 +1,21 @@
+name: "15 - Build OpenSSL"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  libopenssl-android:
+    uses: ./.github/workflows/libopenssl-android.yml
+    secrets: inherit
+  libopenssl-ios:
+    uses: ./.github/workflows/libopenssl-ios.yml
+    secrets: inherit
+  libopenssl-macosx:
+    uses: ./.github/workflows/libopenssl-macosx.yml
+    secrets: inherit
+  libopenssl-linux:
+    uses: ./.github/workflows/libopenssl-linux.yml
+    secrets: inherit
+  libopenssl-windows:
+    uses: ./.github/workflows/libopenssl-windows.yml
+    secrets: inherit

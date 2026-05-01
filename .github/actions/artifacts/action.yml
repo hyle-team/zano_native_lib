@@ -1,0 +1,58 @@
+name: "Commit and push artifacts"
+description: "Configures git and commits and pushes artifacts to the repository"
+
+inputs:
+  folder:
+    description: "Folder or folders (separated by ;) to stage and commit"
+    required: true
+  name:
+    description: "Build name used in the commit message"
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        git config --global user.name "github-actions[bot]${GITHUB_ACTOR}"
+        git config --global user.email "github-actions[bot]${GITHUB_ACTOR}@zano.org"
+        git config --global http.postBuffer 1048576000
+
+        echo "[INFO] Committing changes..."
+        folders="${{ inputs.folder }}"
+        IFS=';' read -ra folders <<< "$folders"
+        for folder in "${folders[@]}"; do
+          echo "[INFO] adding folder: '${folder}'"
+          git add "$folder"
+        done
+        git commit --allow-empty -m "[AUTO] build ${{ inputs.name }} from ${GITHUB_SHA}"
+
+        ATTEMPT=0
+        MAX_ATTEMPTS=10
+        function push_changes() {
+          ATTEMPT=$((ATTEMPT+1))
+          echo "[INFO] Pulling latest changes from remote..."
+          if ! git pull --rebase origin "${GITHUB_REF_NAME}"; then
+            if [[ $ATTEMPT -eq $MAX_ATTEMPTS ]]; then
+              echo "[ERROR] Pulling failed" >&2
+              exit 1
+            fi
+            echo "[WARN] Pull failed. Let's see git status"
+            git status
+            echo "[WARN] Retrying in 10 seconds..."
+            sleep 10
+            push_changes || exit 1
+            exit $?
+          fi
+          echo "[INFO] Pushing changes..."
+          if ! git push; then
+            if [[ $ATTEMPT -eq $MAX_ATTEMPTS ]]; then
+              echo "[ERROR] Pushing failed" >&2
+              exit 1
+            fi
+            echo "[WARN] Push conflict detected. Retrying in 10 seconds..."
+            sleep 10
+            push_changes || exit 1
+          fi
+        }
+        push_changes || exit 1
