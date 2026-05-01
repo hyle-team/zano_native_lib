@@ -84,3 +84,11 @@ set_target_properties(Boost::regex PROPERTIES
   )
 
 list(APPEND _BOOST_REGEX_DEPS headers)
+
+if(CMAKE_CONFIGURATION_TYPES)
+  set_property(TARGET Boost::regex APPEND PROPERTY INTERFACE_LINK_LIBRARIES
+    "$<$<CONFIG:release>:icudata;icui18n;icuuc>")
+else()
+  set_property(TARGET Boost::regex APPEND PROPERTY INTERFACE_LINK_LIBRARIES
+    icudata icui18n icuuc)
+endif()
