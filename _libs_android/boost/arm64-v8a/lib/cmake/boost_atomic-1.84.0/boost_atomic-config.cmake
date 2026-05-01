@@ -15,10 +15,10 @@ mark_as_advanced(boost_atomic_DIR)
 get_filename_component(_BOOST_CMAKEDIR "${CMAKE_CURRENT_LIST_DIR}/../" REALPATH)
 
 # If the computed and the original directories are symlink-equivalent, use original
-if(EXISTS "/home/runner/work/zano_native_lib/zano_native_lib/thirdparty/boost-android/build/out/arm64-v8a/lib/cmake")
-  get_filename_component(_BOOST_CMAKEDIR_ORIGINAL "/home/runner/work/zano_native_lib/zano_native_lib/thirdparty/boost-android/build/out/arm64-v8a/lib/cmake" REALPATH)
+if(EXISTS "/home/runner/work/zano_native_lib/zano_native_lib/thirdparty/boost/android/Boost-for-Android/build/out/arm64-v8a/lib/cmake")
+  get_filename_component(_BOOST_CMAKEDIR_ORIGINAL "/home/runner/work/zano_native_lib/zano_native_lib/thirdparty/boost/android/Boost-for-Android/build/out/arm64-v8a/lib/cmake" REALPATH)
   if(_BOOST_CMAKEDIR STREQUAL _BOOST_CMAKEDIR_ORIGINAL)
-    set(_BOOST_CMAKEDIR "/home/runner/work/zano_native_lib/zano_native_lib/thirdparty/boost-android/build/out/arm64-v8a/lib/cmake")
+    set(_BOOST_CMAKEDIR "/home/runner/work/zano_native_lib/zano_native_lib/thirdparty/boost/android/Boost-for-Android/build/out/arm64-v8a/lib/cmake")
   endif()
   unset(_BOOST_CMAKEDIR_ORIGINAL)
 endif()
