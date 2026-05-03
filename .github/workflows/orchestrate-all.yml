@@ -31,7 +31,7 @@ jobs:
           workflow: orchestrate-openssl.yml
           ref_name: ${{ github.ref_name }}
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build Zano
+      - name: Build Zano Native Lib
         uses: ./.github/actions/workflow
         with:
           workflow: orchestrate-zano.yml
