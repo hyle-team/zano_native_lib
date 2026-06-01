@@ -1,4 +1,4 @@
-name: "10 - Build Zano Native Lib"
+name: "10 - Build Zano Native Lib(all platforms)"
 
 on:
   workflow_dispatch:
