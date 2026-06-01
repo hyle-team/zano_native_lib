@@ -1,0 +1,12 @@
+name: "10 - Build Zano Native Lib(mobile platforms)"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  libzano-android:
+    uses: ./.github/workflows/libzano-android.yml
+    secrets: inherit
+  libzano-ios:
+    uses: ./.github/workflows/libzano-ios.yml
+    secrets: inherit
