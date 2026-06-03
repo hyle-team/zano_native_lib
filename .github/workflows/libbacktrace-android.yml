@@ -3,6 +3,9 @@ name: "26 - libbacktrace Android prebuilds"
 on:
   workflow_dispatch:
   workflow_call:
+  push:
+    branches:
+      - android-libbacktrace
 
 jobs:
   build-libbacktrace-android:
