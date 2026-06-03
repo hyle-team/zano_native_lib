@@ -1,0 +1,9 @@
+name: "16 - Build libbacktrace"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  libbacktrace-android:
+    uses: ./.github/workflows/libbacktrace-android.yml
+    secrets: inherit

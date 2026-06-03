@@ -1,0 +1,32 @@
+name: "26 - libbacktrace Android prebuilds"
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  build-libbacktrace-android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          lfs: true
+          fetch-depth: 1
+          submodules: false
+      - name: Setup Android build environment
+        id: android
+        uses: ./.github/actions/android
+      - name: Load env
+        uses: ./.github/actions/env
+        with:
+          platform: android
+      - name: Build
+        run: ./thirdparty/libbacktrace/android/build.sh
+        env:
+          ANDROID_NDK_ROOT: ${{ steps.android.outputs.ndk-path }}
+      - name: Configure git and stage artifacts for push
+        uses: ./.github/actions/artifacts
+        with:
+          folder: _libs_android/libbacktrace/arm64-v8a;_libs_android/libbacktrace/armeabi-v7a;_libs_android/libbacktrace/x86;_libs_android/libbacktrace/x86_64;_libs_android/libbacktrace/include
+          name: libbacktrace android

@@ -12,6 +12,7 @@ BOOST_ROOT="${PROJECT_ROOT}/_libs_android/boost/"
 BOOST_VERSION=$(cat "${BOOST_ROOT}/${ARCH}/VERSION")
 OPENSSL_ROOT="${PROJECT_ROOT}/_libs_android/openssl"
 OPENSSL_VERSION=$(cat "${OPENSSL_ROOT}/${ARCH}/VERSION")
+BACKTRACE_ROOT="${PROJECT_ROOT}/_libs_android/libbacktrace"
 
 echo "Boost Version:   $BOOST_VERSION"
 echo "OpenSSL Version: $OPENSSL_VERSION"
@@ -55,6 +56,7 @@ CONFIGURE_FLAGS+=("-DBoost_INCLUDE_DIRS=${BOOST_ROOT}/include/")
 CONFIGURE_FLAGS+=("-DOPENSSL_INCLUDE_DIR=${OPENSSL_ROOT}/${ARCH}/include/")
 CONFIGURE_FLAGS+=("-DOPENSSL_CRYPTO_LIBRARY=${OPENSSL_ROOT}/${ARCH}/lib/libcrypto.a")
 CONFIGURE_FLAGS+=("-DOPENSSL_SSL_LIBRARY=${OPENSSL_ROOT}/${ARCH}/lib/libssl.a")
+CONFIGURE_FLAGS+=("-DBACKTRACE_ROOT=${BACKTRACE_ROOT}")
 CONFIGURE_FLAGS+=("-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS[*]}")
 CONFIGURE_FLAGS+=("-DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS[*]}")
 
@@ -80,4 +82,9 @@ cp "${BUILD_ROOT}/src/libcrypto.a" "${TARGET_ROOT}/${ARCH}/lib/"
 cp "${BUILD_ROOT}/src/libcurrency_core.a" "${TARGET_ROOT}/${ARCH}/lib/"
 cp "${BUILD_ROOT}/src/libwallet.a" "${TARGET_ROOT}/${ARCH}/lib/"
 cp "${BUILD_ROOT}/contrib/zlib/libz.a" "${TARGET_ROOT}/${ARCH}/lib/"
+# libbacktrace.a (Boost.Stacktrace backend) — present only if the libbacktrace prebuild ran;
+# the Zano CMake falls back to the basic backend when it is absent, so this stays optional.
+if [ -f "${BACKTRACE_ROOT}/${ARCH}/lib/libbacktrace.a" ]; then
+  cp "${BACKTRACE_ROOT}/${ARCH}/lib/libbacktrace.a" "${TARGET_ROOT}/${ARCH}/lib/"
+fi
 "${PLATFORM_ROOT}/../zano-version.sh" "${BUILD_ROOT}" > "${TARGET_ROOT}/${ARCH}/VERSION"
