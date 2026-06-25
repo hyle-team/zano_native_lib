@@ -5,3 +5,6 @@ _install_ios/**/*.a filter=lfs diff=lfs merge=lfs -text
 _install_linux/**/*.a filter=lfs diff=lfs merge=lfs -text
 _install_macosx/**/*.a filter=lfs diff=lfs merge=lfs -text
 _install_windows/**/*.lib filter=lfs diff=lfs merge=lfs -text
+*.so filter=lfs diff=lfs merge=lfs -text
+*.dll filter=lfs diff=lfs merge=lfs -text
+*.dylib filter=lfs diff=lfs merge=lfs -text
