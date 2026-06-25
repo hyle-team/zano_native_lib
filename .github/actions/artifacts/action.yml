@@ -32,7 +32,7 @@ runs:
         function push_changes() {
           ATTEMPT=$((ATTEMPT+1))
           echo "[INFO] Pulling latest changes from remote..."
-          if ! git pull --rebase origin "${GITHUB_REF_NAME}"; then
+          if ! GIT_LFS_SKIP_SMUDGE=1 git pull --rebase origin "${GITHUB_REF_NAME}"; then
             if [[ $ATTEMPT -eq $MAX_ATTEMPTS ]]; then
               echo "[ERROR] Pulling failed" >&2
               exit 1
