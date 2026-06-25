@@ -7,7 +7,7 @@ TARGET_ROOT="${PROJECT_ROOT}/_install_ios/lib/thirdparty"
 cd "${PLATFORM_ROOT}/Apple-Boost-BuildScript"
 rm -rf dist/boost.xcframework
 if ! (cat boost.sh | grep 'archives.boost.io'); then patch -p1 < ../fixes.patch; fi
-BOOST_VERSION=${BOOST_VERSION:-1.76.0}
+BOOST_VERSION=${BOOST_VERSION:-1.84.0}
 MIN_VERSION=${MIN_IOS_VERSION:-$(xcrun --sdk $PLATFORM --show-sdk-version)}
 MIN_IOS_VERSION=${MIN_VERSION} \
   ./boost.sh \
