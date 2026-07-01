@@ -7,4 +7,5 @@ runs:
     - shell: bash
       run: |
         git config --global user.name "${GITHUB_ACTOR}"
-        git config --global user.email "${GITHUB_ACTOR}@zano.org"        
+        git config --global user.email "${GITHUB_ACTOR}@zano.org"
+        (cd Zano && git tag -a v1.0 -m build HEAD)        
