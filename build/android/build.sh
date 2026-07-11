@@ -83,6 +83,7 @@ cp "${BUILD_ROOT}/src/libcrypto.a" "${TARGET_ROOT}/${ARCH}/lib/"
 cp "${BUILD_ROOT}/src/libcurrency_core.a" "${TARGET_ROOT}/${ARCH}/lib/"
 cp "${BUILD_ROOT}/src/libwallet.a" "${TARGET_ROOT}/${ARCH}/lib/"
 cp "${BUILD_ROOT}/contrib/zlib/libz.a" "${TARGET_ROOT}/${ARCH}/lib/"
+cp "${BUILD_ROOT}/contrib/ethereum/libethash/libethash.a" "${TARGET_ROOT}/${ARCH}/lib/"
 # libbacktrace.a (Boost.Stacktrace backend) — present only if the libbacktrace prebuild ran;
 # the Zano CMake falls back to the basic backend when it is absent, so this stays optional.
 if [ -f "${BACKTRACE_ROOT}/${ARCH}/lib/libbacktrace.a" ]; then
