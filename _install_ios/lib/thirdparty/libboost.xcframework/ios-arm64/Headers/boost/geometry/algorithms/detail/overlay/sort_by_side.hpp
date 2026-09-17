@@ -3,9 +3,10 @@
 // Copyright (c) 2015 Barend Gehrels, Amsterdam, the Netherlands.
 // Copyright (c) 2017 Adam Wulkiewicz, Lodz, Poland.
 
-// This file was modified by Oracle on 2017, 2019.
-// Modifications copyright (c) 2017, 2019 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2017-2023.
+// Modifications copyright (c) 2017-2023 Oracle and/or its affiliates.
 
+// Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -17,8 +18,10 @@
 
 #include <algorithm>
 #include <map>
+#include <set>
 #include <vector>
 
+#include <boost/geometry/algorithms/detail/overlay/approximately_equals.hpp>
 #include <boost/geometry/algorithms/detail/overlay/copy_segment_point.hpp>
 #include <boost/geometry/algorithms/detail/overlay/get_ring.hpp>
 #include <boost/geometry/algorithms/detail/direction_code.hpp>
@@ -86,7 +89,7 @@ struct ranked_point
 struct less_by_turn_index
 {
     template <typename T>
-    inline bool operator()(const T& first, const T& second) const
+    inline bool operator()(T const& first, T const& second) const
     {
         return first.turn_index == second.turn_index
             ? first.index < second.index
@@ -98,7 +101,7 @@ struct less_by_turn_index
 struct less_by_index
 {
     template <typename T>
-    inline bool operator()(const T& first, const T& second) const
+    inline bool operator()(T const& first, T const& second) const
     {
         // Length might be considered too
         // First order by from/to
@@ -120,23 +123,23 @@ struct less_by_index
 struct less_false
 {
     template <typename T>
-    inline bool operator()(const T&, const T& ) const
+    inline bool operator()(T const&, T const& ) const
     {
         return false;
     }
 };
 
-template <typename Point, typename SideStrategy, typename LessOnSame, typename Compare>
+template <typename PointOrigin, typename PointTurn, typename SideStrategy, typename LessOnSame, typename Compare>
 struct less_by_side
 {
-    less_by_side(const Point& p1, const Point& p2, SideStrategy const& strategy)
+    less_by_side(PointOrigin const& p1, PointTurn const& p2, SideStrategy const& strategy)
         : m_origin(p1)
         , m_turn_point(p2)
         , m_strategy(strategy)
     {}
 
     template <typename T>
-    inline bool operator()(const T& first, const T& second) const
+    inline bool operator()(T const& first, T const& second) const
     {
         typedef typename SideStrategy::cs_tag cs_tag;
 
@@ -208,8 +211,8 @@ struct less_by_side
     }
 
 private :
-    Point const& m_origin;
-    Point const& m_turn_point;
+    PointOrigin const& m_origin;
+    PointTurn const& m_turn_point;
     SideStrategy const& m_strategy;
 };
 
@@ -290,31 +293,6 @@ public :
         add_segment_to(turn_index, op_index, point_to, op);
     }
 
-    // Returns true if two points are approximately equal, tuned by a giga-epsilon constant
-    // (if constant is 1.0, for type double, the boundary is about 1.0e-7)
-    template <typename Point1, typename Point2, typename T>
-    static inline bool approximately_equals(Point1 const& a, Point2 const& b,
-                                            T const& limit_giga_epsilon)
-    {
-        // Including distance would introduce cyclic dependencies.
-        using coor_t = typename select_coordinate_type<Point1, Point2>::type;
-        using calc_t = typename geometry::select_most_precise <coor_t, T>::type;
-        constexpr calc_t machine_giga_epsilon = 1.0e9 * std::numeric_limits<calc_t>::epsilon();
-
-        calc_t const& a0 = geometry::get<0>(a);
-        calc_t const& b0 = geometry::get<0>(b);
-        calc_t const& a1 = geometry::get<1>(a);
-        calc_t const& b1 = geometry::get<1>(b);
-        calc_t const one = 1.0;
-        calc_t const c = math::detail::greatest(a0, b0, a1, b1, one);
-
-        // The maximum limit is avoid, for floating point, large limits like 400
-        // (which are be calculated using eps)
-        constexpr calc_t maxlimit = 1.0e-3;
-        auto const limit = (std::min)(maxlimit, limit_giga_epsilon * machine_giga_epsilon * c);
-        return std::abs(a0 - b0) <= limit && std::abs(a1 - b1) <= limit;
-    }
-
     template <typename Operation, typename Geometry1, typename Geometry2>
     static Point walk_over_ring(Operation const& op, int offset,
             Geometry1 const& geometry1,
@@ -336,20 +314,31 @@ public :
                 op.seg_id, point_from, point2, point3);
         Point point_to = op.fraction.is_one() ? point3 : point2;
 
-
-        // If the point is in the neighbourhood (the limit itself is not important),
+        // If the point is in the neighbourhood (the limit is arbitrary),
         // then take a point (or more) further back.
-        // The limit of offset avoids theoretical infinite loops. In practice it currently
-        // walks max 1 point back in all cases.
+        // The limit of offset avoids theoretical infinite loops.
+        // In practice it currently walks max 1 point back in all cases.
+        // Use the coordinate type, but if it is too small (e.g. std::int16), use a double
+        using ct_type = typename geometry::select_most_precise
+            <
+                typename geometry::coordinate_type<Point>::type,
+                double
+            >::type;
+
+        static auto const tolerance
+            = common_approximately_equals_epsilon_multiplier<ct_type>::value();
+
         int offset = 0;
-        while (approximately_equals(point_from, turn.point, 1.0) && offset > -10)
+        while (approximately_equals(point_from, turn.point, tolerance)
+               && offset > -10)
         {
             point_from = walk_over_ring(op, --offset, geometry1, geometry2);
         }
 
-        // Similarly for the point to, walk forward
+        // Similarly for the point_to, walk forward
         offset = 0;
-        while (approximately_equals(point_to, turn.point, 1.0) && offset < 10)
+        while (approximately_equals(point_to, turn.point, tolerance)
+               && offset < 10)
         {
             point_to = walk_over_ring(op, ++offset, geometry1, geometry2);
         }
@@ -393,7 +382,8 @@ public :
         }
     }
 
-    void apply(Point const& turn_point)
+    template <typename PointTurn>
+    void apply(PointTurn const& turn_point)
     {
         // We need three compare functors:
         // 1) to order clockwise (union) or counter clockwise (intersection)
@@ -402,8 +392,8 @@ public :
         //    to give colinear points
 
         // Sort by side and assign rank
-        less_by_side<Point, SideStrategy, less_by_index, Compare> less_unique(m_origin, turn_point, m_strategy);
-        less_by_side<Point, SideStrategy, less_false, Compare> less_non_unique(m_origin, turn_point, m_strategy);
+        less_by_side<Point, PointTurn, SideStrategy, less_by_index, Compare> less_unique(m_origin, turn_point, m_strategy);
+        less_by_side<Point, PointTurn, SideStrategy, less_false, Compare> less_non_unique(m_origin, turn_point, m_strategy);
 
         std::sort(m_ranked_points.begin(), m_ranked_points.end(), less_unique);
 
@@ -428,7 +418,7 @@ public :
 
         for (std::size_t i = 0; i < m_ranked_points.size(); i++)
         {
-            const rp& ranked = m_ranked_points[i];
+            rp const& ranked = m_ranked_points[i];
             if (ranked.direction != dir_from)
             {
                 continue;
@@ -450,7 +440,7 @@ public :
         bool handled[2] = {false, false};
         for (std::size_t i = 0; i < m_ranked_points.size(); i++)
         {
-            const rp& ranked = m_ranked_points[i];
+            rp const& ranked = m_ranked_points[i];
             if (ranked.direction != dir_from)
             {
                 continue;
@@ -489,7 +479,7 @@ public :
 
         // Move iterator after rank==0
         bool has_first = false;
-        typename container_type::iterator it = m_ranked_points.begin() + 1;
+        auto it = m_ranked_points.begin() + 1;
         for (; it != m_ranked_points.end() && it->rank == 0; ++it)
         {
             has_first = true;
@@ -500,8 +490,7 @@ public :
             // Reverse first part (having rank == 0), if any,
             // but skip the very first row
             std::reverse(m_ranked_points.begin() + 1, it);
-            for (typename container_type::iterator fit = m_ranked_points.begin();
-                 fit != it; ++fit)
+            for (auto fit = m_ranked_points.begin(); fit != it; ++fit)
             {
                 BOOST_ASSERT(fit->rank == 0);
             }

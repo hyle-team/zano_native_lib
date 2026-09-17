@@ -31,11 +31,6 @@ template<class Executor>
 template<class Handler, class Buffers>
 class basic_stream<Executor>::read_op : public detail::stream_read_op_base
 {
-    using ex1_type =
-        executor_type;
-    using ex2_type
-        = net::associated_executor_t<Handler, ex1_type>;
-
     struct lambda
     {
         Handler h_;
@@ -44,7 +39,8 @@ class basic_stream<Executor>::read_op : public detail::stream_read_op_base
 #if defined(BOOST_ASIO_NO_TS_EXECUTORS)
         net::any_io_executor wg2_;
 #else // defined(BOOST_ASIO_NO_TS_EXECUTORS)
-        net::executor_work_guard<ex2_type> wg2_;
+        net::executor_work_guard<
+            net::associated_executor_t<Handler, net::any_io_executor>> wg2_;
 #endif // defined(BOOST_ASIO_NO_TS_EXECUTORS)
 
         lambda(lambda&&) = default;
@@ -77,13 +73,25 @@ class basic_stream<Executor>::read_op : public detail::stream_read_op_base
           return net::get_associated_allocator(h_);
         }
 
+        using cancellation_slot_type =
+            net::associated_cancellation_slot_t<Handler>;
+
+        cancellation_slot_type
+        get_cancellation_slot() const noexcept
+        {
+            return net::get_associated_cancellation_slot(h_,
+                net::cancellation_slot());
+        }
+
         void
         operator()(error_code ec)
         {
             std::size_t bytes_transferred = 0;
             auto sp = wp_.lock();
             if(! sp)
-                ec = net::error::operation_aborted;
+            {
+                BOOST_BEAST_ASSIGN_EC(ec, net::error::operation_aborted);
+            }
             if(! ec)
             {
                 std::lock_guard<std::mutex> lock(sp->m);
@@ -98,7 +106,7 @@ class basic_stream<Executor>::read_op : public detail::stream_read_op_base
                 }
                 else if (buffer_bytes(b_) > 0)
                 {
-                    ec = net::error::eof;
+                    BOOST_BEAST_ASSIGN_EC(ec, net::error::eof);
                 }
             }
 
@@ -311,14 +319,14 @@ read_some(MutableBufferSequence const& buffers,
 
     // deliver error
     BOOST_ASSERT(in_->code != detail::stream_status::ok);
-    ec = net::error::eof;
+    BOOST_BEAST_ASSIGN_EC(ec, net::error::eof);
     return 0;
 }
 
 template<class Executor>
 template<class MutableBufferSequence,
     BOOST_ASIO_COMPLETION_TOKEN_FOR(void(error_code, std::size_t)) ReadHandler>
-BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler, void(error_code, std::size_t))
+BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler, void(error_code, std::size_t))
 basic_stream<Executor>::
 async_read_some(
     MutableBufferSequence const& buffers,
@@ -382,7 +390,7 @@ write_some(
     auto out = out_.lock();
     if(! out)
     {
-        ec = net::error::connection_reset;
+        BOOST_BEAST_ASSIGN_EC(ec, net::error::connection_reset);
         return 0;
     }
 
@@ -402,7 +410,7 @@ write_some(
 template<class Executor>
 template<class ConstBufferSequence,
     BOOST_ASIO_COMPLETION_TOKEN_FOR(void(error_code, std::size_t)) WriteHandler>
-BOOST_ASIO_INITFN_RESULT_TYPE(WriteHandler, void(error_code, std::size_t))
+BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler, void(error_code, std::size_t))
 basic_stream<Executor>::
 async_write_some(
     ConstBufferSequence const& buffers,
@@ -441,7 +449,9 @@ async_teardown(
     s.close();
     if( s.in_->fc &&
         s.in_->fc->fail(ec))
-        ec = net::error::eof;
+    {
+        BOOST_BEAST_ASSIGN_EC(ec, net::error::eof);
+    }
     else
         ec = {};
 
