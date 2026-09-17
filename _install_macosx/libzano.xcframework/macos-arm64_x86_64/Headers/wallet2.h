@@ -165,6 +165,8 @@ namespace tools
     // variables that should be part of state data object but should not be stored during serialization
     mutable std::atomic<bool> m_whitelist_updated = false;
     //===============================================================
+    void migrate_unconfirmed_payments_171();
+
     template <class t_archive>
     inline void serialize(t_archive &a, const unsigned int ver)
     {
@@ -226,7 +228,12 @@ namespace tools
       a & m_rollback_events;
       a & m_whitelisted_assets;
       a & m_use_assets_whitelisting;
-      a & m_last_zc_global_indexs;      
+      a & m_last_zc_global_indexs;
+
+      // v171 is wallet version that doesn't store mempool payments in m_payments
+      // and we remove legacy height-0 entries when loading an older wallet
+      if (t_archive::is_loading::value && ver < 171)
+        migrate_unconfirmed_payments_171();
     }
   };
   
@@ -677,9 +684,11 @@ namespace tools
     bool select_indices_for_transfer(assets_selection_context& needed_money_map, uint64_t fake_outputs_count, std::vector<uint64_t>& selected_indexes);
 
     //PoS
-    //synchronous version of function 
+    //synchronous version of function
     bool try_mint_pos();
     bool try_mint_pos(const currency::account_public_address& miner_address); // block reward will be sent to miner_address, stake will be returned back to the wallet
+    bool do_one_pos_mining_cycle(std::atomic<bool>& stop, std::function<bool()> idle_condition_cb, const currency::core_runtime_config& runtime_config);
+    bool do_one_pos_mining_cycle(std::atomic<bool>& stop, std::function<bool()> idle_condition_cb, const currency::core_runtime_config& runtime_config, const currency::account_public_address& miner_address);
     //for unit tests
     friend class ::test_generator;
     
@@ -803,6 +812,9 @@ namespace tools
     //performance inefficient call, suitable only for rare ocasions or super lazy developers
     bool proxy_to_daemon(const std::string& uri, const std::string& body, int& response_code, std::string& response_body);
     void set_concise_mode(bool enabled) { m_concise_mode = enabled; }
+    // сallers opt in, older daemons ignore the request flag and return full blocks
+    void set_compact_sync(bool enabled) { m_compact_sync = enabled; }
+    bool get_compact_sync() const { return m_compact_sync; }
     void set_concise_mode_reorg_max_reorg_blocks(uint64_t max_blocks) { m_wallet_concise_mode_max_reorg_blocks = max_blocks; }
     void set_concise_mode_truncate_history(uint64_t max_entries) { m_truncate_history_max_entries = max_entries; }
     bool get_concise_mode() const { return m_concise_mode; }
@@ -831,7 +843,7 @@ private:
     void remove_transfer_from_expiration_list(uint64_t transfer_index);
     void load_keys(const std::string& keys_file_name, const std::string& password, uint64_t file_signature, keys_file_data& kf_data, std::string* out_body_password = nullptr);
     void process_ado_in_new_transaction(const currency::asset_descriptor_operation& ado, process_transaction_context& ptc);
-    void process_new_transaction(const currency::transaction& tx, uint64_t height, const currency::block& b, const std::vector<uint64_t>* pglobal_indexes);
+    void process_new_transaction(const currency::transaction& tx_from_block, uint64_t height, const currency::block& b, const std::vector<uint64_t>* pglobal_indexes);
     void fetch_tx_global_indixes(const currency::transaction& tx, std::vector<uint64_t>& goutputs_indexes);
     void fetch_tx_global_indixes(const std::list<std::reference_wrapper<const currency::transaction>>& txs, std::vector<std::vector<uint64_t>>& goutputs_indexes);
     void detach_blockchain(uint64_t including_height);
@@ -967,8 +979,8 @@ private:
     void push_alias_info_to_extra_according_to_hf_status(const currency::extra_alias_entry& ai, std::vector<currency::extra_v>& extra);
     void remove_transfer_from_amount_gindex_map(uint64_t tid);
     uint64_t get_alias_cost(const std::string& alias);
-    void append_heights_with_distribution(std::vector<uint64_t>& heights, size_t oversample, uint64_t max_height, decoy_selection_generator::dist_kind kind) const;
-    void build_distribution_for_input(std::vector<uint64_t>& height_distrib, uint64_t own_height, decoy_selection_generator::dist_kind kind) const;
+    void append_heights_with_distribution(std::vector<uint64_t>& heights, size_t oversample, uint64_t preincluded_height, uint64_t min_height, decoy_selection_generator::dist_kind kind) const;
+    void build_distribution_for_input(std::vector<uint64_t>& height_distrib, uint64_t own_height, uint64_t min_height, decoy_selection_generator::dist_kind kind) const;
     void build_distribution_for_input(std::vector<uint64_t>& offsets, uint64_t own_index);
     void select_decoys(currency::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount & amount_entry, uint64_t own_g_index);
 
@@ -1031,6 +1043,7 @@ private:
     tools::wallet_public::wallet_vote_config m_votes_config;
 
     std::atomic<bool> m_concise_mode = true; //in this mode the wallet don't keep spent entries in m_transfers as well as m_recent_transfers longer then 100 entries
+    std::atomic<bool> m_compact_sync = false;
     uint64_t m_last_known_daemon_height = 0;
     uint64_t m_wallet_concise_mode_max_reorg_blocks = WALLET_CONCISE_MODE_MAX_REORG_BLOCKS;
     uint64_t m_full_resync_requested_at_h = 0;
