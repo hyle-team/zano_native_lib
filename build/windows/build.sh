@@ -17,6 +17,21 @@ echo "OpenSSL Version: $OPENSSL_VERSION"
 echo "==============================================================================="
 echo "Building: '${BUILD_ROOT}'"
 
+# Pick the CMake generator from the Visual Studio that msvc-dev-cmd activated.
+# windows-11-arm switched to VS 2026 on 2026-09-21 (actions/runner-images#14602);
+# windows-2022 still ships VS 2022. VsDevCmd exports VisualStudioVersion (e.g. "18.0").
+VS_MAJOR="${VisualStudioVersion%%.*}"
+[[ -z $VS_MAJOR ]] && VS_MAJOR="${VSCMD_VER%%.*}"
+case "$VS_MAJOR" in
+  18) CMAKE_GENERATOR_NAME="Visual Studio 18 2026";;
+  17) CMAKE_GENERATOR_NAME="Visual Studio 17 2022";;
+  *)
+    echo "ERROR: unsupported or undetected Visual Studio version '${VisualStudioVersion:-$VSCMD_VER}'" >&2
+    exit 1
+    ;;
+esac
+echo "Generator:       $CMAKE_GENERATOR_NAME"
+
 CONFIGURE_FLAGS=("${CONFIGURE_FLAGS}")
 CONFIGURE_FLAGS+=("-S${PROJECT_ROOT}/Zano" "-B${BUILD_ROOT}")
 CONFIGURE_FLAGS+=("-Wno-dev")
@@ -40,8 +55,9 @@ CONFIGURE_FLAGS+=("-DBoost_INCLUDE_DIRS=${BOOST_ROOT}/include")
 CONFIGURE_FLAGS+=("-DUSE_PCH=ON")
 CONFIGURE_FLAGS+=("-DBUILD_TESTS=OFF")
 CONFIGURE_FLAGS+=("-DDISABLE_TOR=ON")
-[[ $ARCH == x86_64 ]] && CONFIGURE_FLAGS+=("Ax64" "-Thost=x64")
-CONFIGURE_FLAGS+=("-GVisual Studio 17 2022")
+[[ $ARCH == x86_64 ]] && CONFIGURE_FLAGS+=("-Ax64" "-Thost=x64")
+[[ $ARCH == arm64 ]]  && CONFIGURE_FLAGS+=("-Aarm64")
+CONFIGURE_FLAGS+=("-G${CMAKE_GENERATOR_NAME}")
 
 cmake.exe "${CONFIGURE_FLAGS[@]}"
 cmake --build "${BUILD_ROOT}" --config Release
