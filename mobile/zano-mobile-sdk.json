@@ -1,0 +1,633 @@
+{
+  "schema": "zano-mobile-sdk-producer",
+  "version": 1,
+  "purpose": "Versioned producer pins of the Zano mobile SDK built from the nested Zano core. Records which core commit is the source of each shipped mobile SDK composition, the exact composed bytes, and the recipe inputs that exist as evidence. check_core_pin.py verifies these pins against the core git objects.",
+  "core": {
+    "path": "Zano",
+    "url": "https://github.com/hyle-team/zano.git",
+    "branch": "feat/mobile-core-extraction-2026-11-11",
+    "baseCommit": "299bf172e8428042919b48bfa1cedfcd9ede139a",
+    "commit": "e90a4e181fff7ff96ce03ddeda565d07cb5f75e8",
+    "chain": [
+      {
+        "commit": "7bff4fa699becd57a115d71085c318fa5350fceb",
+        "role": "accepted-sdk-base"
+      },
+      {
+        "commit": "98131bb6728ea79bb54e6c21a3a83a8bca27d686",
+        "role": "composition-snapshot-compat-v1"
+      },
+      {
+        "commit": "759c9682922b1abf282f80066260c3134a340411",
+        "role": "darwin-provisioning-port"
+      },
+      {
+        "commit": "fdee56b8f8d9d429848a49aa89d5d0278ba0839a",
+        "role": "sdk-revision-v2-pod-registration"
+      },
+      {
+        "commit": "e90a4e181fff7ff96ce03ddeda565d07cb5f75e8",
+        "role": "host-unit-tests"
+      }
+    ],
+    "published": false,
+    "publicationNote": "Local signed commits only. The pinned commits are not on the url above yet; a fresh clone cannot resolve them until the core branch is published."
+  },
+  "compositions": {
+    "android-arm64-v8a-testnet": {
+      "sourceCommit": "98131bb6728ea79bb54e6c21a3a83a8bca27d686",
+      "expectedVersion": "2.2.1.506[1.0-g299bf172e8428042919b48bfa1cedfcd9ede139a-native-snapshot-compat-v1]",
+      "versionNote": "COMMIT_ID_IN_VERSION label set by the producer, not the source commit id.",
+      "profile": "testnet-lifecycle-arm64-api24",
+      "network": "TESTNET",
+      "formation": 103,
+      "abis": [
+        "arm64-v8a"
+      ],
+      "toolchain": {
+        "androidApi": 24,
+        "ndk": "27.1.12297006",
+        "cmake": "3.22.1",
+        "stl": "c++_shared",
+        "sdkCppStandard": 17,
+        "moduleCppStandard": 20
+      },
+      "targets": [
+        "wallet",
+        "currency_core",
+        "crypto",
+        "common",
+        "zlibstatic"
+      ],
+      "layout": "_install_android/<abi>/lib/lib{wallet,currency_core,crypto,common,z}.a, _install_android/<abi>/VERSION, _install_android/include/<lock header path set>, _libs_android/{boost,openssl}/<abi>/lib",
+      "currentArtifactEvidence": {
+        "publisherLockSha256": "567e3664e5eb8a67f69833b21129f284d46fc734e5cbd3a2435a628a438c8c55",
+        "acceptedSourceManifestSha256": "8d497776ef3036cdad90f848da21c004fd65556d3af7763bb86eebefd0fc69aa",
+        "build": "Existing Android SDK build caches reused with the nine accepted overlays applied before configure (all nine byte-equal to sourceCommit/tip here). No clean configure command or complete dependency rebuild contract is recorded."
+      },
+      "producerRecipe": null,
+      "producerRecipeGap": "No clean Android producer command exists in evidence; one must be established and measured before this composition can be rebuilt from this pin."
+    },
+    "apple-iphoneos-iphonesimulator-testnet": {
+      "sourceCommit": "fdee56b8f8d9d429848a49aa89d5d0278ba0839a",
+      "expectedVersion": "2.2.1.506[1.0-g299bf172e8428042919b48bfa1cedfcd9ede139a-native-snapshot-compat-v1]",
+      "versionCommitLabel": "299bf172e8428042919b48bfa1cedfcd9ede139a-native-snapshot-compat-v1",
+      "producerConfigSha256": "05d152fd98aee9a036bba7cdd21068e2cdfa05807697e127d2b9f399a131f131",
+      "sdkCensus": {
+        "sha256": "d019db972ab89dd60da61bac244f96f9afee703a1ba4034f70a4e7b185644b7e",
+        "fileCount": 824,
+        "totalBytes": 12336757,
+        "meaning": "Census of the 824-path iOS compile closure of sourceCommit (prepare_source_inputs.py REVISION v2)."
+      },
+      "sdks": {
+        "iphoneos": {
+          "sysroot": "iphoneos",
+          "arch": "arm64",
+          "machoPlatform": 2,
+          "machoPlatformName": "IOS"
+        },
+        "iphonesimulator": {
+          "sysroot": "iphonesimulator",
+          "arch": "arm64",
+          "machoPlatform": 7,
+          "machoPlatformName": "IOSSIMULATOR"
+        }
+      },
+      "deploymentTarget": "16.6",
+      "cmake": {
+        "minimumVersion": "3.16",
+        "generator": "Unix Makefiles",
+        "cache": {
+          "CMAKE_SYSTEM_NAME": "iOS",
+          "CMAKE_BUILD_TYPE": "Release",
+          "TESTNET": "ON",
+          "BUILD_TESTS": "OFF",
+          "BUILD_GUI": "OFF",
+          "USE_PCH": "OFF",
+          "CAKEWALLET": "OFF",
+          "USE_BITCOIN_SECP256K1_FOR_ECDSA": "OFF",
+          "DISABLE_TOR": "ON",
+          "BUILD_SHARED_LIBS": "OFF",
+          "CMAKE_POSITION_INDEPENDENT_CODE": "ON",
+          "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+          "CMAKE_TRY_COMPILE_TARGET_TYPE": "STATIC_LIBRARY",
+          "CMAKE_CXX_STANDARD": "17",
+          "SKIP_BOOST_FATLIB_LIB": "ON",
+          "CMAKE_C_FLAGS_RELEASE": "-fembed-bitcode=off",
+          "CMAKE_CXX_FLAGS_RELEASE": "-fembed-bitcode=off",
+          "REFS": "",
+          "GIT": "OFF",
+          "COMMIT_ID_IN_VERSION": "ON"
+        },
+        "why": {
+          "deploymentTarget": "The base CMakeLists sets CMAKE_OSX_DEPLOYMENT_TARGET 10.15 for every APPLE build before its iOS branch could choose 12.00. The producer always passes the podspec platform (16.6) explicitly.",
+          "bitcode": "The base iOS branch appends -fembed-bitcode to CMAKE_C/CXX_FLAGS. Bitcode is retired in current Xcode. CMAKE_*_FLAGS_RELEASE follows CMAKE_*_FLAGS on the compile line, so -fembed-bitcode=off wins without a CMake source change; produce verifies no __LLVM/__bitcode section remains.",
+          "boost": "With SKIP_BOOST_FATLIB_LIB the iOS branch links no libboost.a; the static archives need only Boost headers. Boost archives are packaged per SDK from the dependency inputs.",
+          "tryCompile": "iOS executables cannot be linked unsigned during configure checks; static-library try_compile matches the Android producer.",
+          "version": "COMMIT is versionCommitLabel; with REFS empty, GIT=OFF and COMMIT_ID_IN_VERSION=ON the base writes BUILD_COMMIT_ID 1.0-g<COMMIT>, so PROJECT_VERSION_LONG equals expectedVersion. produce checks the generated version.h."
+        },
+        "targets": [
+          "wallet",
+          "currency_core",
+          "crypto",
+          "common",
+          "zlibstatic"
+        ],
+        "archives": {
+          "zano-wallet": "src/libwallet.a",
+          "zano-currency_core": "src/libcurrency_core.a",
+          "zano-crypto": "src/libcrypto.a",
+          "zano-common": "src/libcommon.a",
+          "zano-z": "contrib/zlib/libz.a"
+        },
+        "installGap": "src/CMakeLists.txt installs only wallet/currency_core/crypto/common for iOS, with no zlib and no headers. The producer packages zlibstatic (libz.a) from the build tree and the header closure from the composed source explicitly; cmake --install is never used."
+      },
+      "requiredCompiledUnits": [
+        "src/wallet/native_wallet_provisioning.cpp",
+        "src/wallet/native_wallet_alias_operation.cpp",
+        "src/wallet/native_wallet_password_rekey.cpp",
+        "src/wallet/native_wallet_history_interval.cpp",
+        "src/wallet/native_wallet_session.cpp",
+        "src/wallet/wallet2.cpp"
+      ],
+      "requiredCompileDefinitions": [
+        "-DMOBILE_WALLET_BUILD",
+        "-DIOS_BUILD",
+        "-DTESTNET"
+      ],
+      "requiredWalletSymbols": [
+        "capture_snapshot",
+        "capture_product_snapshot_v1",
+        "capture_product_snapshot_v2",
+        "capture_product_snapshot_v3",
+        "capture_product_snapshot_v4",
+        "prepare_alias_review_v1",
+        "sign_reviewed_alias_to_held_v1",
+        "rekey_password_v1"
+      ],
+      "producer": "zano-mobile-rn native/zano/ios/produce_stage.py with sdk-producer.json (sha above); stays app-owned until the iOS consumer cutover is validated."
+    }
+  },
+  "appComposition": {
+    "rule": "Final bytes of every SDK path that differs from the base source tree, after the accepted order base -> bind map -> R5 node/sdk rows -> unchanged selector -> history-interval v4 sdk rows -> accepted alias/password/compatibility overlays. Paths overwritten by a later step are listed once with their final bytes. Host-test overlays (tests/) are not part of the archive build (BUILD_TESTS=OFF).",
+    "deltas": [
+      {
+        "path": "src/currency_core/blockchain_storage.cpp",
+        "sha256": "2a3b47847afef28a7b7f93bbf1a31b08767e697e59d1db3d15603352ee82bac2"
+      },
+      {
+        "path": "src/currency_core/blockchain_storage.h",
+        "sha256": "ee30dbf1eedb3c26a1e17b1e89d3a23969f8e4f90e6d7088f41f3783d8f280db"
+      },
+      {
+        "path": "src/rpc/core_rpc_server.cpp",
+        "sha256": "18f0f6f005840309f52f4989525dfaa0e31e7e98bf03f37c177f7c8723c7a5b8"
+      },
+      {
+        "path": "src/rpc/core_rpc_server.h",
+        "sha256": "00414270af922c24d3f514ae8d08cb925fc70eb569a442cd6220f4b22aa0272a"
+      },
+      {
+        "path": "src/rpc/core_rpc_server_commands_defs.h",
+        "sha256": "090e5cabdd969aaedfe4c696bb3406c483d520a1b4aef5b4f7eda9ffdab285b3"
+      },
+      {
+        "path": "src/wallet/native_wallet_history_origin.h",
+        "sha256": "18bd96d570c0251e42f83fc7fa9611a3d435780fc47ad6e654dde803f154e4b7"
+      },
+      {
+        "path": "src/wallet/read_only_birthday_prefix.h",
+        "sha256": "9871e3e250611f4e4e6884de7e7be4fc5895e4ed16dbee2d348af8e6ed6bd086"
+      },
+      {
+        "path": "src/wallet/read_only_block_transport.cpp",
+        "sha256": "f10882993a4fcc48031a13197be8f4e285baf98847fa71f4c13b10dd35a05f1b"
+      },
+      {
+        "path": "src/wallet/read_only_block_transport.h",
+        "sha256": "9aa9ddb69d7ba0f47a6723967986514d1c4b7e80c1c67d50e66b18dfb20aaed0"
+      },
+      {
+        "path": "src/wallet/read_only_core_proxy.h",
+        "sha256": "bf79d85c5ae326bec4eacfca8ddc883b93d186be28643e990fb0a8008a50fb8a"
+      },
+      {
+        "path": "src/wallet/read_only_wallet_sync.cpp",
+        "sha256": "86c58df5f5ee3683644de390aeb18f34d70d1dd999575eb91b45dbf4ef18c24f"
+      },
+      {
+        "path": "src/wallet/read_only_wallet_sync.h",
+        "sha256": "35413f2039eefca1871e2038a49cccf36e54ae6013c26348fc16d12ecae49e90"
+      },
+      {
+        "path": "src/wallet/wallet2.h",
+        "sha256": "2af9de93d24f0908e58c1c4814e9bbfb224d5cef0506bc2564e22833b4eccb1c"
+      },
+      {
+        "path": "src/wallet/native_wallet_birthday_prefix.h",
+        "sha256": "968267effffb4a91d95223f4004d0d440b62b211eab2bce8d8770e39f7316b5b"
+      },
+      {
+        "path": "src/wallet/native_wallet_history_interval.cpp",
+        "sha256": "aef551988c986556b3000b191d40a4576d62f8cee5a126fd75c27ff4ada27634"
+      },
+      {
+        "path": "src/wallet/native_wallet_alias_operation.cpp",
+        "sha256": "b2b370452b7c9c4bd8c7674e16806dbd685f3becbf713402728fadf435d8a4a5"
+      },
+      {
+        "path": "src/wallet/native_wallet_alias_pending.h",
+        "sha256": "c210c975cf2eb0796a24445fb87f9de5306c9e62ec6a16d7112b9d94f3591a9f"
+      },
+      {
+        "path": "src/wallet/native_wallet_password_rekey.cpp",
+        "sha256": "1e550da2af34483c87f9429f4f8e696172c449b91cda1b887e784fe5c30024c4"
+      },
+      {
+        "path": "src/wallet/native_wallet_session.cpp",
+        "sha256": "6f03a4f7875b662626e792f4bb4ec341096a55714d8bfba81feadc14ddcf8041"
+      },
+      {
+        "path": "src/wallet/native_wallet_session.h",
+        "sha256": "91d5619e15b6911dcc3899b444826c4a950ab094a2ea921ed92cac9dc61a6063"
+      },
+      {
+        "path": "src/wallet/wallet2.cpp",
+        "sha256": "330e16fe2c7ee32cff43689b138b1e019b2179dda76ef768b6d1c847ca2bf4e3"
+      }
+    ],
+    "projectOverlays": [
+      "src/wallet/native_wallet_provisioning.cpp",
+      "src/wallet/native_wallet_durable_descriptor.h",
+      "contrib/epee/include/misc_language.h",
+      "src/common/db_abstract_accessor.h"
+    ],
+    "forbiddenPaths": [
+      {
+        "path": "contrib/zlib/zconf.h",
+        "why": "contrib/zlib/CMakeLists.txt renames it inside the source tree during an out-of-source configure; the accepted base carries zconf.h.included instead, so an immutable snapshot must not contain zconf.h."
+      }
+    ]
+  },
+  "sourceMap": [
+    {
+      "path": "contrib/epee/include/misc_language.h",
+      "sha256": "185d990ee3480e040ac9fd1646eb9ade0234f3d6f3c168d020e329ba68bf71ee",
+      "size": 21185,
+      "finalCommit": "fdee56b8f8d9d429848a49aa89d5d0278ba0839a",
+      "finalRole": "sdk-revision-v2-pod-registration",
+      "inBase": true
+    },
+    {
+      "path": "src/common/db_abstract_accessor.h",
+      "sha256": "def5c2955149cd30c602a901da6ea0e22d52dc96ff89f8ca8d09c3d2d5be8b72",
+      "size": 49210,
+      "finalCommit": "fdee56b8f8d9d429848a49aa89d5d0278ba0839a",
+      "finalRole": "sdk-revision-v2-pod-registration",
+      "inBase": true
+    },
+    {
+      "path": "src/currency_core/blockchain_storage.cpp",
+      "sha256": "2a3b47847afef28a7b7f93bbf1a31b08767e697e59d1db3d15603352ee82bac2",
+      "size": 428567,
+      "finalCommit": "7bff4fa699becd57a115d71085c318fa5350fceb",
+      "finalRole": "accepted-sdk-base",
+      "inBase": true
+    },
+    {
+      "path": "src/currency_core/blockchain_storage.h",
+      "sha256": "ee30dbf1eedb3c26a1e17b1e89d3a23969f8e4f90e6d7088f41f3783d8f280db",
+      "size": 61409,
+      "finalCommit": "7bff4fa699becd57a115d71085c318fa5350fceb",
+      "finalRole": "accepted-sdk-base",
+      "inBase": true
+    },
+    {
+      "path": "src/rpc/core_rpc_server.cpp",
+      "sha256": "18f0f6f005840309f52f4989525dfaa0e31e7e98bf03f37c177f7c8723c7a5b8",
+      "size": 117053,
+      "finalCommit": "7bff4fa699becd57a115d71085c318fa5350fceb",
+      "finalRole": "accepted-sdk-base",
+      "inBase": true
+    },
+    {
+      "path": "src/rpc/core_rpc_server.h",
+      "sha256": "00414270af922c24d3f514ae8d08cb925fc70eb569a442cd6220f4b22aa0272a",
+      "size": 23055,
+      "finalCommit": "7bff4fa699becd57a115d71085c318fa5350fceb",
+      "finalRole": "accepted-sdk-base",
+      "inBase": true
+    },
+    {
+      "path": "src/rpc/core_rpc_server_commands_defs.h",
+      "sha256": "090e5cabdd969aaedfe4c696bb3406c483d520a1b4aef5b4f7eda9ffdab285b3",
+      "size": 128936,
+      "finalCommit": "98131bb6728ea79bb54e6c21a3a83a8bca27d686",
+      "finalRole": "composition-snapshot-compat-v1",
+      "inBase": true
+    },
+    {
+      "path": "src/serialization/binary_archive.h",
+      "sha256": "3d72a6fb618576fe8c9f8b9cd5d95bb2cc41d06223d772f8a85b2745eb7e4a4a",
+      "size": 8742,
+      "finalCommit": "7bff4fa699becd57a115d71085c318fa5350fceb",
+      "finalRole": "accepted-sdk-base",
+      "inBase": true
+    },
+    {
+      "path": "src/wallet/native_held_submission.cpp",
+      "sha256": "7760f0a4d2000439bc4482f26f4b8bb53bd9474885ed3a864f4b1dd7ab2f6f48",
+      "size": 6553,
+      "finalCommit": "7bff4fa699becd57a115d71085c318fa5350fceb",
+      "finalRole": "accepted-sdk-base",
+      "inBase": false
+    },
+    {
+      "path": "src/wallet/native_held_submission.h",
+      "sha256": "c696791cc44391239aebf073a189c0e15e0e6da358e702766a656a6ab84230c3",
+      "size": 2543,
+      "finalCommit": "7bff4fa699becd57a115d71085c318fa5350fceb",
+      "finalRole": "accepted-sdk-base",
+      "inBase": false
+    },
+    {
+      "path": "src/wallet/native_payment_transport.cpp",
+      "sha256": "e7bb311e34c0f7abf40ba4c6bc04a2427b8e9b0d28f1b5820d5fb48702d83fe7",
+      "size": 20310,
+      "finalCommit": "7bff4fa699becd57a115d71085c318fa5350fceb",
+      "finalRole": "accepted-sdk-base",
+      "inBase": false
+    },
+    {
+      "path": "src/wallet/native_payment_transport.h",
+      "sha256": "56ffbe928023d843924aecd087ca541252ad8ebc5f3d62db80f3750fa465745d",
+      "size": 4219,
+      "finalCommit": "7bff4fa699becd57a115d71085c318fa5350fceb",
+      "finalRole": "accepted-sdk-base",
+      "inBase": false
+    },
+    {
+      "path": "src/wallet/native_wallet_alias_operation.cpp",
+      "sha256": "b2b370452b7c9c4bd8c7674e16806dbd685f3becbf713402728fadf435d8a4a5",
+      "size": 44048,
+      "finalCommit": "98131bb6728ea79bb54e6c21a3a83a8bca27d686",
+      "finalRole": "composition-snapshot-compat-v1",
+      "inBase": false
+    },
+    {
+      "path": "src/wallet/native_wallet_alias_pending.h",
+      "sha256": "c210c975cf2eb0796a24445fb87f9de5306c9e62ec6a16d7112b9d94f3591a9f",
+      "size": 6833,
+      "finalCommit": "98131bb6728ea79bb54e6c21a3a83a8bca27d686",
+      "finalRole": "composition-snapshot-compat-v1",
+      "inBase": false
+    },
+    {
+      "path": "src/wallet/native_wallet_birthday_prefix.h",
+      "sha256": "968267effffb4a91d95223f4004d0d440b62b211eab2bce8d8770e39f7316b5b",
+      "size": 8261,
+      "finalCommit": "98131bb6728ea79bb54e6c21a3a83a8bca27d686",
+      "finalRole": "composition-snapshot-compat-v1",
+      "inBase": false
+    },
+    {
+      "path": "src/wallet/native_wallet_durable_descriptor.h",
+      "sha256": "044866a9acef9ec3cc0f8a5e3800ff771820f9202b5ab5ecbc48f78411d284bf",
+      "size": 5154,
+      "finalCommit": "759c9682922b1abf282f80066260c3134a340411",
+      "finalRole": "darwin-provisioning-port",
+      "inBase": false
+    },
+    {
+      "path": "src/wallet/native_wallet_history_interval.cpp",
+      "sha256": "aef551988c986556b3000b191d40a4576d62f8cee5a126fd75c27ff4ada27634",
+      "size": 6788,
+      "finalCommit": "98131bb6728ea79bb54e6c21a3a83a8bca27d686",
+      "finalRole": "composition-snapshot-compat-v1",
+      "inBase": false
+    },
+    {
+      "path": "src/wallet/native_wallet_history_origin.h",
+      "sha256": "18bd96d570c0251e42f83fc7fa9611a3d435780fc47ad6e654dde803f154e4b7",
+      "size": 601,
+      "finalCommit": "98131bb6728ea79bb54e6c21a3a83a8bca27d686",
+      "finalRole": "composition-snapshot-compat-v1",
+      "inBase": false
+    },
+    {
+      "path": "src/wallet/native_wallet_password_rekey.cpp",
+      "sha256": "1e550da2af34483c87f9429f4f8e696172c449b91cda1b887e784fe5c30024c4",
+      "size": 12491,
+      "finalCommit": "98131bb6728ea79bb54e6c21a3a83a8bca27d686",
+      "finalRole": "composition-snapshot-compat-v1",
+      "inBase": false
+    },
+    {
+      "path": "src/wallet/native_wallet_provisioning.cpp",
+      "sha256": "6e6521732a5d844cebc9e38752ef2f4cf1bb3bdcd8770498663ea7804e31f9bd",
+      "size": 24675,
+      "finalCommit": "759c9682922b1abf282f80066260c3134a340411",
+      "finalRole": "darwin-provisioning-port",
+      "inBase": true
+    },
+    {
+      "path": "src/wallet/native_wallet_session.cpp",
+      "sha256": "6f03a4f7875b662626e792f4bb4ec341096a55714d8bfba81feadc14ddcf8041",
+      "size": 97369,
+      "finalCommit": "98131bb6728ea79bb54e6c21a3a83a8bca27d686",
+      "finalRole": "composition-snapshot-compat-v1",
+      "inBase": true
+    },
+    {
+      "path": "src/wallet/native_wallet_session.h",
+      "sha256": "91d5619e15b6911dcc3899b444826c4a950ab094a2ea921ed92cac9dc61a6063",
+      "size": 63412,
+      "finalCommit": "98131bb6728ea79bb54e6c21a3a83a8bca27d686",
+      "finalRole": "composition-snapshot-compat-v1",
+      "inBase": true
+    },
+    {
+      "path": "src/wallet/read_only_birthday_prefix.h",
+      "sha256": "9871e3e250611f4e4e6884de7e7be4fc5895e4ed16dbee2d348af8e6ed6bd086",
+      "size": 10020,
+      "finalCommit": "98131bb6728ea79bb54e6c21a3a83a8bca27d686",
+      "finalRole": "composition-snapshot-compat-v1",
+      "inBase": false
+    },
+    {
+      "path": "src/wallet/read_only_block_transport.cpp",
+      "sha256": "f10882993a4fcc48031a13197be8f4e285baf98847fa71f4c13b10dd35a05f1b",
+      "size": 55165,
+      "finalCommit": "98131bb6728ea79bb54e6c21a3a83a8bca27d686",
+      "finalRole": "composition-snapshot-compat-v1",
+      "inBase": true
+    },
+    {
+      "path": "src/wallet/read_only_block_transport.h",
+      "sha256": "9aa9ddb69d7ba0f47a6723967986514d1c4b7e80c1c67d50e66b18dfb20aaed0",
+      "size": 8096,
+      "finalCommit": "98131bb6728ea79bb54e6c21a3a83a8bca27d686",
+      "finalRole": "composition-snapshot-compat-v1",
+      "inBase": true
+    },
+    {
+      "path": "src/wallet/read_only_block_wire.cpp",
+      "sha256": "3e38a453c72970b674433040c8385f8c3adffd59d1d282cd6b8ac1214504d2b9",
+      "size": 14285,
+      "finalCommit": "7bff4fa699becd57a115d71085c318fa5350fceb",
+      "finalRole": "accepted-sdk-base",
+      "inBase": false
+    },
+    {
+      "path": "src/wallet/read_only_block_wire.h",
+      "sha256": "776b75b9d0c638ebe441f4f13766d59d14770a5aa9a080f4ac5497d81eb64fa0",
+      "size": 2587,
+      "finalCommit": "7bff4fa699becd57a115d71085c318fa5350fceb",
+      "finalRole": "accepted-sdk-base",
+      "inBase": false
+    },
+    {
+      "path": "src/wallet/read_only_block_wire_outer.cpp",
+      "sha256": "bfe4c9d8d6e5c9bc2f668faf549149b38f3df983968c481d7938e5d9749e5af9",
+      "size": 19931,
+      "finalCommit": "7bff4fa699becd57a115d71085c318fa5350fceb",
+      "finalRole": "accepted-sdk-base",
+      "inBase": false
+    },
+    {
+      "path": "src/wallet/read_only_block_wire_outer.h",
+      "sha256": "cf69f1bc7528783d96af98dd45eeb06aa14e471150a0d115722f8053340eb419",
+      "size": 3191,
+      "finalCommit": "7bff4fa699becd57a115d71085c318fa5350fceb",
+      "finalRole": "accepted-sdk-base",
+      "inBase": false
+    },
+    {
+      "path": "src/wallet/read_only_block_wire_schema.inl",
+      "sha256": "5fb9621542c6c63c6215c762c50a87e370ca34b9deaf167545b929db9088b8d8",
+      "size": 34337,
+      "finalCommit": "7bff4fa699becd57a115d71085c318fa5350fceb",
+      "finalRole": "accepted-sdk-base",
+      "inBase": false
+    },
+    {
+      "path": "src/wallet/read_only_core_proxy.h",
+      "sha256": "bf79d85c5ae326bec4eacfca8ddc883b93d186be28643e990fb0a8008a50fb8a",
+      "size": 10601,
+      "finalCommit": "7bff4fa699becd57a115d71085c318fa5350fceb",
+      "finalRole": "accepted-sdk-base",
+      "inBase": true
+    },
+    {
+      "path": "src/wallet/read_only_validated_prefix.h",
+      "sha256": "d6cc02b65ca940ef5670744ea0049a3bc856748031272cb354d215f40fa867c6",
+      "size": 1170,
+      "finalCommit": "7bff4fa699becd57a115d71085c318fa5350fceb",
+      "finalRole": "accepted-sdk-base",
+      "inBase": false
+    },
+    {
+      "path": "src/wallet/read_only_wallet_birthday.h",
+      "sha256": "94f4612c3be1613233ec04e2adeaffaf53955d50e0532fa87bf755fd6026892e",
+      "size": 5660,
+      "finalCommit": "7bff4fa699becd57a115d71085c318fa5350fceb",
+      "finalRole": "accepted-sdk-base",
+      "inBase": false
+    },
+    {
+      "path": "src/wallet/read_only_wallet_sync.cpp",
+      "sha256": "86c58df5f5ee3683644de390aeb18f34d70d1dd999575eb91b45dbf4ef18c24f",
+      "size": 30242,
+      "finalCommit": "98131bb6728ea79bb54e6c21a3a83a8bca27d686",
+      "finalRole": "composition-snapshot-compat-v1",
+      "inBase": true
+    },
+    {
+      "path": "src/wallet/read_only_wallet_sync.h",
+      "sha256": "35413f2039eefca1871e2038a49cccf36e54ae6013c26348fc16d12ecae49e90",
+      "size": 5681,
+      "finalCommit": "98131bb6728ea79bb54e6c21a3a83a8bca27d686",
+      "finalRole": "composition-snapshot-compat-v1",
+      "inBase": true
+    },
+    {
+      "path": "src/wallet/wallet2.cpp",
+      "sha256": "330e16fe2c7ee32cff43689b138b1e019b2179dda76ef768b6d1c847ca2bf4e3",
+      "size": 535630,
+      "finalCommit": "7bff4fa699becd57a115d71085c318fa5350fceb",
+      "finalRole": "accepted-sdk-base",
+      "inBase": true
+    },
+    {
+      "path": "src/wallet/wallet2.h",
+      "sha256": "2af9de93d24f0908e58c1c4814e9bbfb224d5cef0506bc2564e22833b4eccb1c",
+      "size": 81855,
+      "finalCommit": "7bff4fa699becd57a115d71085c318fa5350fceb",
+      "finalRole": "accepted-sdk-base",
+      "inBase": true
+    },
+    {
+      "path": "tests/unit_tests/native_held_submission_cases.cpp",
+      "sha256": "7c022dce886b7fa41445e2c0ba6784a5b5d7e6c95e303ae61009713af5614385",
+      "size": 3380,
+      "finalCommit": "7bff4fa699becd57a115d71085c318fa5350fceb",
+      "finalRole": "accepted-sdk-base",
+      "inBase": false
+    },
+    {
+      "path": "tests/unit_tests/native_signed_held_order_cases.py",
+      "sha256": "76d0e006f7e893df4f9512fe7e6b283b996fe8a763f369bf9b1f463e96c86ccb",
+      "size": 3987,
+      "finalCommit": "7bff4fa699becd57a115d71085c318fa5350fceb",
+      "finalRole": "accepted-sdk-base",
+      "inBase": false
+    },
+    {
+      "path": "tests/unit_tests/native_wallet_alias_pending.cpp",
+      "sha256": "cb68228996dd42633ba6e263fab7cbfd875051e137758202f7a9c3dd283ffe16",
+      "size": 11484,
+      "finalCommit": "e90a4e181fff7ff96ce03ddeda565d07cb5f75e8",
+      "finalRole": "host-unit-tests",
+      "inBase": false
+    },
+    {
+      "path": "tests/unit_tests/native_wallet_birthday_prefix.cpp",
+      "sha256": "b4d038053dee5a79d2d8ef9ff5342f058243a93052323631d2d285697f962391",
+      "size": 17052,
+      "finalCommit": "e90a4e181fff7ff96ce03ddeda565d07cb5f75e8",
+      "finalRole": "host-unit-tests",
+      "inBase": false
+    },
+    {
+      "path": "tests/unit_tests/native_wallet_history_interval.cpp",
+      "sha256": "5db6e6ff50d5bddac2d09edc141dc3aa8f8333f900f53cfb106387454e6ff95f",
+      "size": 61794,
+      "finalCommit": "e90a4e181fff7ff96ce03ddeda565d07cb5f75e8",
+      "finalRole": "host-unit-tests",
+      "inBase": false
+    },
+    {
+      "path": "tests/unit_tests/native_wallet_password_rekey.cpp",
+      "sha256": "2b85b4905dfdb7df9db98b9deb5be7499309d1eba2ff0873bd7f98c146478be0",
+      "size": 16447,
+      "finalCommit": "e90a4e181fff7ff96ce03ddeda565d07cb5f75e8",
+      "finalRole": "host-unit-tests",
+      "inBase": false
+    },
+    {
+      "path": "tests/unit_tests/native_wallet_session.cpp",
+      "sha256": "67efdad1b87feba0b46b921393dcf3730a2179a5e9ad7e49270fa2123f008c8a",
+      "size": 167735,
+      "finalCommit": "7bff4fa699becd57a115d71085c318fa5350fceb",
+      "finalRole": "accepted-sdk-base",
+      "inBase": true
+    }
+  ],
+  "submodulesUnchangedFromBase": {
+    "contrib/bitcoin-secp256k1": "a5269373fa13ff845f654d81b90629dd78495641",
+    "contrib/jwt-cpp": "364a5572f4b46bb9f4304cb1c92acec8ddb2c620",
+    "contrib/miniupnp": "bd836936f7ed7e697f36dff709d00a907644172a",
+    "src/gui/qt-daemon/layout": "52b429c6f0b40979e543bc57ab911d220b07b83d"
+  },
+  "historyGap": "The SDK steps between 299bf172 and the accepted base (Send, payment construction/poll/jsonrpc, signed-pending history, seed/history join, bounded block response, birthday) were produced as overlays and captured trees, never as core commits. accepted-sdk-base records their accepted result in one commit; per-step authorship and order are not recoverable from git."
+}
