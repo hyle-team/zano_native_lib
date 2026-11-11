@@ -79,7 +79,7 @@
       "sourceCommit": "fdee56b8f8d9d429848a49aa89d5d0278ba0839a",
       "expectedVersion": "2.2.1.506[1.0-g299bf172e8428042919b48bfa1cedfcd9ede139a-native-snapshot-compat-v1]",
       "versionCommitLabel": "299bf172e8428042919b48bfa1cedfcd9ede139a-native-snapshot-compat-v1",
-      "producerConfigSha256": "7fe8a455400550001768b9985d0cdd7bc3573b14e6a202db6f29af0c4e15b229",
+      "producerConfigSha256": "750bbd305e71be0322956becbce4f3c5b71f70f08c21df2f8ff242a875f952d3",
       "sdkCensus": {
         "sha256": "d019db972ab89dd60da61bac244f96f9afee703a1ba4034f70a4e7b185644b7e",
         "fileCount": 824,
@@ -172,13 +172,17 @@
         "sign_reviewed_alias_to_held_v1",
         "rekey_password_v1"
       ],
-      "producer": "zano-mobile-rn native/zano/ios/produce_stage.py, configured by this wrapper's mobile/ios/sdk-producer.json; the project overlays resolve from the pinned core through the app's native/zano-core mount.",
+      "producer": "mobile/ios/sdk_producer.py, the SDK-specific producer (configuration, closure source, composed-source admission, header closure, toolchain/archive checks, per-slice SDK build), configured by mobile/ios/sdk-producer.json; every path is wrapper-relative. A consuming app binds it from its stage producer and adds its own host inputs (zano-mobile-rn: native/zano/ios/produce_stage.py adds R1/EVM, Boost/OpenSSL bootstrap, the source packet and the stage).",
       "producerConfig": "mobile/ios/sdk-producer.json",
       "historicalAppProducerConfigSha256": "05d152fd98aee9a036bba7cdd21068e2cdfa05807697e127d2b9f399a131f131",
       "closure": {
         "path": "mobile/ios/closure.json",
-        "sha256": "5771d531bfa7c4419cbc66b6a83a0e8cf332378ea9bee791bf4ab8116db73e52",
-        "meaning": "The 824-path iOS compile closure of sourceCommit with exact bytes: 735 from the core, 87 from its pinned jwt-cpp/miniupnp submodules, 2 captured libmdbx configure outputs (mobile/ios/captured). Census d019db97."
+        "sha256": "75f18619e913b2eceaca47a0ae1725f9b5a642f2dbb2b1b67fd252435e6d5bf7",
+        "meaning": "The 824-path iOS compile closure of sourceCommit with exact bytes: 735 from the core, 87 from its pinned jwt-cpp/miniupnp submodules, 2 captured Linux-host libmdbx configure outputs unused by both mobile SDK builds and kept only for census parity (mobile/ios/captured). Census d019db97."
+      },
+      "sdkProducer": {
+        "path": "mobile/ios/sdk_producer.py",
+        "sha256": "90a9fff616b42b7315a99c66a523679bcbeff0cb38c4fb0897b8f8d446e98e2d"
       }
     }
   },
