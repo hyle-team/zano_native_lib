@@ -1,0 +1,284 @@
+{
+ "schema": "zano-mobile-sdk-snapshot-profile",
+ "version": 1,
+ "sourceProfile": "maintained-snapshot-v1",
+ "purpose": "Producer pins of the Zano mobile SDK built from the maintained source snapshot in the nested Zano core. The snapshot is one root commit without a parent. This profile binds its commit, tree, source census and submodule commits, the composition bytes, the version derived from the root, and the exact producer inputs. check_core_pin.py --profile snapshot verifies them against the core git objects and this library's files. The retained original lineage stays in mobile/zano-mobile-sdk.json.",
+ "core": {
+  "path": "Zano",
+  "url": "https://github.com/hyle-team/zano.git",
+  "branch": "feat/mobile-publishable-snapshot-2026-11-11",
+  "commit": "428edd06ee3691b3b51a270f85a0d25d859b81bc",
+  "tree": "beb496b8753ed8f08e885b9bb52861fe0b29a51f",
+  "parents": [],
+  "provenanceNote": {
+   "path": "SOURCE-PROVENANCE.md",
+   "sha256": "568110a04067ee918fb19de85e667f0fb12945913b9de20a2f2beb4e1618daab",
+   "size": 1531
+  },
+  "published": false,
+  "publicationNote": "Local signed root commit on the named branch. It is not on the url above, so a clone of that url cannot resolve it until the branch is published."
+ },
+ "sourceCensus": {
+  "sha256": "ea2c22c03c031d5df92a87a853106c6aa4b03041567c8b231564d226c7c8d980",
+  "blobCount": 1292,
+  "blobBytes": 35308214,
+  "gitlinkCount": 4,
+  "rule": "sha256 over one line per root tree entry in path byte order: '<mode> <sha256> <size> <path>' for each blob and '160000 <commit> - <path>' for each gitlink, each line ending in a newline."
+ },
+ "submodules": {
+  "contrib/bitcoin-secp256k1": "a5269373fa13ff845f654d81b90629dd78495641",
+  "contrib/jwt-cpp": "364a5572f4b46bb9f4304cb1c92acec8ddb2c620",
+  "contrib/miniupnp": "bd836936f7ed7e697f36dff709d00a907644172a",
+  "src/gui/qt-daemon/layout": "52b429c6f0b40979e543bc57ab911d220b07b83d"
+ },
+ "omittedPaths": [
+  "utils/JS/JWT/example.js",
+  "utils/JS/test_eth_sig.js",
+  "utils/JS/emmit_response.json"
+ ],
+ "appComposition": {
+  "rule": "Bytes of the 21 app composition paths and the 4 project overlay paths at the root. In the original lineage they arrived in separate commits; in the snapshot they are plain root content, checked byte for byte.",
+  "deltas": [
+   {
+    "path": "src/currency_core/blockchain_storage.cpp",
+    "sha256": "2a3b47847afef28a7b7f93bbf1a31b08767e697e59d1db3d15603352ee82bac2",
+    "size": 428567
+   },
+   {
+    "path": "src/currency_core/blockchain_storage.h",
+    "sha256": "ee30dbf1eedb3c26a1e17b1e89d3a23969f8e4f90e6d7088f41f3783d8f280db",
+    "size": 61409
+   },
+   {
+    "path": "src/rpc/core_rpc_server.cpp",
+    "sha256": "18f0f6f005840309f52f4989525dfaa0e31e7e98bf03f37c177f7c8723c7a5b8",
+    "size": 117053
+   },
+   {
+    "path": "src/rpc/core_rpc_server.h",
+    "sha256": "00414270af922c24d3f514ae8d08cb925fc70eb569a442cd6220f4b22aa0272a",
+    "size": 23055
+   },
+   {
+    "path": "src/rpc/core_rpc_server_commands_defs.h",
+    "sha256": "090e5cabdd969aaedfe4c696bb3406c483d520a1b4aef5b4f7eda9ffdab285b3",
+    "size": 128936
+   },
+   {
+    "path": "src/wallet/native_wallet_history_origin.h",
+    "sha256": "18bd96d570c0251e42f83fc7fa9611a3d435780fc47ad6e654dde803f154e4b7",
+    "size": 601
+   },
+   {
+    "path": "src/wallet/read_only_birthday_prefix.h",
+    "sha256": "9871e3e250611f4e4e6884de7e7be4fc5895e4ed16dbee2d348af8e6ed6bd086",
+    "size": 10020
+   },
+   {
+    "path": "src/wallet/read_only_block_transport.cpp",
+    "sha256": "f10882993a4fcc48031a13197be8f4e285baf98847fa71f4c13b10dd35a05f1b",
+    "size": 55165
+   },
+   {
+    "path": "src/wallet/read_only_block_transport.h",
+    "sha256": "9aa9ddb69d7ba0f47a6723967986514d1c4b7e80c1c67d50e66b18dfb20aaed0",
+    "size": 8096
+   },
+   {
+    "path": "src/wallet/read_only_core_proxy.h",
+    "sha256": "bf79d85c5ae326bec4eacfca8ddc883b93d186be28643e990fb0a8008a50fb8a",
+    "size": 10601
+   },
+   {
+    "path": "src/wallet/read_only_wallet_sync.cpp",
+    "sha256": "86c58df5f5ee3683644de390aeb18f34d70d1dd999575eb91b45dbf4ef18c24f",
+    "size": 30242
+   },
+   {
+    "path": "src/wallet/read_only_wallet_sync.h",
+    "sha256": "35413f2039eefca1871e2038a49cccf36e54ae6013c26348fc16d12ecae49e90",
+    "size": 5681
+   },
+   {
+    "path": "src/wallet/wallet2.h",
+    "sha256": "2af9de93d24f0908e58c1c4814e9bbfb224d5cef0506bc2564e22833b4eccb1c",
+    "size": 81855
+   },
+   {
+    "path": "src/wallet/native_wallet_birthday_prefix.h",
+    "sha256": "968267effffb4a91d95223f4004d0d440b62b211eab2bce8d8770e39f7316b5b",
+    "size": 8261
+   },
+   {
+    "path": "src/wallet/native_wallet_history_interval.cpp",
+    "sha256": "aef551988c986556b3000b191d40a4576d62f8cee5a126fd75c27ff4ada27634",
+    "size": 6788
+   },
+   {
+    "path": "src/wallet/native_wallet_alias_operation.cpp",
+    "sha256": "b2b370452b7c9c4bd8c7674e16806dbd685f3becbf713402728fadf435d8a4a5",
+    "size": 44048
+   },
+   {
+    "path": "src/wallet/native_wallet_alias_pending.h",
+    "sha256": "c210c975cf2eb0796a24445fb87f9de5306c9e62ec6a16d7112b9d94f3591a9f",
+    "size": 6833
+   },
+   {
+    "path": "src/wallet/native_wallet_password_rekey.cpp",
+    "sha256": "1e550da2af34483c87f9429f4f8e696172c449b91cda1b887e784fe5c30024c4",
+    "size": 12491
+   },
+   {
+    "path": "src/wallet/native_wallet_session.cpp",
+    "sha256": "6f03a4f7875b662626e792f4bb4ec341096a55714d8bfba81feadc14ddcf8041",
+    "size": 97369
+   },
+   {
+    "path": "src/wallet/native_wallet_session.h",
+    "sha256": "91d5619e15b6911dcc3899b444826c4a950ab094a2ea921ed92cac9dc61a6063",
+    "size": 63412
+   },
+   {
+    "path": "src/wallet/wallet2.cpp",
+    "sha256": "330e16fe2c7ee32cff43689b138b1e019b2179dda76ef768b6d1c847ca2bf4e3",
+    "size": 535630
+   }
+  ],
+  "projectOverlays": [
+   {
+    "path": "src/wallet/native_wallet_provisioning.cpp",
+    "sha256": "6e6521732a5d844cebc9e38752ef2f4cf1bb3bdcd8770498663ea7804e31f9bd",
+    "size": 24675
+   },
+   {
+    "path": "src/wallet/native_wallet_durable_descriptor.h",
+    "sha256": "044866a9acef9ec3cc0f8a5e3800ff771820f9202b5ab5ecbc48f78411d284bf",
+    "size": 5154
+   },
+   {
+    "path": "contrib/epee/include/misc_language.h",
+    "sha256": "185d990ee3480e040ac9fd1646eb9ade0234f3d6f3c168d020e329ba68bf71ee",
+    "size": 21185
+   },
+   {
+    "path": "src/common/db_abstract_accessor.h",
+    "sha256": "def5c2955149cd30c602a901da6ea0e22d52dc96ff89f8ca8d09c3d2d5be8b72",
+    "size": 49210
+   }
+  ],
+  "forbiddenPaths": [
+   {
+    "path": "contrib/zlib/zconf.h",
+    "why": "contrib/zlib/CMakeLists.txt renames it inside the source tree during an out-of-source configure; the accepted base carries zconf.h.included instead, so an immutable snapshot must not contain zconf.h."
+   }
+  ]
+ },
+ "sdkVersion": {
+  "rule": "With REFS empty, GIT=OFF, COMMIT_ID_IN_VERSION=ON and COMMIT set, the root CMakeLists.txt writes BUILD_COMMIT_ID <cmakeVersion>-g<COMMIT>, and src/version.h.in gives PROJECT_VERSION_LONG <projectVersion>.<buildNumber>[BUILD_COMMIT_ID]. Both snapshot producers pass the root commit id as COMMIT, so the expected version comes from the root's own build metadata and changes with every new root. Each producer checks the generated version.h against it.",
+  "sourceVersion": {
+   "cmakeVersion": "1.0",
+   "projectVersion": "2.2.1",
+   "buildNumber": 506
+  },
+  "commitLabel": "428edd06ee3691b3b51a270f85a0d25d859b81bc",
+  "expectedVersion": "2.2.1.506[1.0-g428edd06ee3691b3b51a270f85a0d25d859b81bc]"
+ },
+ "compositions": {
+  "android-arm64-v8a-testnet": {
+   "sourceCommit": "428edd06ee3691b3b51a270f85a0d25d859b81bc",
+   "expectedVersion": "2.2.1.506[1.0-g428edd06ee3691b3b51a270f85a0d25d859b81bc]",
+   "versionNote": "COMMIT label is the snapshot root commit id.",
+   "profile": "testnet-lifecycle-arm64-api24",
+   "network": "TESTNET",
+   "formation": 103,
+   "abis": [
+    "arm64-v8a"
+   ],
+   "toolchain": {
+    "androidApi": 24,
+    "ndk": "27.1.12297006",
+    "cmake": "3.22.1",
+    "stl": "c++_shared",
+    "sdkCppStandard": 17,
+    "moduleCppStandard": 20
+   },
+   "targets": [
+    "wallet",
+    "currency_core",
+    "crypto",
+    "common",
+    "zlibstatic"
+   ],
+   "layout": "_install_android/<abi>/lib/lib{wallet,currency_core,crypto,common,z}.a, _install_android/<abi>/VERSION, _install_android/include/<lock header path set>, _libs_android/{boost,openssl}/<abi>/lib",
+   "compositionNote": "Built from the full root tree, which includes the four project overlays. The legacy Android composition excluded them, so this composition has never been built.",
+   "producerRecipe": {
+    "script": "mobile/android/produce_android.py",
+    "scriptSha256": "3864b4a1bef54e5acba56794291e70081aed37887c74065f64aced4a6393072d",
+    "inputs": "mobile/android/inputs-snapshot.json",
+    "inputsSha256": "e881e45ed0be7a55f1512ce94dff08b72249b4eb23e7b2809a4423a5337723a5",
+    "output": "mobile/out/android-arm64-v8a-testnet-snapshot",
+    "status": "authored-not-executed",
+    "meaning": "Clean producer of this composition from the snapshot root, the pinned public dependency identities and the declared toolchain. No output digest exists until an actual execution is measured and reviewed."
+   }
+  },
+  "apple-iphoneos-iphonesimulator-testnet": {
+   "sourceCommit": "428edd06ee3691b3b51a270f85a0d25d859b81bc",
+   "expectedVersion": "2.2.1.506[1.0-g428edd06ee3691b3b51a270f85a0d25d859b81bc]",
+   "versionCommitLabel": "428edd06ee3691b3b51a270f85a0d25d859b81bc",
+   "producerConfig": "mobile/ios/sdk-producer-snapshot.json",
+   "producerConfigSha256": "cea2bc8858520a7766776abf2a0efcc2e8923d984c62f1f1e3c0f2a1d4bf5f6d",
+   "sdkCensus": {
+    "sha256": "d019db972ab89dd60da61bac244f96f9afee703a1ba4034f70a4e7b185644b7e",
+    "fileCount": 824,
+    "totalBytes": 12336757,
+    "meaning": "Census of the 824-path iOS compile closure resolved at the snapshot root."
+   },
+   "producer": "mobile/ios/sdk_producer.py with --profile snapshot, configured by mobile/ios/sdk-producer-snapshot.json; it carries the build settings (SDKs, deployment target, CMake cache, required units, definitions and wallet symbols). A consuming app binds it from its stage producer and adds its own host inputs.",
+   "closure": {
+    "path": "mobile/ios/closure-snapshot.json",
+    "sha256": "75037e620787b8a1514c07bd2220755cd211c0ef47828c235a52273f96200db1",
+    "meaning": "The 824-path iOS compile closure with exact bytes: 735 from the snapshot root, 87 from its pinned jwt-cpp/miniupnp submodules, 2 captured Linux-host libmdbx configure outputs unused by both mobile SDK builds (mobile/ios/captured)."
+   },
+   "sdkProducer": {
+    "path": "mobile/ios/sdk_producer.py",
+    "sha256": "e70e2e527a62a062f08c02457540f5033edaee2b45896381e3afc11ac7ccaeed"
+   }
+  }
+ },
+ "qualification": {
+  "status": "unqualified",
+  "rule": "Nothing has been built from this profile. It stays unqualified until real QA measurements of both producers and an owner review adopt their measured outputs. This file holds no output digests."
+ },
+ "historicalReferences": {
+  "rule": "Identifiers from the retained original lineage, kept as provenance references only. The snapshot route never resolves them and does not need their objects. They are not ancestry of the root and do not show how any existing binary was built.",
+  "localSourceCommit": "e90a4e181fff7ff96ce03ddeda565d07cb5f75e8",
+  "upstreamReference": {
+   "repository": "hyle-team/zano",
+   "commit": "ee3de1e5a077b60106ba88301e236474680b1028"
+  },
+  "legacyLineage": {
+   "versionBase": "299bf172e8428042919b48bfa1cedfcd9ede139a",
+   "androidComposition": "98131bb6728ea79bb54e6c21a3a83a8bca27d686",
+   "appleComposition": "fdee56b8f8d9d429848a49aa89d5d0278ba0839a",
+   "tip": "e90a4e181fff7ff96ce03ddeda565d07cb5f75e8"
+  },
+  "legacyExpectedVersion": "2.2.1.506[1.0-g299bf172e8428042919b48bfa1cedfcd9ede139a-native-snapshot-compat-v1]",
+  "legacyProfile": {
+   "retainedAt": "f31719ea41fa94ba102c45f20e4c078eac45caf3",
+   "files": {
+    "mobile/zano-mobile-sdk.json": "844e2c3b68bd5bcf910195bda158df6df7e2fd41075f84182663772628bce431",
+    "mobile/android/inputs.json": "6df8d0a67fbb2cdeafc51f3a81121cf6ecb6174b4347fc391d75338c0f2b623d",
+    "mobile/ios/sdk-producer.json": "750bbd305e71be0322956becbce4f3c5b71f70f08c21df2f8ff242a875f952d3",
+    "mobile/ios/closure.json": "75f18619e913b2eceaca47a0ae1725f9b5a642f2dbb2b1b67fd252435e6d5bf7"
+   },
+   "rule": "These files stay unchanged for consumers pinned to the original lineage. Their producer script pins name the scripts at retainedAt; this library's scripts now serve both profiles."
+  },
+  "observedAndroidEvidence": {
+   "publisherLockSha256": "567e3664e5eb8a67f69833b21129f284d46fc734e5cbd3a2435a628a438c8c55",
+   "acceptedSourceManifestSha256": "8d497776ef3036cdad90f848da21c004fd65556d3af7763bb86eebefd0fc69aa",
+   "inputCount": 308,
+   "rule": "The observed 308-entry Android input set (287 headers, 15 dependencies, 6 built outputs) and its archive evidence describe the legacy composition only. They are not inputs, expectations or proof for anything built from this snapshot."
+  }
+ }
+}

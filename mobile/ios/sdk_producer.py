@@ -5,9 +5,17 @@ The one implementation of the SDK-specific producer steps. Every path here is re
 wrapper checkout (the directory holding mobile/); nothing names a consuming app, its mount point,
 its Android lock or its own SDK copies.
 
+Source profiles (PROFILES; always named explicitly, never defaulted):
+  legacy    sdk-producer.json + closure.json + mobile/zano-mobile-sdk.json: the retained original
+            lineage (Apple composition fdee56b8, observed snapshot-compat-v1 version label). Resolves
+            only from a core repository that holds those commits.
+  snapshot  sdk-producer-snapshot.json + closure-snapshot.json + mobile/zano-mobile-sdk-snapshot.json:
+            the maintained snapshot root. Resolves from the wrapper's Zano checkout at that root
+            (declared tree, no parent); the version label is the root commit.
+
 Interface (INTERFACE below; a consuming app binds these names and adds its own host inputs):
-  load_config()                       mobile/ios/sdk-producer.json and its sha256
-  admit_closure / materialize_closure mobile/ios/closure.json resolved through the pinned core
+  load_config(profile)                the profile's producer configuration and its sha256
+  admit_closure / materialize_closure the profile's closure resolved through the pinned core
                                       (Zano), its pinned submodule commits and mobile/ios/captured
   snapshot_from_closure               a composed snapshot (composition.json + source) of the closure,
                                       admitted with admit_snapshot
@@ -20,8 +28,10 @@ Interface (INTERFACE below; a consuming app binds these names and adds its own h
                                       the per-slice CMake build of the SDK targets and its checks
 
 Command (no toolchain, no network, nothing outside --scratch is written):
-  plan --scratch NEW_DIR   materialize and admit the closure snapshot, resolve the header closure
-                           against it, and print the producer plan.
+  plan --profile P --scratch NEW_DIR [--core-git CORE_REPO]
+                           materialize and admit the closure snapshot, resolve the header closure
+                           against it, and print the producer plan. CORE_REPO (default: the
+                           wrapper's Zano) is where the closure's core objects are read.
 A real build (build_sdk) runs only on macOS with Xcode, through a consuming app's stage producer.
 Standard library only; run as python3 -I.
 """
@@ -46,8 +56,15 @@ sys.dont_write_bytecode = True
 
 HERE = Path(__file__).resolve().parent
 WRAPPER = HERE.parents[1]
+PRODUCER_PATH = Path(__file__).resolve()
 CONFIG_PATH = HERE / "sdk-producer.json"
 APPLE_COMPOSITION = "apple-iphoneos-iphonesimulator-testnet"
+SNAPSHOT_PROFILE = "maintained-snapshot-v1"
+PROFILES = {
+    "legacy": {"config": CONFIG_PATH, "manifest": "mobile/zano-mobile-sdk.json", "closure": "mobile/ios/closure.json"},
+    "snapshot": {"config": HERE / "sdk-producer-snapshot.json", "manifest": "mobile/zano-mobile-sdk-snapshot.json",
+                 "closure": "mobile/ios/closure-snapshot.json"},
+}
 
 CHUNK = 1 << 20
 
@@ -227,14 +244,32 @@ def publish(incoming, final):
     os.chmod(str(final), 0o555)
 
 
-def load_config():
-    sha, _ = digest_file(CONFIG_PATH)
-    config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+def profile_of(config):
+    """The source profile a configuration declares: snapshot by its sourceProfile, legacy by having none."""
+    declared = config.get("sourceProfile")
+    if declared is None:
+        return "legacy"
+    if declared != SNAPSHOT_PROFILE:
+        refuse("unknown source profile %r" % (declared,))
+    return "snapshot"
+
+
+def load_config(profile=None):
+    if profile not in PROFILES:
+        refuse("an explicit source profile is required (legacy or snapshot), not %r" % (profile,))
+    path = PROFILES[profile]["config"]
+    sha, _ = digest_file(path)
+    config = json.loads(path.read_text(encoding="utf-8"))
     if config.get("schema") != "zano-ios-sdk-producer" or config.get("version") != 1:
-        refuse("unknown producer configuration schema in %s" % CONFIG_PATH)
+        refuse("unknown producer configuration schema in %s" % path)
+    if profile_of(config) != profile:
+        refuse("%s does not declare the %s source profile" % (path.name, profile))
     label = config["versionCommitLabel"]
-    if not re.fullmatch(r"[0-9a-f]{40}-[0-9a-z-]+", label) or not label.startswith(config["coreCommit"] + "-"):
-        refuse("versionCommitLabel is not <coreCommit>-<suffix>")
+    if profile == "legacy":
+        if not re.fullmatch(r"[0-9a-f]{40}-[0-9a-z-]+", label) or not label.startswith(config["coreCommit"] + "-"):
+            refuse("versionCommitLabel is not <coreCommit>-<suffix>")
+    elif not re.fullmatch(r"[0-9a-f]{40}", label) or label != config["coreCommit"]:
+        refuse("the snapshot versionCommitLabel is not the snapshot root commit")
     sv = config["sourceVersion"]
     expected = "%s.%d[%s-g%s]" % (sv["projectVersion"], sv["buildNumber"], sv["cmakeVersion"], label)
     if config["expectedVersion"] != expected:
@@ -848,6 +883,14 @@ def built_version(build):
                                 values["PROJECT_REVISION"], number.group(1), values["BUILD_COMMIT_ID"])
 
 
+def check_built_version(build, config, sdk):
+    """The generated version.h of a slice build must carry the configuration's expectedVersion."""
+    version = built_version(build)
+    if version != config["expectedVersion"]:
+        refuse("%s built version %s, expected %s" % (sdk, version, config["expectedVersion"]))
+    return version
+
+
 def header_closure(config):
     """The consumer include-path set, owned by this library configuration (headers.closurePaths)."""
     paths = config["headers"]["closurePaths"]
@@ -1094,9 +1137,7 @@ def build_sdk(config, sdk, spec, source, deps, work, logs, cmake, tools, env, jo
     say("building %s targets %s with %d jobs (this takes a while)" % (sdk, " ".join(config["cmake"]["targets"]), jobs))
     run([cmake, "--build", str(build), "--target"] + config["cmake"]["targets"] + ["--parallel", str(jobs)],
         log=log, cwd=str(work), env=env, timeout=4 * 3600)
-    version = built_version(build)
-    if version != config["expectedVersion"]:
-        refuse("%s built version %s, expected %s" % (sdk, version, config["expectedVersion"]))
+    version = check_built_version(build, config, sdk)
     archives = {}
     for role, rel in config["cmake"]["archives"].items():
         path = build / rel
@@ -1139,21 +1180,57 @@ def read_objects(repo, specs):
     return found
 
 
-def admit_closure(config, config_sha, wrapper=WRAPPER, closure=None, census=None):
-    """The wrapper's iOS closure for this configuration: the manifest's Apple composition commit,
-    the pinned closure bytes, the core's pinned submodule commits and (when given) the census."""
-    manifest = json.loads(open_text(wrapper / "mobile" / "zano-mobile-sdk.json"))
+def commit_identity(repo, commit):
+    """(tree, [parents]) read from the header of a commit object in repo."""
+    if git_bytes(repo, "cat-file", "-t", commit).strip() != b"commit":
+        refuse("%s is not a commit in %s" % (commit, repo))
+    header = git_bytes(repo, "cat-file", "commit", commit).split(b"\n\n", 1)[0].decode()
+    tree = [line[5:] for line in header.splitlines() if line.startswith("tree ")]
+    parents = [line[7:] for line in header.splitlines() if line.startswith("parent ")]
+    if len(tree) != 1:
+        refuse("%s has no single tree" % commit)
+    return tree[0], parents
+
+
+def admit_closure(config, config_sha, wrapper=WRAPPER, closure=None, census=None, core=None):
+    """The wrapper's iOS closure for this configuration's source profile: the profile manifest's Apple
+    composition commit, the pinned closure bytes, the core's pinned submodule commits and (when given)
+    the census. The snapshot profile also requires the core checkout at the declared root (tree, no
+    parent) and the closure census the profile declares. core defaults to the wrapper's Zano."""
+    profile = profile_of(config)
+    paths = PROFILES[profile]
+    manifest = json.loads(open_text(wrapper / paths["manifest"]))
+    if profile == "snapshot":
+        if manifest.get("schema") != "zano-mobile-sdk-snapshot-profile" or manifest.get("sourceProfile") != SNAPSHOT_PROFILE:
+            refuse("the wrapper has no snapshot profile manifest at %s" % paths["manifest"])
+        pinned = manifest["compositions"][APPLE_COMPOSITION]["sdkProducer"]["sha256"]
+        if digest_file(PRODUCER_PATH)[0] != pinned:
+            refuse("%s is not the SDK producer the snapshot profile pins" % PRODUCER_PATH.name)
+    elif "sourceProfile" in manifest:
+        refuse("the legacy profile is the retained lineage manifest")
     apple = manifest["compositions"][APPLE_COMPOSITION]
     if apple.get("producerConfigSha256") != config_sha:
         refuse("the wrapper's Apple composition names another producer configuration than %s" % config_sha)
     if closure is None:
-        if digest_file(wrapper / "mobile" / "ios" / "closure.json")[0] != apple["closure"]["sha256"]:
-            refuse("mobile/ios/closure.json is not the closure the wrapper manifest pins")
-        closure = json.loads(open_text(wrapper / "mobile" / "ios" / "closure.json"))
+        if digest_file(wrapper / paths["closure"])[0] != apple["closure"]["sha256"]:
+            refuse("%s is not the closure the wrapper manifest pins" % paths["closure"])
+        closure = json.loads(open_text(wrapper / paths["closure"]))
     if closure.get("schema") != "zano-ios-sdk-closure" or closure.get("version") != 1 or \
             closure.get("sourceCommit") != apple["sourceCommit"] or (census is not None and closure.get("census") != census):
         refuse("the wrapper closure is not the pinned Apple composition and census")
-    core = wrapper / "Zano"
+    if closure.get("sourceProfile") != config.get("sourceProfile"):
+        refuse("the closure and the producer configuration name different source profiles")
+    core = wrapper / "Zano" if core is None else Path(core)
+    if profile == "snapshot":
+        root = manifest["core"]
+        declared = {k: apple["sdkCensus"][k] for k in ("sha256", "fileCount", "totalBytes")}
+        if closure["sourceCommit"] != root["commit"] or config["coreCommit"] != root["commit"] or closure.get("census") != declared:
+            refuse("the snapshot closure, configuration and profile name different roots or censuses")
+        tree, parents = commit_identity(core, root["commit"])
+        if tree != root["tree"] or parents:
+            refuse("the core snapshot root %s is not the declared root tree %s without parents" % (root["commit"], root["tree"]))
+        if git_bytes(core, "rev-parse", "HEAD").decode().strip() != root["commit"]:
+            refuse("the core checkout %s is not at the snapshot root %s" % (core, root["commit"]))
     for link, commit in sorted(closure["submodules"].items()):
         if gitlink_at(core, closure["sourceCommit"], link) != commit:
             refuse("core submodule %s is not pinned to %s at %s" % (link, commit, closure["sourceCommit"]))
@@ -1199,10 +1276,10 @@ def materialize_closure(ctx, dest):
         write_new(target, blob, 0o755 if row["executable"] else 0o644)
 
 
-def snapshot_from_closure(config, config_sha, scratch_value, wrapper=WRAPPER, closure=None):
+def snapshot_from_closure(config, config_sha, scratch_value, wrapper=WRAPPER, closure=None, core=None):
     """A new composed snapshot (composition.json + source) of the closure under scratch, admitted
     with admit_snapshot. Returns (snapshot, admitted source, composition, overlays, closure ctx)."""
-    ctx = admit_closure(config, config_sha, wrapper, closure)
+    ctx = admit_closure(config, config_sha, wrapper, closure, core=core)
     scratch = new_path(scratch_value, "--scratch")
     if os.path.lexists(str(scratch)):
         refuse("--scratch must be a new directory: %s exists" % scratch)
@@ -1278,14 +1355,17 @@ INTERFACE = tuple(name for name in (
     "DARWIN_RETIRED_OPENSSL_HEADERS", "DARWIN_FLATTENED_SOURCE_HEADERS", "OPENSSL_PUBLIC_PREFIX",
     "openssl_public_tree", "resolve_header_closure", "planned_header_rows", "check_reused_headers", "build_env",
     "configure_argv", "check_snapshot_census", "build_sdk", "git_bytes", "gitlink_at", "read_objects",
-    "admit_closure", "materialize_closure", "snapshot_from_closure", "source_header_plan"))
+    "admit_closure", "materialize_closure", "snapshot_from_closure", "source_header_plan",
+    "SNAPSHOT_PROFILE", "PROFILES", "PRODUCER_PATH", "profile_of", "commit_identity", "check_built_version"))
 
 
 def cmd_plan(args):
-    config, config_sha = load_config()
-    snapshot, source, composition, overlays, ctx = snapshot_from_closure(config, config_sha, args.scratch)
+    config, config_sha = load_config(args.profile)
+    core = canonical_dir(args.core_git, "--core-git") if args.core_git else None
+    snapshot, source, composition, overlays, ctx = snapshot_from_closure(config, config_sha, args.scratch, core=core)
     plan = source_header_plan(config, source)
     print(json.dumps({
+        "profile": args.profile, "core": str(ctx["core"]),
         "producerConfigSha256": config_sha, "expectedVersion": config["expectedVersion"],
         "sourceCommit": ctx["closure"]["sourceCommit"], "submodules": ctx["closure"]["submodules"],
         "snapshot": str(snapshot), "census": composition["census"], "deltas": len(composition["deltas"]),
@@ -1301,7 +1381,9 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = parser.add_subparsers(dest="command", required=True)
     plan = sub.add_parser("plan", help="materialize and admit the closure snapshot, resolve headers, print the plan")
+    plan.add_argument("--profile", required=True, choices=sorted(PROFILES))
     plan.add_argument("--scratch", required=True)
+    plan.add_argument("--core-git", help="absolute core repository holding the closure commit (default: the wrapper's Zano)")
     args = parser.parse_args(argv)
     try:
         return cmd_plan(args)
