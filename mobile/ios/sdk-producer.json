@@ -1,0 +1,172 @@
+{
+  "schema": "zano-ios-sdk-producer",
+  "version": 1,
+  "purpose": "Configuration of produce_stage.py: the Apple (iOS device + iOS simulator, arm64) build of the Zano core libraries from the accepted public SDK source composition, plus the Darwin provisioning overlays of this project. README.md beside this file is the runbook.",
+  "coreCommit": "299bf172e8428042919b48bfa1cedfcd9ede139a",
+  "versionCommitLabel": "299bf172e8428042919b48bfa1cedfcd9ede139a-native-snapshot-compat-v1",
+  "expectedVersion": "2.2.1.506[1.0-g299bf172e8428042919b48bfa1cedfcd9ede139a-native-snapshot-compat-v1]",
+  "versionOrigin": {
+    "meaning": "The label of the current qualified Android SDK built from the same accepted composition (alias/password-rekey/compatibility overlays over accepted R5 + history interval v4). The Apple build adds only this project's overlays (the two Darwin provisioning files and the two SDK source revision v2 headers: owned POD registration, no layout, constructor, crypto or wire change), which the stage lock binds separately by bytes; the label alone never proves the composition, and the Android SDK behind it was not built from the v2 headers.",
+    "androidPublisherLock": "native-compatibility-legacy-helper-sdk-tests-2026-11-01/publisher-overlay/native/zano/artifacts.testnet-lifecycle-arm64-api24.lock.json",
+    "androidPublisherLockSha256": "567e3664e5eb8a67f69833b21129f284d46fc734e5cbd3a2435a628a438c8c55",
+    "acceptedSourceManifestSha256": "8d497776ef3036cdad90f848da21c004fd65556d3af7763bb86eebefd0fc69aa"
+  },
+  "sourceVersion": {
+    "cmakeVersion": "1.0",
+    "projectVersion": "2.2.1",
+    "buildNumber": 506
+  },
+  "composition": {
+    "rule": "Final bytes of every SDK path that differs from the base source tree, after the accepted order base -> bind map -> R5 node/sdk rows -> unchanged selector -> history-interval v4 sdk rows -> accepted alias/password/compatibility overlays. Paths overwritten by a later step are listed once with their final bytes. Host-test overlays (tests/) are not part of the archive build (BUILD_TESTS=OFF).",
+    "excludedTopLevel": [".git"],
+    "forbiddenPaths": [
+      {"path": "contrib/zlib/zconf.h", "why": "contrib/zlib/CMakeLists.txt renames it inside the source tree during an out-of-source configure; the accepted base carries zconf.h.included instead, so an immutable snapshot must not contain zconf.h."}
+    ],
+    "deltas": [
+      {"path": "src/currency_core/blockchain_storage.cpp", "sha256": "2a3b47847afef28a7b7f93bbf1a31b08767e697e59d1db3d15603352ee82bac2", "size": 428567, "step": "R5 node"},
+      {"path": "src/currency_core/blockchain_storage.h", "sha256": "ee30dbf1eedb3c26a1e17b1e89d3a23969f8e4f90e6d7088f41f3783d8f280db", "size": 61409, "step": "R5 node"},
+      {"path": "src/rpc/core_rpc_server.cpp", "sha256": "18f0f6f005840309f52f4989525dfaa0e31e7e98bf03f37c177f7c8723c7a5b8", "size": 117053, "step": "R5 node"},
+      {"path": "src/rpc/core_rpc_server.h", "sha256": "00414270af922c24d3f514ae8d08cb925fc70eb569a442cd6220f4b22aa0272a", "size": 23055, "step": "R5 node"},
+      {"path": "src/rpc/core_rpc_server_commands_defs.h", "sha256": "090e5cabdd969aaedfe4c696bb3406c483d520a1b4aef5b4f7eda9ffdab285b3", "size": 128936, "step": "R5 node"},
+      {"path": "src/wallet/native_wallet_history_origin.h", "sha256": "18bd96d570c0251e42f83fc7fa9611a3d435780fc47ad6e654dde803f154e4b7", "size": 601, "step": "R5 sdk"},
+      {"path": "src/wallet/read_only_birthday_prefix.h", "sha256": "9871e3e250611f4e4e6884de7e7be4fc5895e4ed16dbee2d348af8e6ed6bd086", "size": 10020, "step": "R5 sdk"},
+      {"path": "src/wallet/read_only_block_transport.cpp", "sha256": "f10882993a4fcc48031a13197be8f4e285baf98847fa71f4c13b10dd35a05f1b", "size": 55165, "step": "R5 sdk"},
+      {"path": "src/wallet/read_only_block_transport.h", "sha256": "9aa9ddb69d7ba0f47a6723967986514d1c4b7e80c1c67d50e66b18dfb20aaed0", "size": 8096, "step": "R5 sdk"},
+      {"path": "src/wallet/read_only_core_proxy.h", "sha256": "bf79d85c5ae326bec4eacfca8ddc883b93d186be28643e990fb0a8008a50fb8a", "size": 10601, "step": "R5 sdk"},
+      {"path": "src/wallet/read_only_wallet_sync.cpp", "sha256": "86c58df5f5ee3683644de390aeb18f34d70d1dd999575eb91b45dbf4ef18c24f", "size": 30242, "step": "R5 sdk"},
+      {"path": "src/wallet/read_only_wallet_sync.h", "sha256": "35413f2039eefca1871e2038a49cccf36e54ae6013c26348fc16d12ecae49e90", "size": 5681, "step": "R5 sdk"},
+      {"path": "src/wallet/wallet2.h", "sha256": "2af9de93d24f0908e58c1c4814e9bbfb224d5cef0506bc2564e22833b4eccb1c", "size": 81855, "step": "R5 sdk (after the bind map)"},
+      {"path": "src/wallet/native_wallet_birthday_prefix.h", "sha256": "968267effffb4a91d95223f4004d0d440b62b211eab2bce8d8770e39f7316b5b", "size": null, "step": "R5 unchanged selector (no size recorded by its accepted source)"},
+      {"path": "src/wallet/native_wallet_history_interval.cpp", "sha256": "aef551988c986556b3000b191d40a4576d62f8cee5a126fd75c27ff4ada27634", "size": 6788, "step": "history interval v4"},
+      {"path": "src/wallet/native_wallet_alias_operation.cpp", "sha256": "b2b370452b7c9c4bd8c7674e16806dbd685f3becbf713402728fadf435d8a4a5", "size": 44048, "step": "accepted overlay"},
+      {"path": "src/wallet/native_wallet_alias_pending.h", "sha256": "c210c975cf2eb0796a24445fb87f9de5306c9e62ec6a16d7112b9d94f3591a9f", "size": 6833, "step": "accepted overlay"},
+      {"path": "src/wallet/native_wallet_password_rekey.cpp", "sha256": "1e550da2af34483c87f9429f4f8e696172c449b91cda1b887e784fe5c30024c4", "size": 12491, "step": "accepted overlay"},
+      {"path": "src/wallet/native_wallet_session.cpp", "sha256": "6f03a4f7875b662626e792f4bb4ec341096a55714d8bfba81feadc14ddcf8041", "size": 97369, "step": "accepted overlay"},
+      {"path": "src/wallet/native_wallet_session.h", "sha256": "91d5619e15b6911dcc3899b444826c4a950ab094a2ea921ed92cac9dc61a6063", "size": 63412, "step": "accepted overlay"},
+      {"path": "src/wallet/wallet2.cpp", "sha256": "330e16fe2c7ee32cff43689b138b1e019b2179dda76ef768b6d1c847ca2bf4e3", "size": 535630, "step": "accepted overlay"}
+    ],
+    "projectOverlays": {
+      "root": "native/zano-core/Zano",
+      "rule": "SDK source owned by this project: the Darwin provisioning port (first two paths) and SDK source revision v2, the epee-owned MARK_AS_POD_C11 registration that replaces the std::is_pod specialization AppleClang rejects (-Winvalid-specialization), with the DB codec guards reading it (last two paths; each is its v1 before image plus the literal edits of prepare_source_inputs.py SDK_REVISION_V2). Their bytes are core source at the Apple composition commit, resolved through the consuming app's native/zano-core wrapper mount (root is relative to that app checkout). Applied last, measured from that checkout when the snapshot is composed, recorded in the snapshot and the stage lock, and compared byte-for-byte with the checkout again by produce and by ZanoEngine.podspec.",
+      "paths": [
+        "src/wallet/native_wallet_provisioning.cpp",
+        "src/wallet/native_wallet_durable_descriptor.h",
+        "contrib/epee/include/misc_language.h",
+        "src/common/db_abstract_accessor.h"
+      ]
+    }
+  },
+  "sdks": {
+    "iphoneos": {"sysroot": "iphoneos", "arch": "arm64", "machoPlatform": 2, "machoPlatformName": "IOS"},
+    "iphonesimulator": {"sysroot": "iphonesimulator", "arch": "arm64", "machoPlatform": 7, "machoPlatformName": "IOSSIMULATOR"}
+  },
+  "deploymentTarget": "16.6",
+  "cmake": {
+    "minimumVersion": "3.16",
+    "generator": "Unix Makefiles",
+    "cache": {
+      "CMAKE_SYSTEM_NAME": "iOS",
+      "CMAKE_BUILD_TYPE": "Release",
+      "TESTNET": "ON",
+      "BUILD_TESTS": "OFF",
+      "BUILD_GUI": "OFF",
+      "USE_PCH": "OFF",
+      "CAKEWALLET": "OFF",
+      "USE_BITCOIN_SECP256K1_FOR_ECDSA": "OFF",
+      "DISABLE_TOR": "ON",
+      "BUILD_SHARED_LIBS": "OFF",
+      "CMAKE_POSITION_INDEPENDENT_CODE": "ON",
+      "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+      "CMAKE_TRY_COMPILE_TARGET_TYPE": "STATIC_LIBRARY",
+      "CMAKE_CXX_STANDARD": "17",
+      "SKIP_BOOST_FATLIB_LIB": "ON",
+      "CMAKE_C_FLAGS_RELEASE": "-fembed-bitcode=off",
+      "CMAKE_CXX_FLAGS_RELEASE": "-fembed-bitcode=off",
+      "REFS": "",
+      "GIT": "OFF",
+      "COMMIT_ID_IN_VERSION": "ON"
+    },
+    "why": {
+      "deploymentTarget": "The base CMakeLists sets CMAKE_OSX_DEPLOYMENT_TARGET 10.15 for every APPLE build before its iOS branch could choose 12.00. The producer always passes the podspec platform (16.6) explicitly.",
+      "bitcode": "The base iOS branch appends -fembed-bitcode to CMAKE_C/CXX_FLAGS. Bitcode is retired in current Xcode. CMAKE_*_FLAGS_RELEASE follows CMAKE_*_FLAGS on the compile line, so -fembed-bitcode=off wins without a CMake source change; produce verifies no __LLVM/__bitcode section remains.",
+      "boost": "With SKIP_BOOST_FATLIB_LIB the iOS branch links no libboost.a; the static archives need only Boost headers. Boost archives are packaged per SDK from the dependency inputs.",
+      "tryCompile": "iOS executables cannot be linked unsigned during configure checks; static-library try_compile matches the Android producer.",
+      "version": "COMMIT is versionCommitLabel; with REFS empty, GIT=OFF and COMMIT_ID_IN_VERSION=ON the base writes BUILD_COMMIT_ID 1.0-g<COMMIT>, so PROJECT_VERSION_LONG equals expectedVersion. produce checks the generated version.h."
+    },
+    "targets": ["wallet", "currency_core", "crypto", "common", "zlibstatic"],
+    "archives": {
+      "zano-wallet": "src/libwallet.a",
+      "zano-currency_core": "src/libcurrency_core.a",
+      "zano-crypto": "src/libcrypto.a",
+      "zano-common": "src/libcommon.a",
+      "zano-z": "contrib/zlib/libz.a"
+    },
+    "installGap": "src/CMakeLists.txt installs only wallet/currency_core/crypto/common for iOS, with no zlib and no headers. The producer packages zlibstatic (libz.a) from the build tree and the header closure from the composed source explicitly; cmake --install is never used."
+  },
+  "requiredCompiledUnits": [
+    "src/wallet/native_wallet_provisioning.cpp",
+    "src/wallet/native_wallet_alias_operation.cpp",
+    "src/wallet/native_wallet_password_rekey.cpp",
+    "src/wallet/native_wallet_history_interval.cpp",
+    "src/wallet/native_wallet_session.cpp",
+    "src/wallet/wallet2.cpp"
+  ],
+  "requiredCompileDefinitions": ["-DMOBILE_WALLET_BUILD", "-DIOS_BUILD", "-DTESTNET"],
+  "requiredWalletSymbols": [
+    "capture_snapshot",
+    "capture_product_snapshot_v1",
+    "capture_product_snapshot_v2",
+    "capture_product_snapshot_v3",
+    "capture_product_snapshot_v4",
+    "prepare_alias_review_v1",
+    "sign_reviewed_alias_to_held_v1",
+    "rekey_password_v1"
+  ],
+  "headers": {
+    "closureFrom": "native/zano/artifacts.testnet-lifecycle-arm64-api24.lock.json",
+    "closurePrefix": "_install_android/include/",
+    "rule": "The include-path set the shared native C++ consumes is the path set of the Android lifecycle lock under _install_android/include/ (its hashes are not used). Each path resolves, in order, to the composed source (src/<path>, then contrib/epee/include/<path>), to the Boost include input (boost/...), or to the per-SDK OpenSSL include input (openssl/, crypto/, internal/). SDK and Boost headers are staged once under include/; OpenSSL headers are staged per SDK under openssl/<sdk>/include/, because the Apple OpenSSL release (>= 3.2 for the simulator PIN profile) is not the Android 3.1.8 build and its generated configuration headers are per target.",
+    "sourceSearch": ["src", "contrib/epee/include"],
+    "opensslPrefixes": ["openssl/", "crypto/", "internal/"],
+    "boostPrefix": "boost/",
+    "required": [
+      "plain_wallet_api.h",
+      "wallet/native_wallet_session.h",
+      "wallet/native_wallet_provisioning.h",
+      "wallet/read_only_block_transport.h",
+      "wallet/native_held_submission.h",
+      "openssl/evp.h",
+      "openssl/kdf.h",
+      "openssl/core_names.h",
+      "openssl/params.h",
+      "openssl/rand.h",
+      "openssl/opensslv.h"
+    ]
+  },
+  "dependencies": {
+    "layout": {
+      "boost": "boost/include/boost/version.hpp and boost/<sdk>/lib/libboost_<name>.a",
+      "openssl": "openssl/<sdk>/include/{openssl,crypto,internal}/... and openssl/<sdk>/lib/{libssl.a,libcrypto.a}",
+      "r1": "r1/multichain_derivation_v1.hpp and r1/<sdk>/libmultichain_derivation_v1_isolated.a"
+    },
+    "boost": {
+      "minimumVersion": 107500,
+      "libraries": ["atomic", "chrono", "date_time", "filesystem", "regex", "serialization", "system", "thread", "timer", "program_options", "wserialization"]
+    },
+    "openssl": {
+      "minimum": [3, 0, 0],
+      "argon2idMinimum": [3, 2, 0],
+      "sameVersionForAllSdks": true
+    },
+    "r1": {
+      "header": {"name": "multichain_derivation_v1.hpp", "sha256": "ae75db3211a10924388e178eea30abe3a6362e3d4f53ca70bc2ebd99363b3d37", "size": 6349},
+      "archive": "libmultichain_derivation_v1_isolated.a",
+      "note": "The header is the accepted frozen R1 API (same pin as android/CMakeLists.txt). The Apple archive slices have no earlier accepted pin; the stage records their measured digests and Mach-O platform as explicit inputs, never as qualified R1 provenance."
+    }
+  },
+  "stage": {
+    "lock": "ios-stage.lock.json",
+    "lockSchema": "zano-ios-native-stage",
+    "lockVersion": 2
+  }
+}
