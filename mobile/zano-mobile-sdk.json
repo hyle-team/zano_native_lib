@@ -65,8 +65,15 @@
         "acceptedSourceManifestSha256": "8d497776ef3036cdad90f848da21c004fd65556d3af7763bb86eebefd0fc69aa",
         "build": "Existing Android SDK build caches reused with the nine accepted overlays applied before configure (all nine byte-equal to sourceCommit/tip here). No clean configure command or complete dependency rebuild contract is recorded."
       },
-      "producerRecipe": null,
-      "producerRecipeGap": "No clean Android producer command exists in evidence; one must be established and measured before this composition can be rebuilt from this pin."
+      "producerRecipe": {
+        "script": "mobile/android/produce_android.py",
+        "scriptSha256": "c04484757cd776e1c0680a2e475a3fb45d470c7c84f581bf9e09da1484963e0e",
+        "inputs": "mobile/android/inputs.json",
+        "inputsSha256": "6df8d0a67fbb2cdeafc51f3a81121cf6ecb6174b4347fc391d75338c0f2b623d",
+        "output": "mobile/out/android-arm64-v8a-testnet",
+        "status": "authored-not-executed",
+        "meaning": "Clean producer of this composition from the declared source commit, pinned public dependency identities (zano_native_lib main commits and Git LFS oids) and the declared toolchain. Its output hashes exist only after an actual execution; the current app lock stays the observed snapshot-compat-v1 artifacts until such an execution is measured and adopted."
+      }
     },
     "apple-iphoneos-iphonesimulator-testnet": {
       "sourceCommit": "fdee56b8f8d9d429848a49aa89d5d0278ba0839a",

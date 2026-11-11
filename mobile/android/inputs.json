@@ -1,0 +1,2431 @@
+{
+ "schema": "zano-mobile-android-producer-inputs",
+ "version": 1,
+ "composition": "android-arm64-v8a-testnet",
+ "sourceCommit": "98131bb6728ea79bb54e6c21a3a83a8bca27d686",
+ "abi": "arm64-v8a",
+ "derivedFrom": "Path set and bytes of the observed snapshot-compat-v1 Android lock (sha256 567e3664...), each resolved here to a public git identity. Built archives and VERSION are recipe outputs and carry no pin.",
+ "headers": [
+  {
+   "include": "boost/preprocessor/config/config.hpp",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/boost/include/boost/preprocessor/config/config.hpp",
+   "sha256": "05c8b9e1e0ebec00f1c396e6c01eabdf400f5c1daf6f76da5c312454f736e43a",
+   "size": 4143
+  },
+  {
+   "include": "boost/preprocessor/stringize.hpp",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/boost/include/boost/preprocessor/stringize.hpp",
+   "sha256": "d00383ad50cb82cd3952d9ac1b7c809dc1d9ce826f23bd56e2f3fa27a9afe576",
+   "size": 1033
+  },
+  {
+   "include": "common/int-util.h",
+   "from": "core",
+   "path": "src/common/int-util.h",
+   "sha256": "5316946817e8ee2142a681d3bf9bf56d455e7f0375ef346dbc45344d52808704",
+   "size": 7857
+  },
+  {
+   "include": "common/pod-class.h",
+   "from": "core",
+   "path": "src/common/pod-class.h",
+   "sha256": "0000512d3c920802d2df4c2e459cf2723201d4f83d3c390fc233d1b366bc78d8",
+   "size": 377
+  },
+  {
+   "include": "crypto/__DECC_INCLUDE_EPILOGUE.H",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/__DECC_INCLUDE_EPILOGUE.H",
+   "sha256": "00895f92ca8e91a5c9e9e3a9d4f075a69245130ce440d644b93bb388f5d0d2e9",
+   "size": 559
+  },
+  {
+   "include": "crypto/__DECC_INCLUDE_PROLOGUE.H",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/__DECC_INCLUDE_PROLOGUE.H",
+   "sha256": "daa4ae15d2a77722e70ef0bd8f7d0c1d877a91f3ff75dcadfe6073eabdf20be5",
+   "size": 630
+  },
+  {
+   "include": "crypto/aes_platform.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/aes_platform.h",
+   "sha256": "3e3c2e104d544363921a4623910fef8ecd6b080548dbb76ed9c2117bf4c3eb8f",
+   "size": 26662
+  },
+  {
+   "include": "crypto/aria.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/aria.h",
+   "sha256": "2d92134f026fffd219d4e945e94af11d15f0324d504b56965abde4a2c75546f0",
+   "size": 1550
+  },
+  {
+   "include": "crypto/asn1.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/asn1.h",
+   "sha256": "f7315805934ff8488aeb5b713c148a386e3fc39d7de899567b8f3acc208fa124",
+   "size": 6478
+  },
+  {
+   "include": "crypto/asn1_dsa.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/asn1_dsa.h",
+   "sha256": "dd092b064bb9d678091960714305f8a7913bc71611d72a0ab1232b14f6136515",
+   "size": 884
+  },
+  {
+   "include": "crypto/asn1err.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/asn1err.h",
+   "sha256": "f3bc3b9452e066eff187f8dc261a8b77e83e9e9406ce4cb981069c568bdd0668",
+   "size": 641
+  },
+  {
+   "include": "crypto/async.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/async.h",
+   "sha256": "c17bf143f4aade6b154e65dd952888c004539cdaf62505c4cbfe35e6545f9b77",
+   "size": 493
+  },
+  {
+   "include": "crypto/asyncerr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/asyncerr.h",
+   "sha256": "1f38e3b8cd0b229d177772a1b7ba401a4d9790ddeecef964b14ed619984d83b2",
+   "size": 644
+  },
+  {
+   "include": "crypto/bioerr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/bioerr.h",
+   "sha256": "432b5389da5254e046e9f1173b1aa64de12eb413254f2195282fe5bb78afcd93",
+   "size": 638
+  },
+  {
+   "include": "crypto/blake2.h",
+   "from": "core",
+   "path": "src/crypto/blake2.h",
+   "sha256": "38ea55fd5a025ce8b6f01e6eb1bc042fa5a9bae641a616e6b27f7881733d3c52",
+   "size": 6646
+  },
+  {
+   "include": "crypto/bn.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/bn.h",
+   "sha256": "95dec6e3c0f318889162e04b36e6301304f0f7889e24899880e8f7a54573f870",
+   "size": 5528
+  },
+  {
+   "include": "crypto/bn_conf.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/bn_conf.h",
+   "sha256": "5f2936059df6a332fc67940c630bacaa23594d43d6cf39c37c286e47f136197c",
+   "size": 837
+  },
+  {
+   "include": "crypto/bn_dh.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/bn_dh.h",
+   "sha256": "c53356c96ab214a0be02a94938de58e6580efe87f8bea3455a32c6a2c1eb75a1",
+   "size": 1657
+  },
+  {
+   "include": "crypto/bn_srp.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/bn_srp.h",
+   "sha256": "aff461e9794ac4a2dbc008088e238073aa6b4e385e08965e08029844e914120a",
+   "size": 782
+  },
+  {
+   "include": "crypto/bnerr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/bnerr.h",
+   "sha256": "642e04070bbc7602b6ce0250c9b1fa444b3e8743c9bd5f99a5f626d81e8a2b2c",
+   "size": 635
+  },
+  {
+   "include": "crypto/buffererr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/buffererr.h",
+   "sha256": "9d2218c8ecdc82791cee98ac5f60664a4d37770ec8182813b7edcc4399cbcad3",
+   "size": 644
+  },
+  {
+   "include": "crypto/chacha.h",
+   "from": "core",
+   "path": "src/crypto/chacha.h",
+   "sha256": "a5999e50474af0f093ad0f2a36f7473b0afe5b2defde8779dfb216154a88dd20",
+   "size": 6471
+  },
+  {
+   "include": "crypto/cmll_platform.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/cmll_platform.h",
+   "sha256": "2e1592ada3bf93c0c4b337b8d3b00c6f251df739a251846c1ebdbc79effebb50",
+   "size": 2314
+  },
+  {
+   "include": "crypto/cmperr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/cmperr.h",
+   "sha256": "c859281a7806f953c7579a2e4692df2ad26f4c806dccfeb1de682456de7650ac",
+   "size": 671
+  },
+  {
+   "include": "crypto/cmserr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/cmserr.h",
+   "sha256": "55820483d8201d40570f6ead7d3ba4fefee6bf1754038be1d0bcc79f611730e6",
+   "size": 671
+  },
+  {
+   "include": "crypto/comperr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/comperr.h",
+   "sha256": "4993e569561bdf7886ec05e9ebfb3feccb9fc47d39f6f69f203e090a2cd1318a",
+   "size": 675
+  },
+  {
+   "include": "crypto/conferr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/conferr.h",
+   "sha256": "1f61f9a2d73c6855830a22849ff6e07e4c48355770fbfd95a2ba753bda50fa9e",
+   "size": 641
+  },
+  {
+   "include": "crypto/context.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/context.h",
+   "sha256": "a02c6c3652e39d46f0ea824f8b31cd3f47d595db5e94e3b744eee7a6bd1e127b",
+   "size": 1710
+  },
+  {
+   "include": "crypto/crmferr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/crmferr.h",
+   "sha256": "70fe12985bab8350e70bf7752094069eb4d87cf0a91b3366a3ea07678df2e711",
+   "size": 675
+  },
+  {
+   "include": "crypto/cryptlib.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/cryptlib.h",
+   "sha256": "6ee382d741306991d162c7c449a8322f8ed0143feed5bb04b75f3618846f1ebf",
+   "size": 1283
+  },
+  {
+   "include": "crypto/crypto.h",
+   "from": "core",
+   "path": "src/crypto/crypto.h",
+   "sha256": "c6cf1a545b8dccbb8d21928fdb4625a0caa155da2d8d6ba5ca521e2b329cc2a1",
+   "size": 12957
+  },
+  {
+   "include": "crypto/cryptoerr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/cryptoerr.h",
+   "sha256": "f191e3630e29806b7d226098258632653c23d7f4b7e5c04c7736ab29abb4b572",
+   "size": 647
+  },
+  {
+   "include": "crypto/cterr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/cterr.h",
+   "sha256": "a920929ee7f2d12b4a2e5e800ab045f548903912e61f87cfd3eda6b788dcd4d4",
+   "size": 667
+  },
+  {
+   "include": "crypto/ctype.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/ctype.h",
+   "sha256": "32142ae10b86fcd933e3d414e63a1a71b4f755ac07eba11ce7bbe454c4d620c4",
+   "size": 3160
+  },
+  {
+   "include": "crypto/decoder.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/decoder.h",
+   "sha256": "6f7f623f6bd4e6191a04ee51a64ef8e2f6fda9ba6a30fcbd4cf71e539bb852a3",
+   "size": 1564
+  },
+  {
+   "include": "crypto/decodererr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/decodererr.h",
+   "sha256": "6e13d28a217685de2f25332f3c53cba7212da1e830478715329eac6b6db2d6ca",
+   "size": 655
+  },
+  {
+   "include": "crypto/des_platform.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/des_platform.h",
+   "sha256": "f8746d7bf2e5d9b4d7bd3d82d12f328955fc7de8221a80308e0ea4bfce52a519",
+   "size": 1414
+  },
+  {
+   "include": "crypto/dh.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/dh.h",
+   "sha256": "39cdfb34dc07a953dd083de4738663c41b696eeed84347275b472a2e9294dfd1",
+   "size": 2705
+  },
+  {
+   "include": "crypto/dherr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/dherr.h",
+   "sha256": "5061baa3cb4aecc009107ddbaaee5181ab6b27dac275f20a5e09d24c7161492c",
+   "size": 667
+  },
+  {
+   "include": "crypto/dsa.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/dsa.h",
+   "sha256": "cea53898b0784157b958a335896e95f223c8b9f0a04627035aa5ef30ce820038",
+   "size": 2041
+  },
+  {
+   "include": "crypto/dsaerr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/dsaerr.h",
+   "sha256": "569c6471142afa365cd727d1213637bc7de8484c147f290efdd963e331684912",
+   "size": 671
+  },
+  {
+   "include": "crypto/dso_conf.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/dso_conf.h",
+   "sha256": "80a640ddd26cc8414cfbab7bf6cf208d15901ec0844ef3917c1f8ea6dd9cc66e",
+   "size": 582
+  },
+  {
+   "include": "crypto/ec.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/ec.h",
+   "sha256": "f0b39b22b0511e13647887a89244efe55531346b61029084699563d13b2f9dfe",
+   "size": 4259
+  },
+  {
+   "include": "crypto/ecerr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/ecerr.h",
+   "sha256": "d8eea6929a92a4985d9af4822d40e22276cc42d68fc9b14ebeca9a3bb81ddfad",
+   "size": 667
+  },
+  {
+   "include": "crypto/ecx.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/ecx.h",
+   "sha256": "24fd15e642f43adcbebcd8f95221385880a285df93675cf98621d39bacdf4b62",
+   "size": 5102
+  },
+  {
+   "include": "crypto/encoder.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/encoder.h",
+   "sha256": "38150bf10f2aa382dfb5a1a7d47746469cb055bff6efdd2f77f2e6d610d6128c",
+   "size": 637
+  },
+  {
+   "include": "crypto/encodererr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/encodererr.h",
+   "sha256": "1ea750e4e09c8c8566b0559af4da30e21c8ef10519eb6ae4d1502b9553a71c4c",
+   "size": 655
+  },
+  {
+   "include": "crypto/engine.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/engine.h",
+   "sha256": "2b4f8a962dc16ff8e744431c290e8751b7375fc70b6fdc13e24f0e51b0701d39",
+   "size": 675
+  },
+  {
+   "include": "crypto/engineerr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/engineerr.h",
+   "sha256": "336c05aa7e6a277fff6aec53454cfa13d5e9f48abecc09124fc81ec696270752",
+   "size": 683
+  },
+  {
+   "include": "crypto/err.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/err.h",
+   "sha256": "936a54cd676e721f184763193760e8d416e6df520ecbbb3ef2ad19e4646feef3",
+   "size": 578
+  },
+  {
+   "include": "crypto/ess.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/ess.h",
+   "sha256": "7637b561bb67b84c06c7275156f45784a2cd4ae30245d8ea78c0655726f37d3d",
+   "size": 1896
+  },
+  {
+   "include": "crypto/esserr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/esserr.h",
+   "sha256": "004a6fd9c629cb9983c4d0981da6ee7b25aa4c81ce1e30c43eadfb833056b215",
+   "size": 638
+  },
+  {
+   "include": "crypto/evp.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/evp.h",
+   "sha256": "44f8f191b1360284dfead3250c05cb9d4d2bc5122f0e3b775ba9905693eff8aa",
+   "size": 37433
+  },
+  {
+   "include": "crypto/evperr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/evperr.h",
+   "sha256": "c99add78c0bd9dd60c02dc281f2de3192e63eb542b318504ce2d454848451482",
+   "size": 638
+  },
+  {
+   "include": "crypto/generic-ops.h",
+   "from": "core",
+   "path": "src/crypto/generic-ops.h",
+   "sha256": "15a97aa358ec71baf77a3506f6d4f06b5bd95fa1ece426b8d6b9d1250c2c3035",
+   "size": 1798
+  },
+  {
+   "include": "crypto/hash-ops.h",
+   "from": "core",
+   "path": "src/crypto/hash-ops.h",
+   "sha256": "3a774cf8cd98bd3add8fd8a75294d24617a6f6770832e1e5adb1c6b6583a1880",
+   "size": 2684
+  },
+  {
+   "include": "crypto/hash.h",
+   "from": "core",
+   "path": "src/crypto/hash.h",
+   "sha256": "30441da4898af788e8479d68e5bad071463f8bf7bcc3dad261210a863f36d6e3",
+   "size": 1833
+  },
+  {
+   "include": "crypto/httperr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/httperr.h",
+   "sha256": "d23592968cd374907932d9f544779a1202f09d2334f075aed00222dbb5c5b02a",
+   "size": 641
+  },
+  {
+   "include": "crypto/lhash.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/lhash.h",
+   "sha256": "7d64c248ed88e19b56b4cd0e706f70e5116d9b230729a275d0393b46c73e3a83",
+   "size": 493
+  },
+  {
+   "include": "crypto/md32_common.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/md32_common.h",
+   "sha256": "9ad74fe628c0887bd881e3dfdb48c50fbee268bdaedfde2c5c4ff7425ddc2e43",
+   "size": 8850
+  },
+  {
+   "include": "crypto/modes.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/modes.h",
+   "sha256": "1e89baa3e72ed35429eb19ec9a5348311fd05287a52a7fe6df63643f8348195b",
+   "size": 7361
+  },
+  {
+   "include": "crypto/objects.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/objects.h",
+   "sha256": "970030d57386e85935e6073ba19e896cb4b8cf986d38228243347cddc7811f72",
+   "size": 400
+  },
+  {
+   "include": "crypto/objectserr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/objectserr.h",
+   "sha256": "488f8f00f8d2c49c3fa659b1ddf3aa5a3ba2847af161ce57f45bfc1c070ec649",
+   "size": 646
+  },
+  {
+   "include": "crypto/ocsperr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/ocsperr.h",
+   "sha256": "07965d4ddfb07cf4dbb257f7532b509761cebb6eb0c2c3578da9789a16130060",
+   "size": 675
+  },
+  {
+   "include": "crypto/pem.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/pem.h",
+   "sha256": "47950dfd3f0f50dd6feb57525ede75d9c78b6da722d2519b461e4cb826ba81f5",
+   "size": 1935
+  },
+  {
+   "include": "crypto/pemerr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/pemerr.h",
+   "sha256": "17ad1872237b01f3fe36ef0201c5da66689f18d3f716eafc184dfceb42b39b02",
+   "size": 638
+  },
+  {
+   "include": "crypto/pkcs12err.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/pkcs12err.h",
+   "sha256": "55d93e78d451e7ec4d6ded4b28ca0b6daa242c77618b65b326070bb5ddb84c58",
+   "size": 647
+  },
+  {
+   "include": "crypto/pkcs7.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/pkcs7.h",
+   "sha256": "dc8463d54130c4b71d219ba5358a28efc8893d531a85dea6ec968c8d8d4c546f",
+   "size": 577
+  },
+  {
+   "include": "crypto/pkcs7err.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/pkcs7err.h",
+   "sha256": "114fa54132d752b77acb20d8d598611f8d377d9cbc308a4c3eaaa377034df3c1",
+   "size": 644
+  },
+  {
+   "include": "crypto/poly1305.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/poly1305.h",
+   "sha256": "4b27e03d6a58a30096315e2d2e670c77cc5889f4556b332bc4e150fbbcaceee7",
+   "size": 1574
+  },
+  {
+   "include": "crypto/ppc_arch.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/ppc_arch.h",
+   "sha256": "fdc0f27f3b5d627c4112ef363598ac88edbee346667e5c981b4ad84c3fa07f74",
+   "size": 862
+  },
+  {
+   "include": "crypto/punycode.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/punycode.h",
+   "sha256": "0f0201281d0cbb40878e4a3c5000ddf351c0ddf4922421aff03ee93005aea14b",
+   "size": 720
+  },
+  {
+   "include": "crypto/rand.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/rand.h",
+   "sha256": "3c694b6fe459b4f421c5822dc4530ed878a3525a895b597621a18c9338c5671a",
+   "size": 4820
+  },
+  {
+   "include": "crypto/rand_pool.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/rand_pool.h",
+   "sha256": "d2263a649c59303dbcc1538434d3269a7b0afbeadb6609956481ad26a887b2b9",
+   "size": 4823
+  },
+  {
+   "include": "crypto/randerr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/randerr.h",
+   "sha256": "cfd24ef86f35eb9f8ce5f5978b37a34f8e8565c3ac4a2e9374e2a2e00074a382",
+   "size": 641
+  },
+  {
+   "include": "crypto/random.h",
+   "from": "core",
+   "path": "src/crypto/random.h",
+   "sha256": "0f9ad3c0877a434d7569884379e0cbc2d1806ef6809b345b5af9e93bcb153e32",
+   "size": 1337
+  },
+  {
+   "include": "crypto/riscv_arch.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/riscv_arch.h",
+   "sha256": "af0bb7d710726719e9f7b9232ca6a505a14d058d482a5024ded01297c00c7570",
+   "size": 1702
+  },
+  {
+   "include": "crypto/rsa.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/rsa.h",
+   "sha256": "b0f733dde2d5ae1dc919a05ed1df110c570f04bc57dc670fc7bb305b334a80d9",
+   "size": 6171
+  },
+  {
+   "include": "crypto/rsaerr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/rsaerr.h",
+   "sha256": "272ddc9dc9b2582f485581c2d64ae15173c0782d83cb7f9c50594ca0519d6fce",
+   "size": 638
+  },
+  {
+   "include": "crypto/security_bits.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/security_bits.h",
+   "sha256": "80781d9a02e1c8b45e4e74740c4117f208f3ea724b2d12fccc25dae1f66f4e62",
+   "size": 471
+  },
+  {
+   "include": "crypto/sha.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/sha.h",
+   "sha256": "0a46dbe5bd1376413711da63a13360cd1b0863ff9e970929a5ed406fcb167b86",
+   "size": 728
+  },
+  {
+   "include": "crypto/siphash.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/siphash.h",
+   "sha256": "3cdbe90af3a8eb658481f251a6931e230fb6f10db0dc0f37029df353bd77dd9d",
+   "size": 1421
+  },
+  {
+   "include": "crypto/siv.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/siv.h",
+   "sha256": "0dba5d8d0fa41af7b47cb2f14fbaf7e84f43a79cc82a99dfa73f8d9424a961bc",
+   "size": 1586
+  },
+  {
+   "include": "crypto/sm2.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/sm2.h",
+   "sha256": "235c3b1ae5e5cb7f56378231db5061fca382b30760649c139f1891fd9b6181c8",
+   "size": 3003
+  },
+  {
+   "include": "crypto/sm2err.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/sm2err.h",
+   "sha256": "c6b2e2499ea384e82f909495555fa301ec7a7ba9d88e1181db7e0620c79daf8d",
+   "size": 1583
+  },
+  {
+   "include": "crypto/sm4.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/sm4.h",
+   "sha256": "215f265ec069e01f163bb7434434b3295a0d98eef5b6a86b979cb7c7c9c06b96",
+   "size": 983
+  },
+  {
+   "include": "crypto/sm4_platform.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/sm4_platform.h",
+   "sha256": "6724a5414af8bb7a7809828dec28efea00930ea3ffe0527f42f1c51b4dbbea2f",
+   "size": 3266
+  },
+  {
+   "include": "crypto/sparc_arch.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/sparc_arch.h",
+   "sha256": "e079f17feebfb87863c9cb639b03c5f9f4d0edfd09b748da9eb476aefa53bf08",
+   "size": 4423
+  },
+  {
+   "include": "crypto/sparse_array.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/sparse_array.h",
+   "sha256": "0f09fa0ad1a905a72fc168f5cdd16736b4d319c38cb1648d8085c797869bd21b",
+   "size": 3251
+  },
+  {
+   "include": "crypto/store.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/store.h",
+   "sha256": "57bd256f27dd17ec37c64107c93bf5400aaaab6e04ad5d8a338e2da875ef3a7b",
+   "size": 738
+  },
+  {
+   "include": "crypto/storeerr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/storeerr.h",
+   "sha256": "865a5d30db566b4cfafdbaa31700e6ebfc304be1daf93d5084e80df7d2bf70f4",
+   "size": 649
+  },
+  {
+   "include": "crypto/tserr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/tserr.h",
+   "sha256": "4406b7c6a06d35fd636b46dc85bc5dc6174f1656b836f196c6d0bed684aa3345",
+   "size": 667
+  },
+  {
+   "include": "crypto/types.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/types.h",
+   "sha256": "8dfa41f48b0445367e084583e6d242479f7d4a269b48e4e08efafe159776df6f",
+   "size": 834
+  },
+  {
+   "include": "crypto/uierr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/uierr.h",
+   "sha256": "57167fcfe038c2bce06da95c9c5d2a585512f2289feb4fafb05bd3a68658f28b",
+   "size": 635
+  },
+  {
+   "include": "crypto/x509.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/x509.h",
+   "sha256": "a274c4a55f0c60b0588bbe2d9a9e6a342b2b330b243d1335ad694c21eb28950f",
+   "size": 14579
+  },
+  {
+   "include": "crypto/x509err.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/x509err.h",
+   "sha256": "f5a836d9d529a75cdb80a0a81dac29d0b257f2824734baa0f231193c89ad844c",
+   "size": 641
+  },
+  {
+   "include": "crypto/x509v3err.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/crypto/x509v3err.h",
+   "sha256": "c175951d3e6672f1e32f4862d9697f7906fd5e0f97d10ced2339023b71b0f478",
+   "size": 647
+  },
+  {
+   "include": "currency_core/currency_config.h",
+   "from": "core",
+   "path": "src/currency_core/currency_config.h",
+   "sha256": "cb5ab9354c6f42252621e9884cbb84b3d9ded1e3b38d0c23444e52dcd256f7e3",
+   "size": 20537
+  },
+  {
+   "include": "internal/__DECC_INCLUDE_EPILOGUE.H",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/__DECC_INCLUDE_EPILOGUE.H",
+   "sha256": "00895f92ca8e91a5c9e9e3a9d4f075a69245130ce440d644b93bb388f5d0d2e9",
+   "size": 559
+  },
+  {
+   "include": "internal/__DECC_INCLUDE_PROLOGUE.H",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/__DECC_INCLUDE_PROLOGUE.H",
+   "sha256": "daa4ae15d2a77722e70ef0bd8f7d0c1d877a91f3ff75dcadfe6073eabdf20be5",
+   "size": 630
+  },
+  {
+   "include": "internal/asn1.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/asn1.h",
+   "sha256": "d0d010b650ced2af91ab668704f9b5ee47e89671dd03e98573efd4a56006df72",
+   "size": 465
+  },
+  {
+   "include": "internal/bio.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/bio.h",
+   "sha256": "f635b50566a963be16b9806cf1269efeef1ee6a28266911eec35981f808c5b40",
+   "size": 3664
+  },
+  {
+   "include": "internal/comp.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/comp.h",
+   "sha256": "d2b8777bb0672ba3d0aaff66da5d5fd6eeb1791fd67ca1c42d9824195990f434",
+   "size": 399
+  },
+  {
+   "include": "internal/conf.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/conf.h",
+   "sha256": "cc787cc42a3e7fce48b7277c89ca646666508aed1db888023bc0b0b67ad27187",
+   "size": 814
+  },
+  {
+   "include": "internal/constant_time.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/constant_time.h",
+   "sha256": "5a02b13f7f0c6eaa1a891f58c3f3d09ca35adbe76d97b593205f349446c0f406",
+   "size": 13546
+  },
+  {
+   "include": "internal/core.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/core.h",
+   "sha256": "587e114a3939286b885a28fdfc73157c265971fccc034abb692d23fef15f0695",
+   "size": 3088
+  },
+  {
+   "include": "internal/cryptlib.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/cryptlib.h",
+   "sha256": "7cbea11f7f2a7dc9447397d99f35eff33853c9e870b81e2fcf1d0e21d73d75d4",
+   "size": 8350
+  },
+  {
+   "include": "internal/dane.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/dane.h",
+   "sha256": "8410118fc71efee4103d09780e2d094d3e186fd6a4bceba3144781f58509a3ff",
+   "size": 3590
+  },
+  {
+   "include": "internal/deprecated.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/deprecated.h",
+   "sha256": "e9c7d8b6d9ac66d607de9c37a83b0bfcd6feed5cbb4a4cdaeb11428fb6912bd2",
+   "size": 940
+  },
+  {
+   "include": "internal/der.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/der.h",
+   "sha256": "63f4b280d02679a8aced36ff62014fe12276182c8d04ca96bef5e116ff29dbab",
+   "size": 3212
+  },
+  {
+   "include": "internal/dso.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/dso.h",
+   "sha256": "34bf259b1b3fd2bd0d646af8f2183297231e9a7342bbd10d18fb91e8516b5b6a",
+   "size": 7122
+  },
+  {
+   "include": "internal/dsoerr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/dsoerr.h",
+   "sha256": "58420e851034f6f64ff39587f7315bc0029877e0a183219f039d2bd5203ca007",
+   "size": 1664
+  },
+  {
+   "include": "internal/e_os.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/e_os.h",
+   "sha256": "435084b7263c7507b64c1a0c96f42fba8f321962b4a0c52700ce7b23367ff1bf",
+   "size": 13152
+  },
+  {
+   "include": "internal/endian.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/endian.h",
+   "sha256": "26243c701aa2076cb6802b9bdc3e8eb17d100b0fe5d012b36a9286dd0b23da76",
+   "size": 1794
+  },
+  {
+   "include": "internal/err.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/err.h",
+   "sha256": "77f1290254a3add13acf334cfbe399076a5040bff1190b0920351530abea2971",
+   "size": 450
+  },
+  {
+   "include": "internal/ffc.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/ffc.h",
+   "sha256": "64c1e031ec5cd329153fef860f61dca0884b64a0a8276fb3bb976215b9825c8e",
+   "size": 9585
+  },
+  {
+   "include": "internal/ktls.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/ktls.h",
+   "sha256": "9958c8b28aea8e229ccb27962c4499b181270158ecb2db57a8e2ea282584ebf0",
+   "size": 11928
+  },
+  {
+   "include": "internal/namemap.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/namemap.h",
+   "sha256": "3daf0474240b49a08f7e5eb69f3b714439c3296f193916c4ee06998bf520e4ab",
+   "size": 1576
+  },
+  {
+   "include": "internal/nelem.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/nelem.h",
+   "sha256": "a9918d75d7d55d94b32671425055e508162cddab4896287458b05b03208caab2",
+   "size": 473
+  },
+  {
+   "include": "internal/numbers.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/numbers.h",
+   "sha256": "592122b522115293c03be1a52c20a3967f4121a309226b09cd9cf1a9aba05a98",
+   "size": 2443
+  },
+  {
+   "include": "internal/o_dir.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/o_dir.h",
+   "sha256": "fb5ea35cc1fa6d1d95f0c01e2aa7dc37251df1a56cf386b491c8752d3534d88b",
+   "size": 2244
+  },
+  {
+   "include": "internal/packet.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/packet.h",
+   "sha256": "642900f518f0ef1e9e555d76e3cc2dfc431a60571bd1adef9e93821f5904fe46",
+   "size": 28753
+  },
+  {
+   "include": "internal/param_build_set.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/param_build_set.h",
+   "sha256": "b05e8330b676dd35ec7180be06919c686efcaadc24ccdc151800acad9c8cea6d",
+   "size": 2010
+  },
+  {
+   "include": "internal/passphrase.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/passphrase.h",
+   "sha256": "63215e312118e305964c43ab94c982eaf0faf558636d081eac3f9c7f386dd865",
+   "size": 4314
+  },
+  {
+   "include": "internal/property.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/property.h",
+   "sha256": "02a09bbd4179bfb09bd35257b5e1d9a26ba7b1505af2144a8ffa827b93d9f17d",
+   "size": 4515
+  },
+  {
+   "include": "internal/propertyerr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/propertyerr.h",
+   "sha256": "26eccbbe2ec2d53afffddc1da187310ee7b2b8db127efa9715237f4d9a3ef136",
+   "size": 1366
+  },
+  {
+   "include": "internal/provider.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/provider.h",
+   "sha256": "630c416685d13bc80ebb6c416dd49ce4d880b4cf6d7c6aa1f246beefca65cd38",
+   "size": 4806
+  },
+  {
+   "include": "internal/refcount.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/refcount.h",
+   "sha256": "214456d24e5cab0c1c4f4c9fb4e660909d4924b5460f62dc793b39aaf23cc358",
+   "size": 5606
+  },
+  {
+   "include": "internal/sha3.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/sha3.h",
+   "sha256": "f22b584ddc4ff4358023ef59d3efc7ce1caaca710101e7a542a442d03ac954e6",
+   "size": 1863
+  },
+  {
+   "include": "internal/sizes.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/sizes.h",
+   "sha256": "f0dbfdccf875cbec03372bb7cdcb28b1934e138f0c2f9efd3e966928a7ecfb16",
+   "size": 749
+  },
+  {
+   "include": "internal/sm3.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/sm3.h",
+   "sha256": "fed80558e8885e768e5b605568510422ad6a3feb86ed8486e3bfdbf3f2f3ac46",
+   "size": 1083
+  },
+  {
+   "include": "internal/sockets.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/sockets.h",
+   "sha256": "b3809e404bce464e1a04dea9ada24f2b4614636ccd035bee8fbdd834dcda99c1",
+   "size": 5401
+  },
+  {
+   "include": "internal/sslconf.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/sslconf.h",
+   "sha256": "15c1d52ea263be737519c26ddd35ff0b447fda894a0de85c299252d581135151",
+   "size": 713
+  },
+  {
+   "include": "internal/symhacks.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/symhacks.h",
+   "sha256": "5f19cc063cb564ed0c68c3584a1aaefe362a0036e8baf5fa076988c18d6e2504",
+   "size": 915
+  },
+  {
+   "include": "internal/thread_once.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/thread_once.h",
+   "sha256": "246dea87ffc3192c70bbc820634528e704c990fc6af410b3cdc80933efb99dfa",
+   "size": 5660
+  },
+  {
+   "include": "internal/tlsgroups.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/tlsgroups.h",
+   "sha256": "c27d9fcff15d18a1889810be44b7eb08951e8d1c6c8d2d362dd48a08381671ea",
+   "size": 2214
+  },
+  {
+   "include": "internal/tsan_assist.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/tsan_assist.h",
+   "sha256": "35bf29ed801359d1a452eb4e4a811599c05e4a8f9c7b64ef900d301aaf1446fe",
+   "size": 6553
+  },
+  {
+   "include": "internal/unicode.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/internal/unicode.h",
+   "sha256": "a98b22f394d2cb01059a43f76f8762bf18b9df8fa1b19110f5f3dd0c619b6e59",
+   "size": 850
+  },
+  {
+   "include": "openssl/__DECC_INCLUDE_EPILOGUE.H",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/__DECC_INCLUDE_EPILOGUE.H",
+   "sha256": "3d837d015f23ad248d7e0c74b5b8ca102d81525f166a0a4b7c19900eea982644",
+   "size": 729
+  },
+  {
+   "include": "openssl/__DECC_INCLUDE_PROLOGUE.H",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/__DECC_INCLUDE_PROLOGUE.H",
+   "sha256": "e66be3418a7b707f09fa011c85b0b3fdfcfa1740c46da11385abf23fe9983529",
+   "size": 801
+  },
+  {
+   "include": "openssl/aes.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/aes.h",
+   "sha256": "27aaa89367b022b12b66cf52c3c2d68f6761965ac36f3f1153202fa44692ad0e",
+   "size": 3752
+  },
+  {
+   "include": "openssl/asn1.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/asn1.h",
+   "sha256": "db028788ff159e966d0c4386b32fc52d7acfc1d1d51b94b1c5c646289864eea0",
+   "size": 60969
+  },
+  {
+   "include": "openssl/asn1_mac.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/asn1_mac.h",
+   "sha256": "5a0d1d59316bc398bc63af0f1dcf377fb66c3e3132d4c45400c9dbc2003e24b5",
+   "size": 398
+  },
+  {
+   "include": "openssl/asn1err.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/asn1err.h",
+   "sha256": "75c4b045fef75587c0df5c658b7466b74ad42755368a56cf6ff43581aa5768c6",
+   "size": 7731
+  },
+  {
+   "include": "openssl/asn1t.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/asn1t.h",
+   "sha256": "a3c3f5b114cb48eee9fc7a4cabec55c895de8edc592753a46c40c650a90200cb",
+   "size": 35937
+  },
+  {
+   "include": "openssl/async.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/async.h",
+   "sha256": "49369e1569d424f56f016865a34d59b676984e7f67f459e6514241afcd818252",
+   "size": 3163
+  },
+  {
+   "include": "openssl/asyncerr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/asyncerr.h",
+   "sha256": "154f003cfbf49040a04d9aac459cf5009a5a1d76298b222d66ba5b5a4e3721af",
+   "size": 842
+  },
+  {
+   "include": "openssl/bio.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/bio.h",
+   "sha256": "4ca14c78a7d22dace2c9447483ea95b9b9862e628ae38c99bd1c0c83214fbff7",
+   "size": 39844
+  },
+  {
+   "include": "openssl/bioerr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/bioerr.h",
+   "sha256": "348571893bca9600b9f790af5c6a02b40bffd83a718450a54a8022c70fef1a14",
+   "size": 3081
+  },
+  {
+   "include": "openssl/blowfish.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/blowfish.h",
+   "sha256": "fb4b19b7730d1cc7ff2b9da1435a506ad0ef50263bd168c5ff24214a06580282",
+   "size": 2693
+  },
+  {
+   "include": "openssl/bn.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/bn.h",
+   "sha256": "7a439d7b7fcb7b2bee94012f7eab7f130e8abf6691a738ec2bd2c6ee1d6de2de",
+   "size": 23750
+  },
+  {
+   "include": "openssl/bnerr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/bnerr.h",
+   "sha256": "f0dfac26985a7ae40174e90173df9f95b15bba4d3768290746d7258ff1b0ae64",
+   "size": 1949
+  },
+  {
+   "include": "openssl/buffer.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/buffer.h",
+   "sha256": "c87b52702746e224e6242f4a2a2070b007502ea92063b41df2c4f6bec11c37ca",
+   "size": 1658
+  },
+  {
+   "include": "openssl/buffererr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/buffererr.h",
+   "sha256": "73f33a7b4406477a0eaf9d0ec42f43b2594167b1d6b84175f378cf5b0de07c12",
+   "size": 594
+  },
+  {
+   "include": "openssl/camellia.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/camellia.h",
+   "sha256": "d1cee6e44668fba0e46c38db7394aa094c6cd2a25b97dbcfcc6f0ff4414f8ebf",
+   "size": 5069
+  },
+  {
+   "include": "openssl/cast.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/cast.h",
+   "sha256": "654ac650ae74ca5e9a87ab46c1205157a7489097d005fdccc4c52912cfcefa55",
+   "size": 2066
+  },
+  {
+   "include": "openssl/cmac.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/cmac.h",
+   "sha256": "b26f8ddb9f60eef2601a84a5455c11060e028d8ce700cae682c4a02ffe2f2ca2",
+   "size": 1608
+  },
+  {
+   "include": "openssl/cmp.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/cmp.h",
+   "sha256": "dd97023fb4cd6797be58ca9cfcd65b6cb74045fd6068fc23d5dca1a45926ec6a",
+   "size": 41123
+  },
+  {
+   "include": "openssl/cmp_util.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/cmp_util.h",
+   "sha256": "7a982bac5840812b486176102b1fe8b48dda8cce0fe94f2d35aff5057a99004e",
+   "size": 1742
+  },
+  {
+   "include": "openssl/cmperr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/cmperr.h",
+   "sha256": "a15841cd934edf4f79c2f6bde6b08aad01046179774e765295c57efebdb66527",
+   "size": 6165
+  },
+  {
+   "include": "openssl/cms.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/cms.h",
+   "sha256": "d9ab5e872b5fcffe83aba492b1ef3ea01cd9fc0e39f375e6a5d969d0503c7759",
+   "size": 34081
+  },
+  {
+   "include": "openssl/cmserr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/cmserr.h",
+   "sha256": "250953529ec294424fd84e58ebb6c65d1047ff9c78a19c9ba1a2a948bcbbed64",
+   "size": 6731
+  },
+  {
+   "include": "openssl/comp.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/comp.h",
+   "sha256": "44ad0613758e8cf84d9ec4f40cf50cbb735b16e659f7e9fd30c2155585d94199",
+   "size": 1445
+  },
+  {
+   "include": "openssl/comperr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/comperr.h",
+   "sha256": "656851389d8f21bc80b566248d7849c6b4ecbd5b178592b8e099c6457b37d87c",
+   "size": 813
+  },
+  {
+   "include": "openssl/conf.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/conf.h",
+   "sha256": "b429a51d28c08c5da24291fa3cbb705fd11984e46064f8a23ee42ab9bde8ce97",
+   "size": 10540
+  },
+  {
+   "include": "openssl/conf_api.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/conf_api.h",
+   "sha256": "a66bcc69464235679980efc4a687a4fe036388da91173809ca45c0a3cfe47a5b",
+   "size": 1420
+  },
+  {
+   "include": "openssl/conferr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/conferr.h",
+   "sha256": "ee8aaa36553894d836b728ce9a52234d22b5d812bbbb75fa09645e7b1011346a",
+   "size": 2265
+  },
+  {
+   "include": "openssl/configuration.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/configuration.h",
+   "sha256": "768b5bb6a5d073e42eb631535c0c98154987fafa8ee4f6cdf1b7b5831a53afbb",
+   "size": 3184
+  },
+  {
+   "include": "openssl/conftypes.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/conftypes.h",
+   "sha256": "e8f6697076d2464eaecfe2cdae8d2045388c53da2372fd52df5f6cfdc4d63375",
+   "size": 1190
+  },
+  {
+   "include": "openssl/core.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/core.h",
+   "sha256": "2981b182ac8930f17b136665b61f1c34c0cfdb4e122f19bd75d7ff552ff5e736",
+   "size": 8131
+  },
+  {
+   "include": "openssl/core_dispatch.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/core_dispatch.h",
+   "sha256": "827b38f9482e0d5a13ea19a033f1533b6f35b7950ca886e15ba1273240c1377b",
+   "size": 48696
+  },
+  {
+   "include": "openssl/core_names.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/core_names.h",
+   "sha256": "14e1fe84d23377939ac8cf48e3df4c87439bbb6262f434f094781bf04e9db410",
+   "size": 29366
+  },
+  {
+   "include": "openssl/core_object.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/core_object.h",
+   "sha256": "7a7172d30597e3a3e06c4e67a049d1335aa6f7d5b49641abba8fd4d5a1c07563",
+   "size": 1126
+  },
+  {
+   "include": "openssl/crmf.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/crmf.h",
+   "sha256": "82845b3e6709944bd15b51b29ea4759f0ada0155490580e7c63dbd82a367ee74",
+   "size": 14644
+  },
+  {
+   "include": "openssl/crmferr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/crmferr.h",
+   "sha256": "c08a40103c0c6d0d7d9ad0e2781db1f19829d29193d115d38b4d0271d13fecf9",
+   "size": 2011
+  },
+  {
+   "include": "openssl/crypto.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/crypto.h",
+   "sha256": "c14458c23bd87bd7681012ab4a64bbce48c2608222240bb7e06e101c7a684e21",
+   "size": 24071
+  },
+  {
+   "include": "openssl/cryptoerr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/cryptoerr.h",
+   "sha256": "2035467a49cd64e952be41ce9a8754652acf31e481f2d710e14a0a4fc870cd4f",
+   "size": 2467
+  },
+  {
+   "include": "openssl/cryptoerr_legacy.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/cryptoerr_legacy.h",
+   "sha256": "870042252331e89723d31079469104cafd676f0fedcbe0d99f56f3e8862fff8d",
+   "size": 80396
+  },
+  {
+   "include": "openssl/ct.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/ct.h",
+   "sha256": "67ac51cc9f39d5674eb1cd9e8282fe1ed2da84db50c1ac9aaeaac9c8f2b236d3",
+   "size": 22765
+  },
+  {
+   "include": "openssl/cterr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/cterr.h",
+   "sha256": "562bfe4ac984ebfef4fb91bdbe0a649d157f5057ab61ffee3a844d23f7c72c0a",
+   "size": 1688
+  },
+  {
+   "include": "openssl/decoder.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/decoder.h",
+   "sha256": "8419fd9e4e333fd477238bbad4ff875d5657b02cc39635c3a5c15f3a5bc7f0f2",
+   "size": 5760
+  },
+  {
+   "include": "openssl/decodererr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/decodererr.h",
+   "sha256": "a785fb95930e8b4a18054f77b7d5143d44673f4ca57682899bc2bf3464cafccf",
+   "size": 791
+  },
+  {
+   "include": "openssl/des.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/des.h",
+   "sha256": "bb13c7c5e13f3402d674fa88994b92ed72d6cdc1116707765d28bd7e0de31285",
+   "size": 8525
+  },
+  {
+   "include": "openssl/dh.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/dh.h",
+   "sha256": "731a77b034eeacbb4fa5bcb6b67e413307a66451a9e2956cd5036a9087cb9d44",
+   "size": 15352
+  },
+  {
+   "include": "openssl/dherr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/dherr.h",
+   "sha256": "1fdb17fb97cdfb1a5db6a29fb34f77e625a4592614d31b6bd7efb334492f5cf3",
+   "size": 2507
+  },
+  {
+   "include": "openssl/dsa.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/dsa.h",
+   "sha256": "702b50b9877cc54e7b19b87c5b9584a208aa5b25a93f840f4d109f6bd18a6238",
+   "size": 12532
+  },
+  {
+   "include": "openssl/dsaerr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/dsaerr.h",
+   "sha256": "69c2ecff5f62898461bc521ea918abd2a673206dd5e8d43288ad25d2c012f163",
+   "size": 1629
+  },
+  {
+   "include": "openssl/dtls1.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/dtls1.h",
+   "sha256": "1d1f404032a9eb31408c1f10bdff554d5740fb345b64b86fb74da8df95fbd901",
+   "size": 1465
+  },
+  {
+   "include": "openssl/e_os2.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/e_os2.h",
+   "sha256": "edc97525ece6d817c910da30f229bba4ad419bb0da4c49c9addb4f0ae751753f",
+   "size": 8800
+  },
+  {
+   "include": "openssl/ebcdic.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/ebcdic.h",
+   "sha256": "75a668c25c97853d5ba37ebce060a15152573242e3729d42830eba1daa642404",
+   "size": 1042
+  },
+  {
+   "include": "openssl/ec.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/ec.h",
+   "sha256": "e61ffa1cbfd7bac0114bbd73537b8b39843cbcbd3423c068bf07dbdc1c21e3dc",
+   "size": 67738
+  },
+  {
+   "include": "openssl/ecdh.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/ecdh.h",
+   "sha256": "5b99fdd1dfea38640ed8a506fb9b66db381cc26a1254448a81cc6b161e41850f",
+   "size": 361
+  },
+  {
+   "include": "openssl/ecdsa.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/ecdsa.h",
+   "sha256": "5b99fdd1dfea38640ed8a506fb9b66db381cc26a1254448a81cc6b161e41850f",
+   "size": 361
+  },
+  {
+   "include": "openssl/ecerr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/ecerr.h",
+   "sha256": "ce4fec7ee41de25a20abb7a9f00fe93305793a7bd2023d434b9aa6f64f91058a",
+   "size": 5405
+  },
+  {
+   "include": "openssl/encoder.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/encoder.h",
+   "sha256": "907d2f061c2972447d3f0c1cfc149c78791b1e4bdc131ad5a3eed1d084c76b41",
+   "size": 5450
+  },
+  {
+   "include": "openssl/encodererr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/encodererr.h",
+   "sha256": "63504766e9fcf36fe1527d95fe21460574896da187c60707bfa68254a35693b7",
+   "size": 791
+  },
+  {
+   "include": "openssl/engine.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/engine.h",
+   "sha256": "b48e5406717b26f41085dad8cc553e78c6cc54ea936df8ff1aa1312f32a6c053",
+   "size": 38823
+  },
+  {
+   "include": "openssl/engineerr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/engineerr.h",
+   "sha256": "8616a93b1b1bd8d1221844834817c28b7da78be1649a5b1780d9ea65fba8807c",
+   "size": 2838
+  },
+  {
+   "include": "openssl/err.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/err.h",
+   "sha256": "3cc1e1dbda3781fec4f515b1d61e31c39c6e76b802b3150e7c977b0b0a213608",
+   "size": 21978
+  },
+  {
+   "include": "openssl/ess.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/ess.h",
+   "sha256": "9da64664080d13f1f541f425dbac6305159d6c47309121427d77c67744c88de0",
+   "size": 8968
+  },
+  {
+   "include": "openssl/esserr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/esserr.h",
+   "sha256": "e791193e891b0784670d5410539aeea9d2a8591de71495b4add6e7dbf9dc22cd",
+   "size": 1144
+  },
+  {
+   "include": "openssl/evp.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/evp.h",
+   "sha256": "4c9e4dc79362ac5db9aca2abb1a0b74806134edec54db19026795495c707bba2",
+   "size": 103908
+  },
+  {
+   "include": "openssl/evperr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/evperr.h",
+   "sha256": "7fab5bade4441300fa7ffe721ca2eb361835998db7d386f8f1be7db5b7596c3f",
+   "size": 7351
+  },
+  {
+   "include": "openssl/fips_names.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/fips_names.h",
+   "sha256": "19e32043a3093329cca882db5348c7cfc9d3f7901d8294bf20e380763bd5d594",
+   "size": 2255
+  },
+  {
+   "include": "openssl/fipskey.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/fipskey.h",
+   "sha256": "056f3c751af11919d3b7c87c33d5f014453a65bf82e95a7e2355149d5a718d3d",
+   "size": 1010
+  },
+  {
+   "include": "openssl/hmac.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/hmac.h",
+   "sha256": "e49fbe0086f8fbefa5648eef70bc84e8090a9226a1e3c6e856499373004aed0a",
+   "size": 2141
+  },
+  {
+   "include": "openssl/http.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/http.h",
+   "sha256": "dd409efeca44be216a7af99b9f39653a5129bfc05f415d6dfaec17758641e1ca",
+   "size": 5346
+  },
+  {
+   "include": "openssl/httperr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/httperr.h",
+   "sha256": "b50562e98d92c08e47e2b1b0bcf5652820b2a774652968a1188f9f2d87f2fe87",
+   "size": 2451
+  },
+  {
+   "include": "openssl/idea.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/idea.h",
+   "sha256": "239122df15e738d7552dd76850c55a9ffe0136f33506c23d9058215a1255af66",
+   "size": 3010
+  },
+  {
+   "include": "openssl/kdf.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/kdf.h",
+   "sha256": "41756fe038443d1d270458d53d6e42ea78d12d980728b6a9284fa259958ea00a",
+   "size": 5619
+  },
+  {
+   "include": "openssl/kdferr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/kdferr.h",
+   "sha256": "3d9f27fffdb49e0ece9d5a62adbb9cc42c56262b00cc8ce7f956b2cb05a2a22d",
+   "size": 482
+  },
+  {
+   "include": "openssl/lhash.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/lhash.h",
+   "sha256": "0c457611f11e6c4fd574738f133618b538f5e0011e9bb9d944f223cf91ce8e92",
+   "size": 14595
+  },
+  {
+   "include": "openssl/macros.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/macros.h",
+   "sha256": "688a164d0aaecee58d6b8d2667a2906de627ab5eb6a7c0b6c366a45341743d60",
+   "size": 10702
+  },
+  {
+   "include": "openssl/md2.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/md2.h",
+   "sha256": "4add77ed047736979dc442a49d42921cce21e654a2dceef058d0191aa2d3c941",
+   "size": 1461
+  },
+  {
+   "include": "openssl/md4.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/md4.h",
+   "sha256": "0472e597d139b44dd7d78d9093a5d8109417d18e9955fc940f1ea3e2e892ab44",
+   "size": 1699
+  },
+  {
+   "include": "openssl/md5.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/md5.h",
+   "sha256": "308c901ec1a28f9b0098717f689ca63e104ce805050802d38b8f122d85ab2c78",
+   "size": 1696
+  },
+  {
+   "include": "openssl/mdc2.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/mdc2.h",
+   "sha256": "42b844c9ae9e00e7c0b0e28858b8b3db7b8abf7e514e5e63f43456371ed3384b",
+   "size": 1441
+  },
+  {
+   "include": "openssl/modes.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/modes.h",
+   "sha256": "4a8b3b1dafc15798a3b2bef0e3885275746e7fae73a0d96e55da55261554ba52",
+   "size": 10786
+  },
+  {
+   "include": "openssl/obj_mac.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/obj_mac.h",
+   "sha256": "c1d31f32a3dbc9dea1db10f322b4b46a24c3d4411fe54630df59fa46fc2b583a",
+   "size": 228668
+  },
+  {
+   "include": "openssl/objects.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/objects.h",
+   "sha256": "5fc6f3f0dd5e46fd409cb51ae1b331fec799fb6ef4b5efdc8ffbe264e5e83997",
+   "size": 6848
+  },
+  {
+   "include": "openssl/objectserr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/objectserr.h",
+   "sha256": "e17a8d7f62a1ef257fd90e604d4293bf02d5f81ae8198efe1e197c5b27baeb8c",
+   "size": 782
+  },
+  {
+   "include": "openssl/ocsp.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/ocsp.h",
+   "sha256": "0e229d683a7e716a3834157218f692f0db7996f4b473da08c57ffdffbd661eb3",
+   "size": 29352
+  },
+  {
+   "include": "openssl/ocsperr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/ocsperr.h",
+   "sha256": "178329cfc042d3f1eb6e179206d844de41ba05ee4ac0ed9e3e6c861fb49d68ea",
+   "size": 2200
+  },
+  {
+   "include": "openssl/opensslconf.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/opensslconf.h",
+   "sha256": "890184233890bacd52fd420fef07befad411b9a318b97efbf36f46673d3e7841",
+   "size": 515
+  },
+  {
+   "include": "openssl/opensslv.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/opensslv.h",
+   "sha256": "87032cf3f8ccd1435553b5547371f7bcdfbcb969404b934b5aa1229ed5e59906",
+   "size": 3186
+  },
+  {
+   "include": "openssl/ossl_typ.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/ossl_typ.h",
+   "sha256": "76cb203ef3bcd305f4171e1d33f3f3319dee6354c2433493e5e9068aa79672fd",
+   "size": 562
+  },
+  {
+   "include": "openssl/param_build.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/param_build.h",
+   "sha256": "3bf39b1037256466f1a89868621b2b62f1d05e63064159e60727041b170d55e3",
+   "size": 2809
+  },
+  {
+   "include": "openssl/params.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/params.h",
+   "sha256": "10d8e0157e339ee01f3b9c60c4b5bc60e6d4edce1084f0c9589ff75bf3a9f693",
+   "size": 7328
+  },
+  {
+   "include": "openssl/pem.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/pem.h",
+   "sha256": "26e59ed8238091baafa52e477910a0fb1c8d2447a23bf330d017650bee5ca105",
+   "size": 25819
+  },
+  {
+   "include": "openssl/pem2.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/pem2.h",
+   "sha256": "a34a1607983b5f32be8ca49e75c3b41f1c9413b4eb777af144958283ecbd3922",
+   "size": 531
+  },
+  {
+   "include": "openssl/pemerr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/pemerr.h",
+   "sha256": "843df90b1b434eed626bb6b8bccd5f6ed530e592d706584f56a725d254d8a5d2",
+   "size": 2634
+  },
+  {
+   "include": "openssl/pkcs12.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/pkcs12.h",
+   "sha256": "0b26819c3e6301852bb6292633e4c5bfcf263f734aaf99b3d025be806a15919c",
+   "size": 19371
+  },
+  {
+   "include": "openssl/pkcs12err.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/pkcs12err.h",
+   "sha256": "b692b1a2c7fc06002dee07a868f0ec394e9b7f20b5e151f78e0941e143c2d2d4",
+   "size": 1837
+  },
+  {
+   "include": "openssl/pkcs7.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/pkcs7.h",
+   "sha256": "059437d2ffdcbcc6aabebc3e018a27b960484a268b64678912f17009eab9f5fe",
+   "size": 22477
+  },
+  {
+   "include": "openssl/pkcs7err.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/pkcs7err.h",
+   "sha256": "9fe7a51f3de13b1fd03b319c64b8bd287164eb6ce7d3481994141c0be51396d5",
+   "size": 2952
+  },
+  {
+   "include": "openssl/prov_ssl.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/prov_ssl.h",
+   "sha256": "1f5c121c02d31f695bff708396e0512286fa04dee67f12ab895c0c558ba33f20",
+   "size": 981
+  },
+  {
+   "include": "openssl/proverr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/proverr.h",
+   "sha256": "c6524a35fda47769544a58905a44467a0fe84db2bf644168c46c25e51f6e5686",
+   "size": 8279
+  },
+  {
+   "include": "openssl/provider.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/provider.h",
+   "sha256": "b9e5b46a26f7e7ec383fe540404092e4d76ae54b5822744e4ba0750ef8d2cac0",
+   "size": 2325
+  },
+  {
+   "include": "openssl/rand.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/rand.h",
+   "sha256": "bb9a0269d976465e31ae7c22a022b39b55e7f5b003ddf82f5b9d0e009da482d9",
+   "size": 3983
+  },
+  {
+   "include": "openssl/randerr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/randerr.h",
+   "sha256": "455f8ca7562cbb97dc3d7f8ce2ce27a404ac2ae3a6d7219d45c48c54bc80f910",
+   "size": 3319
+  },
+  {
+   "include": "openssl/rc2.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/rc2.h",
+   "sha256": "08c6865d169a300e8bc818bd810f80ffb8a21d69e97dad88e400b586d0f3e965",
+   "size": 2382
+  },
+  {
+   "include": "openssl/rc4.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/rc4.h",
+   "sha256": "ea45836c253246c1d6f1b16b360dbb59322e26e28bfc54881d698e7cd5057666",
+   "size": 1194
+  },
+  {
+   "include": "openssl/rc5.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/rc5.h",
+   "sha256": "968c96ead08204edb8148981094700cbc3338ed0613c4469da5ab4675fa1ce29",
+   "size": 2861
+  },
+  {
+   "include": "openssl/ripemd.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/ripemd.h",
+   "sha256": "2e28edeb6613516db89e28c9d962301f4fe7b38366ebdd1d35933f3491d57b9d",
+   "size": 1717
+  },
+  {
+   "include": "openssl/rsa.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/rsa.h",
+   "sha256": "087c43978b2728f8797cf60752931b55157ab8812fc92fc5dd172fc99efe2a35",
+   "size": 28332
+  },
+  {
+   "include": "openssl/rsaerr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/rsaerr.h",
+   "sha256": "a745e6b2835af7bb933e78870a270d51ab33778fe10a5cd377422d4b9587dcf0",
+   "size": 5681
+  },
+  {
+   "include": "openssl/safestack.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/safestack.h",
+   "sha256": "19ee08576dd9663c91a68ead50a8de4da6c6eb80bc67526b59015c766ddfec33",
+   "size": 18439
+  },
+  {
+   "include": "openssl/seed.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/seed.h",
+   "sha256": "0d6d206f240f7bd6fa28cd4ec66b2b878f199af3ce6eda172af9fe31ebb71586",
+   "size": 3964
+  },
+  {
+   "include": "openssl/self_test.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/self_test.h",
+   "sha256": "780a17cecfd4f821d1293ababb5f560a111c67d32eace330d22ce40f03fee84d",
+   "size": 4145
+  },
+  {
+   "include": "openssl/sha.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/sha.h",
+   "sha256": "06500535b9b3d9742e745558dc02e52d0df6d75b038457d4f6c374ed68d39eaf",
+   "size": 4658
+  },
+  {
+   "include": "openssl/srp.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/srp.h",
+   "sha256": "7f8fe9346e7b96fffab973029ebc955c6bb89e7556391281b0dd49205d49e33c",
+   "size": 15487
+  },
+  {
+   "include": "openssl/srtp.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/srtp.h",
+   "sha256": "d2b97e90531bf9cdb086d9943a518bc474aebaa0aef02f1d41e8113fe944c9d9",
+   "size": 1429
+  },
+  {
+   "include": "openssl/ssl.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/ssl.h",
+   "sha256": "c58e45aa66f6e05af8eb7c817a14fb5dffbb3968baa56fcca6f0188854d225d3",
+   "size": 124993
+  },
+  {
+   "include": "openssl/ssl2.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/ssl2.h",
+   "sha256": "92e3330e2867bf17d3b305ba0f6fe6b073ad4bdb9db519e4224bbd993f1e9cb7",
+   "size": 658
+  },
+  {
+   "include": "openssl/ssl3.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/ssl3.h",
+   "sha256": "5ce26c99d8a0fffe062a4293f01f6d55619b4e1b8f75bf0065fb3faa2ac512e9",
+   "size": 14773
+  },
+  {
+   "include": "openssl/sslerr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/sslerr.h",
+   "sha256": "f81905743cb44b6a82f79a6edba7a879740da8cfc69b20d5a51a0e27f325f54a",
+   "size": 20527
+  },
+  {
+   "include": "openssl/sslerr_legacy.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/sslerr_legacy.h",
+   "sha256": "98401ca29f46694fff11304801d995015a7e4a81afe0db0a9a79a0bdde9e03d8",
+   "size": 27005
+  },
+  {
+   "include": "openssl/stack.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/stack.h",
+   "sha256": "69f94382a15a3c4cfd1dda32108db5234727b36ed0e25f1fb12e0993c7b5ac95",
+   "size": 3284
+  },
+  {
+   "include": "openssl/store.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/store.h",
+   "sha256": "cfd4ee1777782d642da53a045d253ede58f0f0463647e6d4f352953b26e2e058",
+   "size": 15178
+  },
+  {
+   "include": "openssl/storeerr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/storeerr.h",
+   "sha256": "370277e107a1b979ff5e0bd28f5adb92e066d41831ac37ce7108d2a1b84376f6",
+   "size": 2092
+  },
+  {
+   "include": "openssl/symhacks.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/symhacks.h",
+   "sha256": "68b54776fa15943f3f018be6c7dc7a8847c9f512fb5eeec4f093804197dc2dfa",
+   "size": 1290
+  },
+  {
+   "include": "openssl/tls1.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/tls1.h",
+   "sha256": "1e8dc0a669d9dc28a7f390e1020dfd9484be15e5c069de9379fea02834c73e7d",
+   "size": 71383
+  },
+  {
+   "include": "openssl/trace.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/trace.h",
+   "sha256": "b875c655debc29d9c910db5522feb97edf147798dea6f2fcad8f9a85abb18a1a",
+   "size": 10399
+  },
+  {
+   "include": "openssl/ts.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/ts.h",
+   "sha256": "886fcc2d0687b1f3d430d8091067c4bf9a73df2102e1581ac2a1bcfc5f6cf515",
+   "size": 19760
+  },
+  {
+   "include": "openssl/tserr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/tserr.h",
+   "sha256": "0d851cb9db84c48bb8a9871a988950fd0b62ecc854b11641e3e9a07fa191a6f6",
+   "size": 3074
+  },
+  {
+   "include": "openssl/txt_db.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/txt_db.h",
+   "sha256": "1a6a6b331ef3cc6c632f782e8da2fa81aaeeac56e4d0b2fb3016f936805be257",
+   "size": 1784
+  },
+  {
+   "include": "openssl/types.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/types.h",
+   "sha256": "0a99b2c6f9a99ce25038eb98790eaf0f6c3dafaccfe37d6ff126d54f2387375d",
+   "size": 7316
+  },
+  {
+   "include": "openssl/ui.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/ui.h",
+   "sha256": "71663d97e048fd14e4652af8402acb72200784b1940bd70b39b442c6d5c99bd9",
+   "size": 19251
+  },
+  {
+   "include": "openssl/uierr.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/uierr.h",
+   "sha256": "6f46dc9509b4d10802aaa1ad3c84763a2843312fdc8dd8add5c7b24e7f0c877f",
+   "size": 1391
+  },
+  {
+   "include": "openssl/whrlpool.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/whrlpool.h",
+   "sha256": "bb8f9f6ad1960e87f78363793130a0c1bee89b64a12eb32e939791fb0ca61016",
+   "size": 1853
+  },
+  {
+   "include": "openssl/x509.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/x509.h",
+   "sha256": "98dc886d6d3902febf8b4815d0078ece1f1b72b0fac911e415430cc0f5f0799d",
+   "size": 71603
+  },
+  {
+   "include": "openssl/x509_vfy.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/x509_vfy.h",
+   "sha256": "565a4a3c00b770e7941ae6b969000bf6fbbe7644d67e6faacc81c32766ca9886",
+   "size": 52027
+  },
+  {
+   "include": "openssl/x509err.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/x509err.h",
+   "sha256": "a9f2e315eb068c81dd1711a4b2cdc65af0cdd976912704b86f9cd33b341fdd2b",
+   "size": 3319
+  },
+  {
+   "include": "openssl/x509v3.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/x509v3.h",
+   "sha256": "bf20dc7abed639f5a585ff16aabfdd273998e685ffa300e870536666ef9f9cbc",
+   "size": 94023
+  },
+  {
+   "include": "openssl/x509v3err.h",
+   "from": "lib",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include/openssl/x509v3err.h",
+   "sha256": "25ce00779ee00002830ede3e302a8b4bf03dbc505243d2b87a86a62c31a52d6f",
+   "size": 4819
+  },
+  {
+   "include": "plain_wallet_api.h",
+   "from": "core",
+   "path": "src/wallet/plain_wallet_api.h",
+   "sha256": "578f2ad64955b4adb0e59d4da98032ef14f0b093e5585a658f511a3c72b5da54",
+   "size": 2397
+  },
+  {
+   "include": "wallet/native_held_submission.h",
+   "from": "core",
+   "path": "src/wallet/native_held_submission.h",
+   "sha256": "c696791cc44391239aebf073a189c0e15e0e6da358e702766a656a6ab84230c3",
+   "size": 2543
+  },
+  {
+   "include": "wallet/native_payment_transport.h",
+   "from": "core",
+   "path": "src/wallet/native_payment_transport.h",
+   "sha256": "56ffbe928023d843924aecd087ca541252ad8ebc5f3d62db80f3750fa465745d",
+   "size": 4219
+  },
+  {
+   "include": "wallet/native_wallet_provisioning.h",
+   "from": "core",
+   "path": "src/wallet/native_wallet_provisioning.h",
+   "sha256": "4cf0bc9883883e7e59f3be9fb7e96b1b6a8f1280f1b010e0a2e44bca8a889ce1",
+   "size": 15180
+  },
+  {
+   "include": "wallet/native_wallet_session.h",
+   "from": "core",
+   "path": "src/wallet/native_wallet_session.h",
+   "sha256": "91d5619e15b6911dcc3899b444826c4a950ab094a2ea921ed92cac9dc61a6063",
+   "size": 63412
+  },
+  {
+   "include": "wallet/read_only_block_transport.h",
+   "from": "core",
+   "path": "src/wallet/read_only_block_transport.h",
+   "sha256": "9aa9ddb69d7ba0f47a6723967986514d1c4b7e80c1c67d50e66b18dfb20aaed0",
+   "size": 8096
+  },
+  {
+   "include": "wallet/read_only_wallet_birthday.h",
+   "from": "core",
+   "path": "src/wallet/read_only_wallet_birthday.h",
+   "sha256": "94f4612c3be1613233ec04e2adeaffaf53955d50e0532fa87bf755fd6026892e",
+   "size": 5660
+  },
+  {
+   "include": "wallet/read_only_wallet_sync.h",
+   "from": "core",
+   "path": "src/wallet/read_only_wallet_sync.h",
+   "sha256": "35413f2039eefca1871e2038a49cccf36e54ae6013c26348fc16d12ecae49e90",
+   "size": 5681
+  },
+  {
+   "include": "warnings.h",
+   "from": "core",
+   "path": "contrib/epee/include/warnings.h",
+   "sha256": "338ac68b899bd295a33399eba9f95e19f0810d4d81a420fdbb2b1b16be867ec4",
+   "size": 1030
+  },
+  {
+   "include": "wallet/native_wallet_history_origin.h",
+   "from": "core",
+   "path": "src/wallet/native_wallet_history_origin.h",
+   "sha256": "18bd96d570c0251e42f83fc7fa9611a3d435780fc47ad6e654dde803f154e4b7",
+   "size": 601
+  },
+  {
+   "include": "wallet/native_wallet_birthday_prefix.h",
+   "from": "core",
+   "path": "src/wallet/native_wallet_birthday_prefix.h",
+   "sha256": "968267effffb4a91d95223f4004d0d440b62b211eab2bce8d8770e39f7316b5b",
+   "size": 8261
+  },
+  {
+   "include": "wallet/read_only_birthday_prefix.h",
+   "from": "core",
+   "path": "src/wallet/read_only_birthday_prefix.h",
+   "sha256": "9871e3e250611f4e4e6884de7e7be4fc5895e4ed16dbee2d348af8e6ed6bd086",
+   "size": 10020
+  }
+ ],
+ "dependencies": [
+  {
+   "output": "LICENSE",
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "LICENSE",
+   "blob": "3df162d7706b0bcdfeb8681102e95377766ee562",
+   "sha256": "f6be8b1bff2e048573bb80028a2350d28646993ea557b87189fd1c93fd2b0090",
+   "size": 1066
+  },
+  {
+   "output": "_install_android/arm64-v8a/lib/libbacktrace.a",
+   "commit": "99c0378a5b33065ecf734636a2e5d78e934f2dfa",
+   "path": "_libs_android/libbacktrace/arm64-v8a/lib/libbacktrace.a",
+   "pointerBlob": "259abe691cf822abf960fe7279a562029232ed08",
+   "lfsSha256": "0ce1e4b7a19de6a5ec3e939cdab92154ad156ce02af35e858269c0afe6cbabeb",
+   "size": 115354
+  },
+  {
+   "output": "_libs_android/boost/arm64-v8a/lib/libboost_atomic.a",
+   "commit": "75af8ea6a8d2bc47eaa473845ab026a0df18fcfe",
+   "path": "_libs_android/boost/arm64-v8a/lib/libboost_atomic.a",
+   "pointerBlob": "104922d6f3328f3fdb2611cbb4d510fe973a0110",
+   "lfsSha256": "247151a66b9a0b45fae1ed509e8ab65ee7f1cbf725e311dbadc8942b691b1829",
+   "size": 94476
+  },
+  {
+   "output": "_libs_android/boost/arm64-v8a/lib/libboost_chrono.a",
+   "commit": "75af8ea6a8d2bc47eaa473845ab026a0df18fcfe",
+   "path": "_libs_android/boost/arm64-v8a/lib/libboost_chrono.a",
+   "pointerBlob": "0603a1bac1fdd891f14aed8006c6abf280377733",
+   "lfsSha256": "fdce6eb820392a7f6ef5c43772af5ebfe4b41cdd8ca8f893671e97a315a5f2c4",
+   "size": 699590
+  },
+  {
+   "output": "_libs_android/boost/arm64-v8a/lib/libboost_date_time.a",
+   "commit": "75af8ea6a8d2bc47eaa473845ab026a0df18fcfe",
+   "path": "_libs_android/boost/arm64-v8a/lib/libboost_date_time.a",
+   "pointerBlob": "18dfd6288e4d4f6225a3160ec960d91d9c86576e",
+   "lfsSha256": "a123116d05cc09165980a98fd7a1dea741702e8b409132062e5b1c328377f6e9",
+   "size": 9010
+  },
+  {
+   "output": "_libs_android/boost/arm64-v8a/lib/libboost_filesystem.a",
+   "commit": "75af8ea6a8d2bc47eaa473845ab026a0df18fcfe",
+   "path": "_libs_android/boost/arm64-v8a/lib/libboost_filesystem.a",
+   "pointerBlob": "205948811dfbdb95f98822e3f1b49ee266f73266",
+   "lfsSha256": "0b0db1b652cf29062f0febb5360e514830d4f7e3997a55cb89234495127db723",
+   "size": 2482000
+  },
+  {
+   "output": "_libs_android/boost/arm64-v8a/lib/libboost_program_options.a",
+   "commit": "75af8ea6a8d2bc47eaa473845ab026a0df18fcfe",
+   "path": "_libs_android/boost/arm64-v8a/lib/libboost_program_options.a",
+   "pointerBlob": "8769092fbc08a1fa054a325a0e275d74507b3c08",
+   "lfsSha256": "1a47b00784344aed2110c17ebeb8a7444227e073ae221697fe8bfd120f4e625c",
+   "size": 8292176
+  },
+  {
+   "output": "_libs_android/boost/arm64-v8a/lib/libboost_regex.a",
+   "commit": "75af8ea6a8d2bc47eaa473845ab026a0df18fcfe",
+   "path": "_libs_android/boost/arm64-v8a/lib/libboost_regex.a",
+   "pointerBlob": "b5538e758bc2cd6f14cf42c9234af984695559f2",
+   "lfsSha256": "7f44f74a811dd37347d7806dc18fac968165ba44dd695c020f147db324958f8e",
+   "size": 4029390
+  },
+  {
+   "output": "_libs_android/boost/arm64-v8a/lib/libboost_serialization.a",
+   "commit": "75af8ea6a8d2bc47eaa473845ab026a0df18fcfe",
+   "path": "_libs_android/boost/arm64-v8a/lib/libboost_serialization.a",
+   "pointerBlob": "da6ba471c2fdc4217bff973cb39f703d073ec6cd",
+   "lfsSha256": "f5f0dc256e1f9f4259ffe58aad145027c23171c52000f6a9865c70c3c1344fbb",
+   "size": 7914316
+  },
+  {
+   "output": "_libs_android/boost/arm64-v8a/lib/libboost_system.a",
+   "commit": "75af8ea6a8d2bc47eaa473845ab026a0df18fcfe",
+   "path": "_libs_android/boost/arm64-v8a/lib/libboost_system.a",
+   "pointerBlob": "e96435ad0764b34364e70a85609f4369e48acdb3",
+   "lfsSha256": "957a410a96edf8484ea2239a0206f883fcad6d444b87da47e98b6762517e1534",
+   "size": 6740
+  },
+  {
+   "output": "_libs_android/boost/arm64-v8a/lib/libboost_thread.a",
+   "commit": "75af8ea6a8d2bc47eaa473845ab026a0df18fcfe",
+   "path": "_libs_android/boost/arm64-v8a/lib/libboost_thread.a",
+   "pointerBlob": "04648c9b11c49e834ad82918f4b8d068c8cd4392",
+   "lfsSha256": "feff0274654c856d2fa184c8acb7e035499a92c5122b9313d3b030e302fc56ce",
+   "size": 1456368
+  },
+  {
+   "output": "_libs_android/boost/arm64-v8a/lib/libboost_timer.a",
+   "commit": "75af8ea6a8d2bc47eaa473845ab026a0df18fcfe",
+   "path": "_libs_android/boost/arm64-v8a/lib/libboost_timer.a",
+   "pointerBlob": "08a711da92b37341bfedf3a105b573d34f7ffb5e",
+   "lfsSha256": "d4f8b93cd916b5ee2b896146414c747f36a13c271051a24527107de150f8df49",
+   "size": 312714
+  },
+  {
+   "output": "_libs_android/boost/arm64-v8a/lib/libboost_wserialization.a",
+   "commit": "75af8ea6a8d2bc47eaa473845ab026a0df18fcfe",
+   "path": "_libs_android/boost/arm64-v8a/lib/libboost_wserialization.a",
+   "pointerBlob": "2486ebacd414c1308a341380941ae8dd324e7a99",
+   "lfsSha256": "4a8df04c4a33f3c5b6a3fe06eaccb08e19e0be35458bac473686d4fd2edb78c6",
+   "size": 5021748
+  },
+  {
+   "output": "_libs_android/openssl/arm64-v8a/lib/libcrypto.a",
+   "commit": "eb864145fdf4616e5b9ca68b29a3b966e2278c16",
+   "path": "_libs_android/openssl/arm64-v8a/lib/libcrypto.a",
+   "pointerBlob": "e628916d8883030e4e9c7a9275bc8a2b876a09d3",
+   "lfsSha256": "ca4201a39b111c160fe406f91c08ed2bf8eed647d3c68b322f02310fdbec462a",
+   "size": 10454622
+  },
+  {
+   "output": "_libs_android/openssl/arm64-v8a/lib/libssl.a",
+   "commit": "1c07072047ecbd49a1bcf95f7f0384e7ff532aa2",
+   "path": "_libs_android/openssl/arm64-v8a/lib/libssl.a",
+   "pointerBlob": "1fadcae752b24909ad69d06e90810d784cdac5bb",
+   "lfsSha256": "24bd8ac72f057d51e406b5a02b55b87e6b679f57140bd8588a3bd9fdd658157a",
+   "size": 1507354
+  }
+ ],
+ "buildTrees": {
+  "boost/include": {
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/boost/include",
+   "tree": "071ffbedb53243aabf5a0d9d77b262ebdb697cd2"
+  },
+  "openssl/arm64-v8a/include": {
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/openssl/arm64-v8a/include",
+   "tree": "8465611634f083e235a4ab3271b09eeadb3a04c3"
+  },
+  "libbacktrace/include": {
+   "commit": "08b38232c58a5f514909d9a660145299be7ad337",
+   "path": "_libs_android/libbacktrace/include",
+   "tree": "2a6d11b1e9f05d82bddd91c11a3f3db2cf1fee5e"
+  }
+ },
+ "builtOutputs": [
+  "_install_android/arm64-v8a/lib/libcommon.a",
+  "_install_android/arm64-v8a/lib/libcrypto.a",
+  "_install_android/arm64-v8a/lib/libcurrency_core.a",
+  "_install_android/arm64-v8a/lib/libwallet.a",
+  "_install_android/arm64-v8a/lib/libz.a",
+  "_install_android/arm64-v8a/VERSION"
+ ]
+}
