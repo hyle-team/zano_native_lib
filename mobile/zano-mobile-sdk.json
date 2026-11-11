@@ -174,7 +174,12 @@
       ],
       "producer": "zano-mobile-rn native/zano/ios/produce_stage.py, configured by this wrapper's mobile/ios/sdk-producer.json; the project overlays resolve from the pinned core through the app's native/zano-core mount.",
       "producerConfig": "mobile/ios/sdk-producer.json",
-      "historicalAppProducerConfigSha256": "05d152fd98aee9a036bba7cdd21068e2cdfa05807697e127d2b9f399a131f131"
+      "historicalAppProducerConfigSha256": "05d152fd98aee9a036bba7cdd21068e2cdfa05807697e127d2b9f399a131f131",
+      "closure": {
+        "path": "mobile/ios/closure.json",
+        "sha256": "5771d531bfa7c4419cbc66b6a83a0e8cf332378ea9bee791bf4ab8116db73e52",
+        "meaning": "The 824-path iOS compile closure of sourceCommit with exact bytes: 735 from the core, 87 from its pinned jwt-cpp/miniupnp submodules, 2 captured libmdbx configure outputs (mobile/ios/captured). Census d019db97."
+      }
     }
   },
   "appComposition": {
