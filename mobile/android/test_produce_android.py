@@ -9,9 +9,11 @@ no build, no LFS fetch).
 Usage: ZANO_LEGACY_CORE_GIT=CORE_REPO python3 -I mobile/android/test_produce_android.py -v
 """
 import copy
+import hashlib
 import importlib.util
 import json
 import os
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -25,6 +27,40 @@ spec.loader.exec_module(recipe)
 LEGACY_CORE = os.environ.get("ZANO_LEGACY_CORE_GIT")
 SNAPSHOT_CORE = os.environ.get("ZANO_SNAPSHOT_CORE_GIT", str(HERE.parents[1] / "Zano"))
 LEGACY_LABEL = "299bf172e8428042919b48bfa1cedfcd9ede139a-native-snapshot-compat-v1"
+
+
+def listed(repo, rev, prefix=""):
+    """{path: (mode, object)} of every tree entry under rev from `git ls-tree` alone (no blob is read)."""
+    out = subprocess.run(["git", "-C", str(repo), "ls-tree", "-r", "-z", rev], stdout=subprocess.PIPE, check=True).stdout
+    entries = {}
+    for record in out.decode().split("\0"):
+        if record:
+            meta, path = record.split("\t", 1)
+            mode, _kind, obj = meta.split()
+            entries[prefix + path] = (mode, obj)
+    return entries
+
+
+def expected_build_source(repo, rev, never=()):
+    """Blobs of rev plus the pinned trees of the required submodules, as (mode, blob id) by path."""
+    entries = listed(repo, rev)
+    files = {p: v for p, v in entries.items() if v[0] != "160000" and p not in never}
+    for link in recipe.REQUIRED_SUBMODULES:
+        files.update(listed(Path(repo) / link, entries[link][1], link + "/"))
+    return files, sorted(p for p, v in entries.items() if v[0] == "160000" and p not in recipe.REQUIRED_SUBMODULES)
+
+
+def materialized(root):
+    """(mode, blob id) by path of every file under root; any symlink or special file fails."""
+    found = {}
+    for path in sorted(Path(root).rglob("*")):
+        if path.is_symlink() or not (path.is_dir() or path.is_file()):
+            raise AssertionError("not a regular file or directory: %s" % path)
+        if path.is_file():
+            data = path.read_bytes()
+            mode = "100755" if os.stat(str(path)).st_mode & 0o111 else "100644"
+            found[path.relative_to(root).as_posix()] = (mode, hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest())
+    return found
 
 
 @unittest.skipUnless(LEGACY_CORE, "ZANO_LEGACY_CORE_GIT names no core repository with the legacy composition")
@@ -80,6 +116,18 @@ class AndroidRecipeDryChecks(unittest.TestCase):
             self.assertIn(flag, args)
         self.assertEqual(recipe.TARGETS, ("wallet", "currency_core", "crypto", "common", "zlibstatic"))
 
+    def test_build_source_never_holds_the_legacy_js_examples(self):
+        listing = listed(LEGACY_CORE, self.spec["sourceCommit"])
+        for rel in recipe.NEVER_MATERIALIZED:
+            self.assertIn(rel, listing, "the legacy tree lists %s" % rel)
+        expected, empty = expected_build_source(LEGACY_CORE, self.spec["sourceCommit"], recipe.NEVER_MATERIALIZED)
+        with tempfile.TemporaryDirectory() as tmp:
+            dest = Path(tmp) / "source"
+            recipe.materialize_source(LEGACY_CORE, self.spec, self.manifest["appComposition"]["forbiddenPaths"], dest)
+            self.assertEqual(materialized(dest), expected)
+            for link in empty:
+                self.assertEqual(os.listdir(str(dest / link)), [])
+
 
 class SnapshotAndroidRecipeDryChecks(unittest.TestCase):
     def setUp(self):
@@ -93,6 +141,67 @@ class SnapshotAndroidRecipeDryChecks(unittest.TestCase):
     def admit(self, manifest=None, inputs=None, inputs_sha=None, script_sha=None, profile="snapshot"):
         return recipe.admit(profile, manifest or self.manifest, inputs or self.inputs,
                             inputs_sha or self.inputs_sha, script_sha or self.script_sha)
+
+    def plant(self, root, rel):
+        """Creates root/rel (and missing parents) for this test only; each is removed by a cleanup."""
+        target = Path(root) / rel
+        if os.path.lexists(str(target)):
+            self.fail("refusing to overwrite an existing checkout path: " + rel)
+        created, parent = [], target.parent
+        while not parent.exists():
+            created.append(parent)
+            parent = parent.parent
+        for directory in reversed(created):
+            directory.mkdir()
+            self.addCleanup(directory.rmdir)
+        target.write_bytes(b"#error planted outside git by the F1 build-source proof\n")
+        self.addCleanup(target.unlink)
+
+    def test_build_source_holds_exactly_the_git_objects(self):
+        core = Path(SNAPSHOT_CORE)
+        extras = ("contrib/zlib/zconf.h",                                   # untracked: the forbidden zlib header
+                  "src/wallet/f1_untracked_extra.h",                        # untracked core source
+                  "src/.idea/f1_ignored_extra.h",                           # ignored core source (.idea)
+                  "build-f1-proof/f1_ignored_extra.h",                      # ignored top-level build dir (/build*)
+                  "contrib/jwt-cpp/include/jwt-cpp/f1_untracked_extra.h",   # untracked in a required submodule
+                  "contrib/jwt-cpp/include/.vs/f1_ignored_extra.h",         # ignored in a required submodule (.vs/)
+                  "contrib/bitcoin-secp256k1/include/f1_extra.h")           # inside an uninitialized gitlink
+        for rel in extras:
+            self.plant(core, rel)
+        status = recipe.git(core, "status", "--porcelain", "--untracked-files=all", "--ignored").decode().splitlines()
+        for line in ("?? contrib/zlib/zconf.h", "?? src/wallet/f1_untracked_extra.h"):
+            self.assertIn(line, status)
+        self.assertTrue(any(l.startswith("!! src/.idea/") for l in status), "the core ignores src/.idea")
+        self.assertTrue(any(l.startswith("!! build-f1-proof/") for l in status), "the core ignores /build*")
+        sub = recipe.git(core / "contrib/jwt-cpp", "status", "--porcelain", "--untracked-files=all", "--ignored")
+        sub = sub.decode().splitlines()
+        self.assertIn("?? include/jwt-cpp/f1_untracked_extra.h", sub)
+        self.assertTrue(any(l.startswith("!! include/.vs/") for l in sub), "jwt-cpp ignores .vs/")
+        expected, empty = expected_build_source(core, self.root)
+        self.assertEqual(empty, ["contrib/bitcoin-secp256k1", "src/gui/qt-daemon/layout"])
+        with tempfile.TemporaryDirectory() as tmp:
+            dest = Path(tmp) / "source"
+            census = recipe.materialize_source(core, self.spec, self.manifest["appComposition"]["forbiddenPaths"], dest)
+            self.assertEqual(materialized(dest), expected, "the build source is exactly the git objects")
+            self.assertEqual(census["files"], len(expected))
+            for rel in extras:
+                self.assertFalse(os.path.lexists(str(dest / rel)), rel)
+            for link in empty:
+                self.assertEqual(os.listdir(str(dest / link)), [])
+            args = recipe.configure_args(self.spec, dest, Path("/b"), Path("/d"), "/ndk")
+            self.assertEqual(args[:2], ["-S", str(dest)])
+            with self.assertRaisesRegex(SystemExit, "not a git checkout"):
+                recipe.configure_args(self.spec, core, Path("/b"), Path("/d"), "/ndk")
+
+    def test_build_source_refusals(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            with self.assertRaisesRegex(SystemExit, "forbidden path CMakeLists.txt"):
+                recipe.materialize_source(SNAPSHOT_CORE, self.spec, [{"path": "CMakeLists.txt"}], Path(tmp) / "a")
+            with self.assertRaisesRegex(SystemExit, "already exists"):
+                recipe.materialize_source(SNAPSHOT_CORE, self.spec, [], Path(tmp))
+            legacy_spec = self.legacy_manifest["compositions"][recipe.COMPOSITION]
+            with self.assertRaisesRegex(SystemExit, "git ls-tree failed"):
+                recipe.materialize_source(SNAPSHOT_CORE, legacy_spec, [], Path(tmp) / "b")
 
     def test_source_and_every_non_built_input_resolve_at_the_root(self):
         recipe.check_source(SNAPSHOT_CORE, self.spec)

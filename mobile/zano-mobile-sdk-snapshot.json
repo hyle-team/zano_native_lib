@@ -214,7 +214,7 @@
    "compositionNote": "Built from the full root tree, which includes the four project overlays. The legacy Android composition excluded them, so this composition has never been built.",
    "producerRecipe": {
     "script": "mobile/android/produce_android.py",
-    "scriptSha256": "3864b4a1bef54e5acba56794291e70081aed37887c74065f64aced4a6393072d",
+    "scriptSha256": "59c5be1d7dbd912458425fb433d60f4965b579c383026b5bb90453e038e83c1e",
     "inputs": "mobile/android/inputs-snapshot.json",
     "inputsSha256": "e881e45ed0be7a55f1512ce94dff08b72249b4eb23e7b2809a4423a5337723a5",
     "output": "mobile/out/android-arm64-v8a-testnet-snapshot",

@@ -30,7 +30,12 @@ building or checking anything out:
 Usage: python3 -I mobile/check_core_pin.py --profile {legacy,snapshot} --core-git CORE_REPO [--rev REV | --staged]
 CORE_REPO is any git repository holding the profile's core commits (the legacy profile needs the
 original lineage; the snapshot profile needs only the snapshot root, for example the initialized
-Zano submodule). --staged reads this repository's Zano gitlink from the index instead of a commit.
+Zano submodule). Library modes (reported as "mode"):
+  working   (default) the Zano gitlink of HEAD; the profile and every file it pins from the working tree
+  staged    (--staged) the Zano gitlink of the index; files from the working tree
+  revision  (--rev REV) the gitlink and every library file (profile manifest, inputs, configuration,
+            closure, captured inputs, producer scripts, retained legacy files) from commit REV itself
+A profile, pinned file or required field that is missing or unavailable is a listed problem.
 Standard library only. Exit 0 when every check passes; findings are printed as JSON.
 """
 import argparse
@@ -202,6 +207,80 @@ def read_library_file(rel):
     return path.read_bytes()
 
 
+def revision_reader(lib, commit):
+    """A read_lib for commit: the bytes of a regular file (mode 100644/100755) in that commit's tree, or None."""
+    def read(rel):
+        listing = lib.run("ls-tree", "-z", commit, "--", rel, check=False)
+        record = listing.stdout.decode().rstrip("\0")
+        if listing.returncode != 0 or not record or "\0" in record:
+            return None
+        meta, path = record.split("\t", 1)
+        mode, kind, obj = meta.split()
+        if path != rel or kind != "blob" or mode not in ("100644", "100755"):
+            return None
+        return lib.run("cat-file", "blob", obj).stdout
+    return read
+
+
+# Required fields (dotted names) of each profile document; a list holds the spec of its rows.
+ROW = {"path": str, "sha256": str, "size": int}
+SNAPSHOT_REQUIRED = {
+    "core": {"path": str, "commit": str, "tree": str, "parents": list, "provenanceNote": ROW},
+    "sourceCensus": {"sha256": str, "blobCount": int, "blobBytes": int, "gitlinkCount": int},
+    "submodules": dict,
+    "omittedPaths": list,
+    "appComposition": {"deltas": [ROW], "projectOverlays": [ROW], "forbiddenPaths": [{"path": str}]},
+    "sdkVersion": {"commitLabel": str, "expectedVersion": str,
+                   "sourceVersion": {"cmakeVersion": str, "projectVersion": str, "buildNumber": int}},
+    "compositions": {
+        ANDROID: {"sourceCommit": str, "expectedVersion": str,
+                  "producerRecipe": {"script": str, "scriptSha256": str, "inputs": str, "inputsSha256": str}},
+        APPLE: {"sourceCommit": str, "expectedVersion": str, "versionCommitLabel": str, "producerConfig": str,
+                "producerConfigSha256": str, "sdkCensus": {"sha256": str, "fileCount": int, "totalBytes": int},
+                "closure": {"path": str, "sha256": str}, "sdkProducer": {"path": str, "sha256": str}}},
+    "qualification": {"status": str},
+    "historicalReferences": {"legacyProfile": {"files": dict}},
+}
+INPUTS_REQUIRED = {"schema": str, "version": int, "composition": str, "sourceCommit": str,
+                   "headers": [{"from": str, "path": str, "sha256": str, "size": int}]}
+CONFIG_REQUIRED = {"schema": str, "version": int, "coreCommit": str, "versionCommitLabel": str, "expectedVersion": str,
+                   "sourceVersion": dict,
+                   "composition": {"deltas": [ROW], "projectOverlays": {"paths": list}, "forbiddenPaths": list}}
+CLOSURE_REQUIRED = {"schema": str, "version": int, "composition": str, "sourceCommit": str, "census": dict,
+                    "submodules": dict, "captured": {"root": str, "paths": list},
+                    "files": [{"path": str, "sha256": str, "size": int, "executable": bool, "from": str}]}
+LEGACY_REQUIRED = {
+    "core": {"path": str, "baseCommit": str, "commit": str, "chain": [{"commit": str}]},
+    "sourceMap": [{"path": str, "sha256": str, "size": int, "finalCommit": str}],
+    "submodulesUnchangedFromBase": dict,
+    "appComposition": {"deltas": [{"path": str, "sha256": str}], "projectOverlays": list,
+                       "forbiddenPaths": [{"path": str}]},
+    "compositions": {ANDROID: {"sourceCommit": str}, APPLE: {"sourceCommit": str}},
+}
+
+
+def missing_fields(doc, spec, prefix=""):
+    """Dotted names of the required fields of spec that doc lacks or holds with another type."""
+    found = []
+    for key, want in spec.items():
+        name = prefix + key
+        if not isinstance(doc, dict) or key not in doc:
+            found.append(name)
+            continue
+        value = doc[key]
+        if isinstance(want, dict):
+            found.extend(missing_fields(value, want, name + "."))
+        elif isinstance(want, list):
+            if not isinstance(value, list):
+                found.append(name)
+                continue
+            for i, row in enumerate(value):
+                found.extend(missing_fields(row, want[0], "%s[%d]." % (name, i)))
+        elif not isinstance(value, want) or (want is int and isinstance(value, bool)):
+            found.append(name)
+    return found
+
+
 def source_census(entries, data):
     """The declared source census of a tree: sha256 over '<mode> <sha256> <size> <path>' per blob and
     '160000 <commit> - <path>' per gitlink, one line each in path byte order."""
@@ -262,25 +341,47 @@ def legacy_keys(value):
     return set()
 
 
-def library_json(read_lib, rel, pinned, what, found):
+def pinned_library_bytes(read_lib, rel, pinned, what, found):
     data = read_lib(rel)
-    if data is None or sha256(data) != pinned:
+    if data is None:
+        found.append("%s is unavailable: %s" % (what, rel))
+    elif sha256(data) != pinned:
         found.append("%s is not the library file the snapshot profile pins: %s" % (what, rel))
+    else:
+        return data
+    return None
+
+
+def library_json(read_lib, rel, pinned, what, found, required):
+    data = pinned_library_bytes(read_lib, rel, pinned, what, found)
+    if data is None:
         return None
-    return json.loads(data.decode("utf-8"))
+    try:
+        doc = json.loads(data.decode("utf-8"))
+    except ValueError:
+        found.append("%s is not valid JSON: %s" % (what, rel))
+        return None
+    absent = missing_fields(doc, required)
+    if absent:
+        found.extend("%s lacks required field %s: %s" % (what, name, rel) for name in absent)
+        return None
+    return doc
 
 
 def snapshot_problems(profile, lib_gitlink, core, read_lib=read_library_file):
     """Findings of the snapshot profile against its core repository and this library's files."""
-    if profile.get("schema") != SNAPSHOT_SCHEMA or profile.get("version") != 1 or \
+    if not isinstance(profile, dict) or profile.get("schema") != SNAPSHOT_SCHEMA or profile.get("version") != 1 or \
             profile.get("sourceProfile") != SNAPSHOT_PROFILE:
         return ["the snapshot profile declaration (schema, version, sourceProfile) is missing or wrong"]
+    absent = missing_fields(profile, SNAPSHOT_REQUIRED)
+    if absent:
+        return ["the snapshot profile lacks required field " + name for name in absent]
     found = []
     live = {k: v for k, v in profile.items() if k != "historicalReferences"}
     mixed = sorted(legacy_keys(live))
     if mixed:
         found.append("the snapshot profile carries legacy lineage fields: " + ", ".join(mixed))
-    historical = object_ids(profile.get("historicalReferences", {}))
+    historical = object_ids(profile["historicalReferences"])
     for value in sorted(object_ids(live) & historical):
         found.append("a live snapshot pin names a historical reference: " + value)
     pin = profile["core"]
@@ -350,16 +451,15 @@ def snapshot_problems(profile, lib_gitlink, core, read_lib=read_library_file):
             found.append("%s composition expects %s, not %s" % (label, comp["expectedVersion"], expected))
     if apple["versionCommitLabel"] != root:
         found.append("apple versionCommitLabel is not the snapshot root")
-    if profile.get("qualification", {}).get("status") != "unqualified":
+    if profile["qualification"]["status"] != "unqualified":
         found.append("the snapshot profile claims a qualification no measurement has given")
 
     recipe = android["producerRecipe"]
     for rel, sha, what in ((recipe["script"], recipe["scriptSha256"], "the Android producer script"),
                            (apple["sdkProducer"]["path"], apple["sdkProducer"]["sha256"], "the iOS SDK producer")):
-        data = read_lib(rel)
-        if data is None or sha256(data) != sha:
-            found.append("%s is not the library file the snapshot profile pins: %s" % (what, rel))
-    inputs = library_json(read_lib, recipe["inputs"], recipe["inputsSha256"], "the Android inputs", found)
+        pinned_library_bytes(read_lib, rel, sha, what, found)
+    inputs = library_json(read_lib, recipe["inputs"], recipe["inputsSha256"], "the Android inputs", found,
+                          INPUTS_REQUIRED)
     if inputs is not None:
         if inputs.get("schema") != "zano-mobile-android-producer-inputs" or inputs.get("version") != 1 or \
                 inputs.get("sourceProfile") != SNAPSHOT_PROFILE or inputs.get("composition") != ANDROID or \
@@ -368,7 +468,8 @@ def snapshot_problems(profile, lib_gitlink, core, read_lib=read_library_file):
         for header in (h for h in inputs.get("headers", []) if h["from"] == "core"):
             if not pinned(header["path"], header["sha256"], header["size"]):
                 found.append("Android core header differs from its root pin: " + header["path"])
-    config = library_json(read_lib, apple["producerConfig"], apple["producerConfigSha256"], "the iOS producer configuration", found)
+    config = library_json(read_lib, apple["producerConfig"], apple["producerConfigSha256"], "the iOS producer configuration",
+                          found, CONFIG_REQUIRED)
     if config is not None:
         if config.get("schema") != "zano-ios-sdk-producer" or config.get("version") != 1 or \
                 config.get("sourceProfile") != SNAPSHOT_PROFILE or config.get("coreCommit") != root or \
@@ -380,13 +481,16 @@ def snapshot_problems(profile, lib_gitlink, core, read_lib=read_library_file):
                 config["composition"]["projectOverlays"]["paths"] != [o["path"] for o in app["projectOverlays"]] or \
                 config["composition"]["forbiddenPaths"] != app["forbiddenPaths"]:
             found.append("the iOS producer composition differs from the profile app composition")
-    closure = library_json(read_lib, apple["closure"]["path"], apple["closure"]["sha256"], "the iOS closure", found)
+    closure = library_json(read_lib, apple["closure"]["path"], apple["closure"]["sha256"], "the iOS closure", found,
+                           CLOSURE_REQUIRED)
     if closure is not None:
         found.extend(closure_problems(closure, apple, profile, root, at_root, core, read_lib))
     retained = profile["historicalReferences"]["legacyProfile"]["files"]
     for rel, sha in sorted(retained.items()):
         data = read_lib(rel)
-        if data is None or sha256(data) != sha:
+        if data is None:
+            found.append("a retained legacy profile file is unavailable: " + rel)
+        elif sha256(data) != sha:
             found.append("a retained legacy profile file changed: " + rel)
     return found
 
@@ -454,30 +558,65 @@ def library_gitlink(lib, path, rev, staged):
     return lib.gitlinks(rev).get(path)
 
 
+def legacy_problems(manifest, lib_gitlink, core):
+    """problems() of the retained lineage manifest, after its declaration and required fields."""
+    if not isinstance(manifest, dict) or manifest.get("schema") != "zano-mobile-sdk-producer" or "sourceProfile" in manifest:
+        return ["the legacy profile is not the retained lineage manifest"]
+    absent = missing_fields(manifest, LEGACY_REQUIRED)
+    if absent:
+        return ["the legacy profile lacks required field " + name for name in absent]
+    return problems(manifest, lib_gitlink, core)
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--profile", required=True, choices=("legacy", "snapshot"))
     parser.add_argument("--core-git", required=True)
     where = parser.add_mutually_exclusive_group()
-    where.add_argument("--rev", default="HEAD")
-    where.add_argument("--staged", action="store_true")
+    where.add_argument("--rev", help="revision mode: every library read comes from this commit")
+    where.add_argument("--staged", action="store_true", help="staged mode: index gitlink, working-tree files")
     args = parser.parse_args(argv)
     lib = Git(LIB)
-    if args.profile == "legacy":
-        manifest = json.loads(MANIFEST.read_text())
-        if "sourceProfile" in manifest:
-            raise SystemExit("check_core_pin: the legacy profile is the retained lineage manifest")
-        link = library_gitlink(lib, manifest["core"]["path"], args.rev, args.staged)
-        found = problems(manifest, link, Git(args.core_git))
-        extra = {"sourceMapPaths": len(manifest["sourceMap"])}
+    path = (MANIFEST if args.profile == "legacy" else SNAPSHOT_MANIFEST).relative_to(LIB).as_posix()
+    report = {"profile": args.profile}
+    if args.rev is not None:
+        resolved = lib.run("rev-parse", "--verify", "--quiet", args.rev + "^{commit}", check=False)
+        commit = resolved.stdout.decode().strip()
+        report.update(mode="revision", libraryRev=commit or args.rev)
+        if resolved.returncode != 0 or not commit:
+            report["problems"] = ["library revision %s is not an available commit" % args.rev]
+            print(json.dumps(report, indent=1))
+            return 1
+        read_lib, where_text = revision_reader(lib, commit), "revision " + commit
     else:
-        manifest = json.loads(SNAPSHOT_MANIFEST.read_text())
-        link = library_gitlink(lib, manifest["core"]["path"], args.rev, args.staged)
-        found = snapshot_problems(manifest, link, Git(args.core_git))
-        extra = {"snapshotRoot": manifest["core"]["commit"], "sourceCensus": manifest["sourceCensus"]["sha256"]}
-    library = "index" if args.staged else lib.run("rev-parse", args.rev).stdout.decode().strip()
-    print(json.dumps(dict({"profile": args.profile, "libraryRev": library, "zanoGitlink": link}, **extra,
-                          problems=found), indent=1))
+        report.update(mode="staged" if args.staged else "working",
+                      libraryRev="index" if args.staged else lib.run("rev-parse", "HEAD").stdout.decode().strip())
+        read_lib, where_text = read_library_file, "the working tree"
+    data = read_lib(path)
+    try:
+        manifest = None if data is None else json.loads(data.decode("utf-8"))
+    except ValueError:
+        manifest = None
+    if not isinstance(manifest, dict):
+        report["problems"] = ["the %s profile %s is unavailable or not a JSON object in %s"
+                              % (args.profile, path, where_text)]
+        print(json.dumps(report, indent=1))
+        return 1
+    core_path = manifest["core"].get("path") if isinstance(manifest.get("core"), dict) else None
+    link = None
+    if isinstance(core_path, str):
+        link = library_gitlink(lib, core_path, report["libraryRev"], args.staged)
+    report["zanoGitlink"] = link
+    if args.profile == "legacy":
+        found = legacy_problems(manifest, link, Git(args.core_git))
+        if isinstance(manifest.get("sourceMap"), list):
+            report["sourceMapPaths"] = len(manifest["sourceMap"])
+    else:
+        found = snapshot_problems(manifest, link, Git(args.core_git), read_lib)
+        if not missing_fields(manifest, {"core": {"commit": str}, "sourceCensus": {"sha256": str}}):
+            report.update(snapshotRoot=manifest["core"]["commit"], sourceCensus=manifest["sourceCensus"]["sha256"])
+    report["problems"] = found
+    print(json.dumps(report, indent=1))
     return 1 if found else 0
 
 

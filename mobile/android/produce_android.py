@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 """Clean Android producer of the Zano mobile SDK composition (TESTNET/103, arm64-v8a, API 24).
 
-Builds wallet, currency_core, crypto, common and zlibstatic from the core checkout at exactly the
-declared composition commit, and writes the consumer layout the app's verified lock admits:
+Builds wallet, currency_core, crypto, common and zlibstatic from a build source tree written only
+from git objects: every blob of the declared composition commit in the core checkout, the pinned
+trees of its required submodules, and an empty directory for every other gitlink. CMake never reads
+the checkout's working tree, so untracked, ignored or modified files there cannot enter the build.
+It writes the consumer layout the app's verified lock admits:
 
   _install_android/arm64-v8a/lib/lib{common,crypto,currency_core,wallet,z,backtrace}.a
   _install_android/arm64-v8a/VERSION        expectedVersion bytes, no terminator
@@ -53,6 +56,9 @@ ARCHIVES = {"src/libcommon.a": "libcommon.a", "src/libcrypto.a": "libcrypto.a",
             "src/libcurrency_core.a": "libcurrency_core.a", "src/libwallet.a": "libwallet.a",
             "contrib/zlib/libz.a": "libz.a"}
 REQUIRED_SUBMODULES = ("contrib/jwt-cpp", "contrib/miniupnp")
+# Legacy JS examples present in the original lineage trees and omitted from the maintained snapshot
+# (SOURCE-PROVENANCE.md). No CMake file reads utils/JS; they are never read or written as build source.
+NEVER_MATERIALIZED = ("utils/JS/JWT/example.js", "utils/JS/test_eth_sig.js", "utils/JS/emmit_response.json")
 
 
 def refuse(message):
@@ -152,6 +158,74 @@ def pinned_inputs(source, inputs):
     return rows
 
 
+def tree_entries(repo, rev):
+    """[(path, mode, kind, object)] of every entry under rev, recursively."""
+    rows = []
+    for record in git(repo, "ls-tree", "-r", "-z", "--full-tree", rev).decode().split("\0"):
+        if record:
+            meta, path = record.split("\t", 1)
+            mode, kind, obj = meta.split()
+            rows.append((path, mode, kind, obj))
+    return rows
+
+
+def read_blobs(repo, ids):
+    """{object id: bytes} read in one cat-file --batch; refuses anything that is not a blob."""
+    wanted = sorted(set(ids))
+    out = git(repo, "cat-file", "--batch", data="".join(i + "\n" for i in wanted).encode())
+    found, at = {}, 0
+    for obj in wanted:
+        end = out.index(b"\n", at)
+        header = out[at:end].split()
+        if len(header) != 3 or header[0].decode() != obj or header[1] != b"blob":
+            refuse("%s holds no blob %s" % (repo, obj))
+        size = int(header[2])
+        found[obj] = out[end + 1:end + 1 + size]
+        at = end + 1 + size + 1
+    return found
+
+
+def materialize_source(source, spec, forbidden, dest):
+    """Writes the build source of the composition under dest (new) from git objects only.
+
+    Every blob of spec["sourceCommit"] in the core repository keeps its git mode; each required
+    submodule gets the tree of its pinned commit read from its own repository; every other gitlink is
+    an empty directory, as in a fresh checkout. Symlinks, forbidden paths and NEVER_MATERIALIZED are
+    refused or skipped before any blob is read. Returns {"files": n, "bytes": total}."""
+    if os.path.lexists(str(dest)):
+        refuse("the build source directory already exists: %s" % dest)
+    forbidden_paths = {f["path"] for f in forbidden}
+    written = {"files": 0, "bytes": 0}
+
+    def write_tree(repo, rev, prefix):
+        entries = tree_entries(repo, rev)
+        for path, mode, kind, _obj in entries:
+            if prefix + path in forbidden_paths:
+                refuse("the composition tree contains the forbidden path %s" % (prefix + path))
+            if kind not in ("blob", "commit") or (kind == "blob" and mode not in ("100644", "100755")):
+                refuse("the composition tree holds a non-regular entry %s (%s)" % (prefix + path, mode))
+        blobs = [(prefix + p, m, o) for p, m, k, o in entries if k == "blob" and prefix + p not in NEVER_MATERIALIZED]
+        data = read_blobs(repo, [o for _p, _m, o in blobs])
+        for rel, mode, obj in blobs:
+            target = dest / rel
+            target.parent.mkdir(parents=True, exist_ok=True)
+            fd = os.open(str(target), os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
+                         0o755 if mode == "100755" else 0o644)
+            with os.fdopen(fd, "wb") as handle:
+                handle.write(data[obj])
+            written["files"] += 1
+            written["bytes"] += len(data[obj])
+        for path, _mode, kind, obj in entries:
+            if kind == "commit":
+                (dest / (prefix + path)).mkdir(parents=True, exist_ok=True)
+                if not prefix and path in REQUIRED_SUBMODULES:
+                    write_tree(Path(source) / path, obj, path + "/")
+
+    dest.mkdir(parents=True)
+    write_tree(source, spec["sourceCommit"], "")
+    return written
+
+
 def materialize(value):
     if not (isinstance(value, tuple) and value[0] == "lfs"):
         return value
@@ -183,6 +257,8 @@ def write(root, rel, data):
 
 
 def configure_args(spec, source, build, deps, ndk):
+    if os.path.lexists(os.path.join(str(source), ".git")):
+        refuse("CMake must configure the materialized build source, not a git checkout: %s" % source)
     label = version_label(spec)
     return ["-S", str(source), "-B", str(build), "-G", "Unix Makefiles", "-Wno-dev",
             "-DCMAKE_BUILD_TYPE=Release", "-DCMAKE_SYSTEM_NAME=Android", "-DCMAKE_SYSTEM_VERSION=24",
@@ -231,6 +307,8 @@ def build(args):
     if scratch.exists():
         refuse("a previous work directory exists: %s" % scratch)
     deps, build_dir, stage = scratch / "deps", scratch / "build", scratch / "stage"
+    build_source = scratch / "source"
+    source_census = materialize_source(source, spec, manifest["appComposition"]["forbiddenPaths"], build_source)
     for name, t in inputs["buildTrees"].items():
         target = deps / name
         target.mkdir(parents=True)
@@ -243,7 +321,7 @@ def build(args):
             write(deps, output[len("_libs_android/"):], data)
         if output.endswith("libbacktrace.a"):
             write(deps, "libbacktrace/arm64-v8a/lib/libbacktrace.a", data)
-    subprocess.run([args.cmake, *configure_args(spec, source, build_dir, deps, args.ndk)], check=True)
+    subprocess.run([args.cmake, *configure_args(spec, build_source, build_dir, deps, args.ndk)], check=True)
     subprocess.run([args.cmake, "--build", str(build_dir), "--target", *TARGETS, "--", "-j%d" % args.jobs], check=True)
     check_version_header(build_dir, spec)
     for built, name in ARCHIVES.items():
@@ -261,7 +339,7 @@ def build(args):
     write(stage, "inventory.json", (json.dumps(record, indent=1) + "\n").encode())
     os.rename(stage, out)
     shutil.rmtree(scratch)
-    print(json.dumps({"out": str(out), "files": len(inventory)}))
+    print(json.dumps({"out": str(out), "files": len(inventory), "buildSource": source_census}))
 
 
 def plan(args):

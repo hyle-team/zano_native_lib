@@ -9,9 +9,11 @@ refuse it; the unchanged profile must pass.
             root. The library gitlink is read from the index, so the cases run before and after commit.
 Usage: ZANO_LEGACY_CORE_GIT=CORE_REPO python3 -I mobile/test_check_core_pin.py -v
 """
+import contextlib
 import copy
 import hashlib
 import importlib.util
+import io
 import json
 import os
 import sys
@@ -28,6 +30,17 @@ LEGACY_CORE = os.environ.get("ZANO_LEGACY_CORE_GIT")
 SNAPSHOT_CORE = os.environ.get("ZANO_SNAPSHOT_CORE_GIT", str(HERE.parent / "Zano"))
 HISTORICAL = ("299bf172e8428042919b48bfa1cedfcd9ede139a", "98131bb6728ea79bb54e6c21a3a83a8bca27d686",
               "fdee56b8f8d9d429848a49aa89d5d0278ba0839a", "e90a4e181fff7ff96ce03ddeda565d07cb5f75e8")
+# Library commits used as revision-mode evidence: the first signed snapshot-profile commit, whose
+# Android producer pin predates the build-source materialization, and the retained legacy commit.
+FIRST_SNAPSHOT_COMMIT = "d0b7a63a722a8708e9e9668f40478da0bc00ff9d"
+LEGACY_LIBRARY_COMMIT = "f31719ea41fa94ba102c45f20e4c078eac45caf3"
+
+
+def run_main(*argv):
+    out = io.StringIO()
+    with contextlib.redirect_stdout(out):
+        code = checker.main(list(argv))
+    return code, json.loads(out.getvalue())
 
 
 @unittest.skipUnless(LEGACY_CORE, "ZANO_LEGACY_CORE_GIT names no original-lineage core repository")
@@ -77,6 +90,10 @@ class CorePinChecks(unittest.TestCase):
         first = sorted(m["submodulesUnchangedFromBase"])[0]
         m["submodulesUnchangedFromBase"][first] = "0" * 40
         self.assertIn("core submodule gitlinks differ from the base", self.refused(m))
+
+    def test_revision_mode_reads_the_retained_commit(self):
+        code, report = run_main("--profile", "legacy", "--core-git", LEGACY_CORE, "--rev", LEGACY_LIBRARY_COMMIT)
+        self.assertEqual((code, report["mode"], report["zanoGitlink"], report["problems"]), (0, "revision", self.tip, []))
 
 
 class SnapshotProfileChecks(unittest.TestCase):
@@ -223,6 +240,57 @@ class SnapshotProfileChecks(unittest.TestCase):
     def test_unmeasured_qualification_is_refused(self):
         found = self.refused(self.mutated(lambda p: p["qualification"].update(status="qualified")))
         self.assertIn("the snapshot profile claims a qualification no measurement has given", found)
+
+    def test_revision_mode_binds_every_read_to_the_named_commit(self):
+        lib = checker.Git(HERE.parent)
+        at_first = checker.revision_reader(lib, FIRST_SNAPSHOT_COMMIT)
+        profile = json.loads(at_first("mobile/zano-mobile-sdk-snapshot.json"))
+        link = lib.gitlinks(FIRST_SNAPSHOT_COMMIT)["Zano"]
+        self.assertEqual(checker.snapshot_problems(profile, link, self.core, at_first), [])
+        # The same commit's profile against today's working tree: the Android producer has moved on.
+        drift = checker.snapshot_problems(profile, link, self.core, checker.read_library_file)
+        self.assertEqual(drift, ["the Android producer script is not the library file the snapshot profile pins: "
+                                 "mobile/android/produce_android.py"])
+        code, report = run_main("--profile", "snapshot", "--core-git", SNAPSHOT_CORE, "--rev", FIRST_SNAPSHOT_COMMIT)
+        self.assertEqual((code, report["mode"], report["libraryRev"], report["problems"]),
+                         (0, "revision", FIRST_SNAPSHOT_COMMIT, []))
+
+    def test_working_and_staged_modes_read_the_working_tree(self):
+        code, report = run_main("--profile", "snapshot", "--core-git", SNAPSHOT_CORE)
+        self.assertEqual((code, report["mode"], report["problems"]), (0, "working", []))
+        code, report = run_main("--profile", "snapshot", "--core-git", SNAPSHOT_CORE, "--staged")
+        self.assertEqual((code, report["mode"], report["libraryRev"], report["problems"]), (0, "staged", "index", []))
+
+    def test_revision_without_the_profile_or_commit_is_a_structured_refusal(self):
+        code, report = run_main("--profile", "snapshot", "--core-git", SNAPSHOT_CORE, "--rev", LEGACY_LIBRARY_COMMIT)
+        self.assertEqual(code, 1)
+        self.assertEqual(report["problems"], ["the snapshot profile mobile/zano-mobile-sdk-snapshot.json is unavailable "
+                                              "or not a JSON object in revision " + LEGACY_LIBRARY_COMMIT])
+        code, report = run_main("--profile", "snapshot", "--core-git", SNAPSHOT_CORE, "--rev", "f" * 40)
+        self.assertEqual((code, report["problems"]), (1, ["library revision %s is not an available commit" % ("f" * 40)]))
+
+    def test_missing_required_metadata_is_a_structured_refusal(self):
+        # The reviewer's case: a profile naming e90a4e18 as root with no historicalReferences.
+        found = self.refused(self.mutated(lambda p: (p.pop("historicalReferences"),
+                                                     p["core"].update(commit=HISTORICAL[3]))))
+        self.assertEqual(found, ["the snapshot profile lacks required field historicalReferences"])
+        for drop, name in ((lambda p: p["core"].pop("tree"), "core.tree"),
+                           (lambda p: p["historicalReferences"]["legacyProfile"].pop("files"),
+                            "historicalReferences.legacyProfile.files"),
+                           (lambda p: p["appComposition"]["deltas"][2].pop("size"), "appComposition.deltas[2].size"),
+                           (lambda p: p["compositions"]["apple-iphoneos-iphonesimulator-testnet"]["closure"].update(sha256=None),
+                            "compositions.apple-iphoneos-iphonesimulator-testnet.closure.sha256")):
+            self.assertEqual(self.refused(self.mutated(drop)), ["the snapshot profile lacks required field " + name])
+        rel = "mobile/android/inputs-snapshot.json"
+        inputs = json.loads(checker.read_library_file(rel))
+        del inputs["headers"][0]["sha256"]
+        data = json.dumps(inputs).encode()
+        profile = self.mutated(lambda p: p["compositions"]["android-arm64-v8a-testnet"]["producerRecipe"].update(
+            inputsSha256=hashlib.sha256(data).hexdigest()))
+        self.assertIn("the Android inputs lacks required field headers[0].sha256: " + rel,
+                      self.refused(profile, read_lib=self.library_with(rel, data)))
+        missing = lambda path: None if path == rel else checker.read_library_file(path)
+        self.assertIn("the Android inputs is unavailable: " + rel, self.refused(self.profile, read_lib=missing))
 
 
 if __name__ == "__main__":

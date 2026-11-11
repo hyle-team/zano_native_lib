@@ -41,6 +41,16 @@ The snapshot profile does not use the normal Git label. Without `COMMIT`, `src/v
 
 `test_snapshot_version.py` checks this with host CMake. It runs the root's own version block and `src/version.h.in` with the identity options the producers plan, then reads the generated `version.h` with both producers' checkers. It also checks that the legacy label is rejected and that the TESTNET setting leaves the header unchanged. It configures only and compiles nothing.
 
+## Android build source
+
+The Android producer does not point CMake at the checkout. It first writes a build tree from Git objects only:
+
+- every file of the composition commit
+- the pinned trees of `contrib/jwt-cpp` and `contrib/miniupnp`
+- an empty directory for each other submodule
+
+Untracked, ignored or edited files in the checkout or its submodules cannot reach the build. The three legacy JS examples named in `SOURCE-PROVENANCE.md` are never read or written by either profile. The iOS producer already compiles a tree written from Git objects.
+
 ## Legacy evidence stays separate
 
 The legacy version `2.2.1.506[1.0-g299bf172e8428042919b48bfa1cedfcd9ede139a-native-snapshot-compat-v1]` belongs to the original lineage only. So do the observed 308-entry Android input set (287 headers, 15 dependencies, 6 built outputs) and its publisher lock `567e3664…`. They are not inputs, expected values or proof for anything built from the snapshot.
@@ -61,6 +71,8 @@ Consuming apps keep their current library pins until then.
 ## Checks
 
 The `Zano` checkout must be at the root, with `contrib/jwt-cpp` and `contrib/miniupnp` initialized. The CMake proof needs host CMake 3.16 or newer.
+
+By default `check_core_pin.py` reads the profile and every pinned file from the working tree, with the `Zano` gitlink of `HEAD`. `--staged` takes the gitlink from the index instead. `--rev REV` reads the gitlink and every library file from commit `REV` itself. A missing profile, pinned file or required field is reported as a problem.
 
 ```
 python3 -I mobile/check_core_pin.py --profile snapshot --core-git Zano
